@@ -1,14 +1,175 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "NanumSquareRound";
+  src: url("/fonts/NanumSquareRoundOTFL.otf") format("opentype"),
+       url("/fonts/NanumSquareRoundL.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "NanumSquareRound";
+  src: url("/fonts/NanumSquareRoundOTFR.otf") format("opentype"),
+       url("/fonts/NanumSquareRoundR.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "NanumSquareRound";
+  src: url("/fonts/NanumSquareRoundOTFB.otf") format("opentype"),
+       url("/fonts/NanumSquareRoundB.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "NanumSquareRound";
+  src: url("/fonts/NanumSquareRoundOTFEB.otf") format("opentype"),
+       url("/fonts/NanumSquareRoundEB.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
+@theme {
+  /* Brand Colors */
+  --color-rust-50: #f8eae8;
+  --color-rust-100: #facec0;
+  --color-rust-200: #f7ae97;
+  --color-rust-300: #f5906e;
+  --color-rust-400: #f4784f;
+  --color-rust-500: #f36333;
+  --color-rust-600: #e85d2f;
+  --color-rust-700: #da562b;
+  --color-rust-800: #cc5027;
+  --color-rust-900: #b14522;
+
+  --color-green-50: #e6f4ed;
+  --color-green-100: #c4e4d1;
+  --color-green-200: #9ed3b5;
+  --color-green-300: #77c399;
+  --color-green-400: #5ab684;
+  --color-green-500: #3caa6f;
+  --color-green-600: #359b65;
+  --color-green-700: #2e8958;
+  --color-green-800: #28784d;
+  --color-green-900: #205839;
+
+  --color-yellow-50: #fff9e6;
+  --color-yellow-100: #ffefa6;
+  --color-yellow-200: #ffe17d;
+  --color-yellow-300: #ffd166;
+  --color-yellow-400: #f2b830;
+  --color-yellow-500: #d99b1c;
+  --color-yellow-600: #b57b0a;
+  --color-yellow-700: #8c5c05;
+  --color-yellow-800: #664100;
+  --color-yellow-900: #452a00;
+
+  --color-gray-50: #fafafa;
+  --color-gray-100: #f5f5f5;
+  --color-gray-200: #efefef;
+  --color-gray-300: #e2e2e2;
+  --color-gray-400: #bfbfbf;
+  --color-gray-500: #a0a0a0;
+  --color-gray-600: #777777;
+  --color-gray-700: #636363;
+  --color-gray-800: #444444;
+  --color-gray-900: #232527;
+
+  /* Font Family */
+  --font-sans: "NanumSquareRound", "Pretendard", -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif;
+
+  /* Typography */
+  /* Display */
+  --text-d1: 2.75rem;
+  --text-d1--line-height: 3.5rem;
+  --text-d1--letter-spacing: -0.02em;
+  --text-d1--font-weight: 800;
+
+  --text-d2: 2.5rem;
+  --text-d2--line-height: 3.25rem;
+  --text-d2--letter-spacing: -0.02em;
+  --text-d2--font-weight: 800;
+
+  /* Title */
+  --text-t1: 2rem;
+  --text-t1--line-height: 2.75rem;
+  --text-t1--letter-spacing: -0.02em;
+  --text-t1--font-weight: 700;
+
+  --text-t2: 1.75rem;
+  --text-t2--line-height: 2.5rem;
+  --text-t2--letter-spacing: -0.02em;
+  --text-t2--font-weight: 700;
+
+  --text-t3: 1.5rem;
+  --text-t3--line-height: 2.25rem;
+  --text-t3--letter-spacing: -0.02em;
+  --text-t3--font-weight: 700;
+
+  /* Heading */
+  --text-h1: 1.375rem;
+  --text-h1--line-height: 2rem;
+  --text-h1--letter-spacing: -0.01em;
+  --text-h1--font-weight: 700;
+
+  --text-h2: 1.25rem;
+  --text-h2--line-height: 1.875rem;
+  --text-h2--letter-spacing: -0.01em;
+  --text-h2--font-weight: 700;
+
+  --text-h3: 1.125rem;
+  --text-h3--line-height: 1.75rem;
+  --text-h3--letter-spacing: -0.01em;
+  --text-h3--font-weight: 700;
+
+  --text-h4: 1rem;
+  --text-h4--line-height: 1.5rem;
+  --text-h4--letter-spacing: -0.01em;
+  --text-h4--font-weight: 700;
+
+  /* Body */
+  --text-b1: 1.125rem;
+  --text-b1--line-height: 1.75rem;
+  --text-b1--letter-spacing: -0.005em;
+  --text-b1--font-weight: 400;
+
+  --text-b2: 1rem;
+  --text-b2--line-height: 1.5rem;
+  --text-b2--letter-spacing: -0.005em;
+  --text-b2--font-weight: 400;
+
+  --text-b3: 0.875rem;
+  --text-b3--line-height: 1.375rem;
+  --text-b3--letter-spacing: -0.005em;
+  --text-b3--font-weight: 400;
+
+  /* Caption */
+  --text-c1: 0.875rem;
+  --text-c1--line-height: 1.25rem;
+  --text-c1--letter-spacing: 0em;
+  --text-c1--font-weight: 700;
+
+  --text-c2: 0.75rem;
+  --text-c2--line-height: 1rem;
+  --text-c2--letter-spacing: 0em;
+  --text-c2--font-weight: 700;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -22,5 +183,48 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+@layer components {
+  /* Button: variant (색상/상태) + size 클래스를 함께 적용 */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-1 rounded-full transition-colors
+      text-white bg-rust-600
+      hover:bg-rust-700
+      active:text-rust-50 active:bg-rust-800
+      disabled:text-rust-300 disabled:bg-rust-200 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-1 rounded-full border transition-colors
+      text-rust-600 bg-rust-50 border-rust-600
+      hover:bg-rust-100
+      active:text-rust-700 active:bg-rust-200
+      disabled:text-gray-300 disabled:bg-gray-100 disabled:border-gray-300 disabled:cursor-not-allowed;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-1 rounded-full border transition-colors
+      text-gray-400 bg-white border-gray-400
+      hover:text-gray-600 hover:bg-gray-200 hover:border-gray-600
+      active:text-gray-600 active:bg-gray-300 active:border-gray-600
+      disabled:text-gray-300 disabled:bg-gray-200 disabled:border-gray-300 disabled:cursor-not-allowed;
+  }
+
+  .btn-lg {
+    @apply px-5 py-3 text-h3;
+  }
+
+  .btn-md {
+    @apply px-3 py-3 text-h4;
+  }
+
+  .btn-sm {
+    @apply px-4 py-2.5 text-c1;
+  }
+
+  .btn-xs {
+    @apply px-2 py-1.5 text-c1;
+  }
 }
