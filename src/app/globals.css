@@ -1,36 +1,40 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @font-face {
-  font-family: "NanumSquareRound";
-  src: url("/fonts/NanumSquareRoundOTFL.otf") format("opentype"),
-       url("/fonts/NanumSquareRoundL.ttf") format("truetype");
+  font-family: 'NanumSquareRound';
+  src:
+    url('/fonts/NanumSquareRoundOTFL.otf') format('opentype'),
+    url('/fonts/NanumSquareRoundL.ttf') format('truetype');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "NanumSquareRound";
-  src: url("/fonts/NanumSquareRoundOTFR.otf") format("opentype"),
-       url("/fonts/NanumSquareRoundR.ttf") format("truetype");
+  font-family: 'NanumSquareRound';
+  src:
+    url('/fonts/NanumSquareRoundOTFR.otf') format('opentype'),
+    url('/fonts/NanumSquareRoundR.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "NanumSquareRound";
-  src: url("/fonts/NanumSquareRoundOTFB.otf") format("opentype"),
-       url("/fonts/NanumSquareRoundB.ttf") format("truetype");
+  font-family: 'NanumSquareRound';
+  src:
+    url('/fonts/NanumSquareRoundOTFB.otf') format('opentype'),
+    url('/fonts/NanumSquareRoundB.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "NanumSquareRound";
-  src: url("/fonts/NanumSquareRoundOTFEB.otf") format("opentype"),
-       url("/fonts/NanumSquareRoundEB.ttf") format("truetype");
+  font-family: 'NanumSquareRound';
+  src:
+    url('/fonts/NanumSquareRoundOTFEB.otf') format('opentype'),
+    url('/fonts/NanumSquareRoundEB.ttf') format('truetype');
   font-weight: 800;
   font-style: normal;
   font-display: swap;
@@ -88,7 +92,9 @@
   --color-gray-900: #232527;
 
   /* Font Family */
-  --font-sans: "NanumSquareRound", "Pretendard", -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif;
+  --font-sans:
+    'NanumSquareRound', 'Pretendard', -apple-system, BlinkMacSystemFont,
+    'Malgun Gothic', sans-serif;
 
   /* Typography */
   /* Display */
