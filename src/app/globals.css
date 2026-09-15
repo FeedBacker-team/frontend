@@ -219,38 +219,38 @@ body {
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #232527;
+  --background: var(--color-gray-100);
+  --foreground: var(--color-gray-900);
   --card: #ffffff;
-  --card-foreground: #232527;
+  --card-foreground: var(--color-gray-900);
   --popover: #ffffff;
-  --popover-foreground: #232527;
-  --primary: #e85d2f;
+  --popover-foreground: var(--color-gray-900);
+  --primary: var(--color-rust-600);
   --primary-foreground: #ffffff;
-  --secondary: #f8eae8;
-  --secondary-foreground: #e85d2f;
-  --muted: #f5f5f5;
-  --muted-foreground: #a0a0a0;
-  --accent: #facec0;
-  --accent-foreground: #444444;
-  --destructive: #da562b;
-  --border: #e2e2e2;
-  --input: #e2e2e2;
-  --ring: #f4784f;
-  --chart-1: #e85d2f;
-  --chart-2: #359b65;
-  --chart-3: #f2b830;
-  --chart-4: #777777;
-  --chart-5: #444444;
+  --secondary: var(--color-rust-50);
+  --secondary-foreground: var(--color-rust-600);
+  --muted: var(--color-gray-100);
+  --muted-foreground: var(--color-gray-500);
+  --accent: var(--color-rust-100);
+  --accent-foreground: var(--color-gray-800);
+  --destructive: var(--color-rust-700);
+  --border: var(--color-gray-300);
+  --input: var(--color-gray-300);
+  --ring: var(--color-rust-400);
+  --chart-1: var(--color-rust-600);
+  --chart-2: var(--color-green-600);
+  --chart-3: var(--color-yellow-400);
+  --chart-4: var(--color-gray-600);
+  --chart-5: var(--color-gray-800);
   --radius: 0.625rem;
-  --sidebar: #fafafa;
-  --sidebar-foreground: #232527;
-  --sidebar-primary: #e85d2f;
+  --sidebar: var(--color-gray-50);
+  --sidebar-foreground: var(--color-gray-900);
+  --sidebar-primary: var(--color-rust-600);
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f8eae8;
-  --sidebar-accent-foreground: #e85d2f;
-  --sidebar-border: #e2e2e2;
-  --sidebar-ring: #f4784f;
+  --sidebar-accent: var(--color-rust-50);
+  --sidebar-accent-foreground: var(--color-rust-600);
+  --sidebar-border: var(--color-gray-300);
+  --sidebar-ring: var(--color-rust-400);
 }
 
 /* 다크 모드 미정 — 스펙 나오면 토큰 매핑 후 활성화
