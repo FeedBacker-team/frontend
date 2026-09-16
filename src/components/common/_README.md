@@ -116,6 +116,61 @@ import { Radio, RadioGroup } from '@/components/common/radio-group';
 
 ---
 
+## Dialog
+
+오버레이 위 패널. 화면 종류(`login` 등)로 나누지 않고 Header / Body / Footer 슬롯만 둡니다. 오버레이 클릭과 ESC로는 닫히지 않고, 푸터 버튼으로만 닫습니다.
+
+### Props
+
+**Dialog**
+
+| prop                      | type                      | default | 설명                    |
+| ------------------------- | ------------------------- | ------- | ----------------------- |
+| `open`                    | `boolean`                 | —       | 제어 열림               |
+| `onOpenChange`            | `(open) => void`          | —       |                         |
+| `disablePointerDismissal` | `boolean`                 | `true`  | 오버레이 클릭으로 닫기  |
+
+**DialogHeader**
+
+| prop          | type        | default | 설명                         |
+| ------------- | ----------- | ------- | ---------------------------- |
+| `icon`        | `ReactNode` | —       | 있으면 rust-50 박스에 32px   |
+| `title`       | `ReactNode` | —       |                              |
+| `description` | `ReactNode` | —       |                              |
+
+**DialogBody** / **DialogFooter** — `className`과 children. 푸터 버튼은 가로로 균등 분배됩니다.
+
+**DialogContent** — 너비는 `className`으로 화면마다 지정합니다. 지정하지 않으면 내용 너비(`w-max`)를 따릅니다.
+
+### 사용 예
+
+```tsx
+import { Button } from '@/components/common/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+} from '@/components/common/dialog';
+
+<Dialog open={open} onOpenChange={setOpen}>
+  <DialogContent className="w-100">
+    <DialogHeader
+      title="로그인 후 참여할 수 있어요"
+      description="로그인 후 이용할 수 있어요."
+    />
+    <DialogFooter>
+      <Button variant="outline" onClick={() => setOpen(false)}>
+        둘러보기
+      </Button>
+      <Button onClick={() => setOpen(false)}>로그인하기</Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+```
+
+---
+
 ## 컴포넌트 목록
 
 | 컴포넌트 | 상태 | 담당   |
@@ -123,3 +178,4 @@ import { Radio, RadioGroup } from '@/components/common/radio-group';
 | Button   | ✅   | 이찬우 |
 | Sonner   | ✅   | 이찬우 |
 | Radio    | ✅   | 이찬우 |
+| Dialog   | ✅   | 이찬우 |
