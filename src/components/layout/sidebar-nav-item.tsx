@@ -31,7 +31,9 @@ function SidebarNavItem({
       className={cn(
         'flex h-11 items-center rounded-lg px-4 text-c1 transition-colors',
         collapsed ? 'w-full justify-center' : 'w-full gap-3',
-        isActive ? 'bg-rust-50 text-rust-600' : 'bg-white text-gray-900'
+        isActive
+          ? 'bg-rust-50 text-rust-600'
+          : 'bg-white text-gray-900 hover:bg-gray-200'
       )}
     >
       <span

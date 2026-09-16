@@ -12,11 +12,11 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          'bg-rust-600 text-white hover:bg-rust-700 active:bg-rust-800 active:text-rust-50 disabled:bg-rust-200 disabled:text-rust-500',
+          'bg-rust-600 [color:var(--color-gray-50)] hover:bg-rust-700 active:bg-rust-800 active:[color:var(--color-rust-50)] disabled:bg-rust-200 disabled:[color:var(--color-rust-500)]',
         secondary:
-          'bg-rust-50 text-rust-600 border border-rust-600 hover:bg-rust-100 active:bg-rust-200 disabled:bg-gray-100 disabled:text-gray-500 disabled:border-gray-300',
+          'bg-rust-50 [color:var(--color-rust-600)] border border-rust-600 hover:bg-rust-100 active:bg-rust-200 disabled:bg-gray-100 disabled:[color:var(--color-gray-500)] disabled:border-gray-300',
         outline:
-          'bg-white text-gray-900 border border-gray-400 hover:border-gray-600 active:bg-gray-300 active:border-gray-600 disabled:bg-gray-200 disabled:text-gray-500 disabled:border-gray-300',
+          'bg-white [color:var(--color-gray-900)] border border-gray-400 hover:border-gray-600 active:bg-gray-300 active:border-gray-600 disabled:bg-gray-200 disabled:[color:var(--color-gray-500)] disabled:border-gray-300',
       },
       size: {
         giant:
