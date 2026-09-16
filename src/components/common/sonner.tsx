@@ -12,10 +12,9 @@ import { cn } from '@/lib/utils';
 type ToastVariant = 'error' | 'success' | 'undo';
 
 const TOAST_ICONS = {
-  // 색상이 global.css에 정의되지 않아서 헥사코드로 정의
-  error: { src: '/icons/alert-circle.svg', className: 'bg-[#ff383c]' },
-  success: { src: '/icons/check.svg', className: 'bg-[#34c759]' },
-  undo: { src: '/icons/info.svg', className: 'bg-[#ffcc00]' },
+  error: { src: '/icons/alert-circle.svg', className: 'bg-system-alert' },
+  success: { src: '/icons/check.svg', className: 'bg-system-success' },
+  undo: { src: '/icons/info.svg', className: 'bg-system-warning' },
 } as const;
 
 type ToastIconProps = {

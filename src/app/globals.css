@@ -90,6 +90,12 @@
   --color-gray-800: #444444;
   --color-gray-900: #232527;
 
+  /* System Colors */
+  --color-system-alert: #ff383c;
+  --color-system-success: #34c759;
+  --color-system-information: #0088ff;
+  --color-system-warning: #ffcc00;
+
   /* Font Family */
   --font-sans:
     'NanumSquareRound', 'Pretendard', -apple-system, BlinkMacSystemFont,
@@ -205,6 +211,21 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-text-default: var(--text-default);
+  --color-text-sub: var(--text-sub);
+  --color-text-info: var(--text-info);
+  --color-text-disabled: var(--text-disabled);
+  --color-icon-default: var(--icon-default);
+  --color-icon-sub: var(--icon-sub);
+  --color-icon-disabled: var(--icon-disabled);
+  --color-border-default: var(--border-default);
+  --color-border-strong: var(--border-strong);
+  --color-border-disabled: var(--border-disabled);
+  --color-divider-default: var(--divider-default);
+  --color-divider-strong: var(--divider-strong);
+  --color-bg-default: var(--bg-default);
+  --color-bg-light: var(--bg-light);
+  --color-bg-deep: var(--bg-deep);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -251,6 +272,31 @@ body {
   --sidebar-accent-foreground: var(--color-rust-600);
   --sidebar-border: var(--color-gray-300);
   --sidebar-ring: var(--color-rust-400);
+
+  /* Semantic - Text */
+  --text-default: var(--color-gray-900);
+  --text-sub: var(--color-gray-800);
+  --text-info: var(--color-gray-600);
+  --text-disabled: var(--color-gray-500);
+
+  /* Semantic - Icon */
+  --icon-default: var(--color-gray-800);
+  --icon-sub: var(--color-gray-600);
+  --icon-disabled: var(--color-gray-400);
+
+  /* Semantic - Border */
+  --border-default: var(--color-gray-400);
+  --border-strong: var(--color-gray-600);
+  --border-disabled: var(--color-gray-300);
+
+  /* Semantic - Divider */
+  --divider-default: var(--color-gray-300);
+  --divider-strong: var(--color-gray-500);
+
+  /* Semantic - Background */
+  --bg-default: var(--color-gray-50);
+  --bg-light: var(--color-gray-100);
+  --bg-deep: var(--color-gray-200);
 }
 
 /* 다크 모드 미정 — 스펙 나오면 토큰 매핑 후 활성화
