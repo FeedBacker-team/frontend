@@ -69,9 +69,57 @@ toast.undo('항목이 삭제되었습니다.');
 
 ---
 
+## Radio
+
+그룹 안에서 하나만 고르는 라디오. 원 + 라벨 + 설명입니다.
+
+### Props
+
+**RadioGroup**
+
+| prop            | type                    | default   | 설명                          |
+| --------------- | ----------------------- | --------- | ----------------------------- |
+| `size`          | `'large' \| 'medium'`   | `'large'` | 그룹 전체에 적용              |
+| `value`         | `string`                | —         | 제어 선택값                   |
+| `defaultValue`  | `string`                | —         | 비제어 초기 선택값            |
+| `onValueChange` | `(value) => void`       | —         |                               |
+| `disabled`      | `boolean`               | `false`   | 그룹 전체 비활성              |
+| `className`     | `string`                | —         |                               |
+
+**Radio**
+
+| prop          | type        | default | 설명                         |
+| ------------- | ----------- | ------- | ---------------------------- |
+| `value`       | `string`    | —       | 항목 값 (필수)               |
+| `label`       | `ReactNode` | —       |                              |
+| `description` | `ReactNode` | —       | 부가 설명                    |
+| `disabled`    | `boolean`   | `false` | 항목 단위. 선택+비활성도 가능 |
+| `className`   | `string`    | —       |                              |
+
+### 사용 예
+
+```tsx
+import { Radio, RadioGroup } from '@/components/common/radio-group';
+
+<RadioGroup value={value} onValueChange={setValue} size="large">
+  <Radio
+    value="a"
+    label="라디오버튼"
+    description="부가적인 설명이 들어갑니다."
+  />
+  <Radio value="b" label="라디오버튼" description="..." />
+  <Radio value="c" label="라디오버튼" description="..." disabled />
+</RadioGroup>
+```
+
+선택+비활성은 그룹 `value`를 그 항목에 두고 `disabled`를 줍니다.
+
+---
+
 ## 컴포넌트 목록
 
 | 컴포넌트 | 상태 | 담당   |
 | -------- | ---- | ------ |
 | Button   | ✅   | 이찬우 |
 | Sonner   | ✅   | 이찬우 |
+| Radio    | ✅   | 이찬우 |
