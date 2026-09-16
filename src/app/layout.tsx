@@ -1,4 +1,7 @@
 import type { Metadata } from 'next';
+
+import { Toaster } from '@/components/common/sonner';
+
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -30,19 +33,8 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
     <html lang="ko">
       <body>
-        <div className="flex h-screen px-12.5 py-10 gap-10">
-          <div className="w-60 shrink-0 border border-gray-300">Gnb</div>
-          <div className="flex flex-1 flex-col min-w-0 max-w-300 gap-11.25">
-            <header className="border border-gray-300">Header</header>
-            <div className="flex-1 min-h-0 border border-gray-300">
-              {children}
-            </div>
-          </div>
-          <div className="bg-gray-300 w-60">{/* 우측 컨텐츠 */}</div>
-        </div>
-        <footer className="bg-rust-50">
-          <div className="px-12.5">Footer</div>
-        </footer>
+        {children}
+        <Toaster />
       </body>
     </html>
   );
