@@ -10,7 +10,7 @@ import {
   type Locale,
 } from 'react-day-picker';
 
-import { Button, buttonVariants } from '@/components/common/button';
+import { Button, buttonVariants } from '@/components/common/Button';
 import {
   ChevronLeftIcon,
   ChevronRightIcon,

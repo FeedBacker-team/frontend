@@ -3,8 +3,8 @@
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 
-import { Footer } from '@/components/layout/footer';
-import { Sidebar } from '@/components/layout/sidebar';
+import { Footer } from '@/components/layout/Footer';
+import { Sidebar } from '@/components/layout/Sidebar';
 
 const HIDE_SHELL = ['/ex'];
 const HIDE_FOOTER = ['/projects/new'];

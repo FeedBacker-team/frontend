@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
-import { Toaster } from '@/components/common/sonner';
-import { AppShell } from '@/components/layout/app-shell';
+import { Toaster } from '@/components/common/Sonner';
+import { AppShell } from '@/components/layout/AppShell';
 
 import './globals.css';
 

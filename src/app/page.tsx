@@ -1,4 +1,4 @@
-import { HomeBanner } from '@/components/home/home-banner';
+import { HomeBanner } from '@/components/domain/home/HomeBanner';
 
 export default function Home() {
   return (

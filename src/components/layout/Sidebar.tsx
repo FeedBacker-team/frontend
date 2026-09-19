@@ -4,10 +4,10 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { Button } from '@/components/common/button';
+import { Button } from '@/components/common/Button';
 import { cn } from '@/lib/utils';
 
-import { SidebarNavItem } from './sidebar-nav-item';
+import { SidebarNavItem } from './SidebarNavItem';
 
 const NAV_ITEMS = [
   {

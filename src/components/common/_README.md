@@ -19,7 +19,7 @@
 ### 사용 예
 
 ```tsx
-import { Button } from '@/components/common/button';
+import { Button } from '@/components/common/Button';
 
 // 기본 (primary, large)
 <Button>저장</Button>
@@ -60,7 +60,7 @@ import { Button } from '@/components/common/button';
 ### 사용 예
 
 ```tsx
-import { toast } from '@/components/common/sonner';
+import { toast } from '@/components/common/Sonner';
 
 toast.error('토스트');
 toast.success('토스트');
@@ -99,7 +99,7 @@ toast.undo('항목이 삭제되었습니다.');
 ### 사용 예
 
 ```tsx
-import { Radio, RadioGroup } from '@/components/common/radio-group';
+import { Radio, RadioGroup } from '@/components/common/RadioGroup';
 
 <RadioGroup value={value} onValueChange={setValue} size="large">
   <Radio
@@ -145,13 +145,13 @@ import { Radio, RadioGroup } from '@/components/common/radio-group';
 ### 사용 예
 
 ```tsx
-import { Button } from '@/components/common/button';
+import { Button } from '@/components/common/Button';
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
-} from '@/components/common/dialog';
+} from '@/components/common/Dialog';
 
 <Dialog open={open} onOpenChange={setOpen}>
   <DialogContent className="w-100">
