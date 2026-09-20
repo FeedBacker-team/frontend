@@ -98,6 +98,7 @@
 
   /* Layout */
   --width-app-canvas: 1600px;
+  --min-width-app-canvas: var(--width-app-canvas);
 
   /* Font Family */
   --font-sans:

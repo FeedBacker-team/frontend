@@ -50,15 +50,15 @@ function AppShell({ children }: AppShellProps) {
   }
 
   return (
-    <>
-      <div className="w-full sm:mx-auto sm:w-app-canvas">
-        <div className="flex items-stretch gap-6 p-10">
+    <div className="w-full sm:min-w-app-canvas">
+      <div className="sm:mx-auto sm:w-app-canvas">
+        <div className="flex items-stretch gap-10 p-10">
           <Sidebar />
           <div className="min-w-0 flex-1">{children}</div>
         </div>
       </div>
       {hideFooter ? null : <Footer />}
-    </>
+    </div>
   );
 }
 

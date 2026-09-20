@@ -33,7 +33,7 @@ function SidebarNavItem({
         collapsed ? 'w-full justify-center' : 'w-full gap-3',
         isActive
           ? 'bg-rust-50 text-rust-600'
-          : 'bg-white text-gray-900 hover:bg-gray-200'
+          : 'bg-transparent text-gray-900 hover:bg-gray-200'
       )}
     >
       <span

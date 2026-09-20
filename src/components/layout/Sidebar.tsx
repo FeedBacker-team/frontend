@@ -35,7 +35,7 @@ function Sidebar() {
   return (
     <aside
       className={cn(
-        'flex min-h-0 max-h-[85vh] shrink-0 flex-col self-stretch bg-white shadow-[0_0_8px_0_rgba(0,0,0,0.1)]',
+        'flex min-h-0 max-h-[85vh] shrink-0 flex-col self-stretch bg-gray-50 shadow-[0_0_8px_0_rgba(0,0,0,0.1)]',
         isCollapsed ? 'w-20 rounded-xl py-11' : 'w-55 rounded-2xl pt-11 pb-6'
       )}
     >
