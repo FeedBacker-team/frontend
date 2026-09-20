@@ -96,6 +96,10 @@
   --color-system-information: #0088ff;
   --color-system-warning: #ffcc00;
 
+  /* Layout */
+  --width-app-canvas: 1600px;
+  --min-width-app-canvas: var(--width-app-canvas);
+
   /* Font Family */
   --font-sans:
     'NanumSquareRound', 'Pretendard', -apple-system, BlinkMacSystemFont,

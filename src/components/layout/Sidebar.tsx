@@ -4,10 +4,10 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { Button } from '@/components/common/button';
+import { Button } from '@/components/common/Button';
 import { cn } from '@/lib/utils';
 
-import { SidebarNavItem } from './sidebar-nav-item';
+import { SidebarNavItem } from './SidebarNavItem';
 
 const NAV_ITEMS = [
   {
@@ -35,7 +35,7 @@ function Sidebar() {
   return (
     <aside
       className={cn(
-        'flex h-full shrink-0 flex-col bg-white shadow-[0_0_8px_0_rgba(0,0,0,0.1)]',
+        'flex min-h-0 max-h-[85vh] shrink-0 flex-col self-stretch bg-gray-50 shadow-[0_0_8px_0_rgba(0,0,0,0.1)]',
         isCollapsed ? 'w-20 rounded-xl py-11' : 'w-55 rounded-2xl pt-11 pb-6'
       )}
     >
