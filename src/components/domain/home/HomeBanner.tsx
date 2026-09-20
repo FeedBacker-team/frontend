@@ -23,7 +23,7 @@ const BANNERS = [
 function HomeBanner() {
   const [autoplay] = useState(() =>
     Autoplay({
-      delay: 10000,
+      delay: 8000,
       stopOnInteraction: false,
       stopOnMouseEnter: true,
     })
