@@ -59,7 +59,8 @@ function HomeProjectBrowse() {
       }
       searchPlaceholder="관심 있는 키워드나 프로젝트를 검색해 보세요"
       tags={MOCK_TAGS}
-      resultCount={12}
+      resultCount={0}
+      emptyTitle="조건에 맞는 프로젝트가 없어요"
       sortOptions={[
         { value: 'latest', label: '최신순' },
         { value: 'views', label: '조회수 순' },

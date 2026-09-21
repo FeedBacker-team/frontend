@@ -5,6 +5,7 @@ import { useState, type ReactNode } from 'react';
 import { Button } from '@/components/common/Button';
 import { Input } from '@/components/common/Input';
 import { Tag } from '@/components/common/Tag';
+import { BrowseEmpty } from '@/components/domain/shared/BrowseEmpty';
 import { cn } from '@/lib/utils';
 
 type BrowseTag = {
@@ -26,6 +27,7 @@ type BrowseSectionProps = {
   maxSelectedTags?: number;
   defaultSelectedTagValues?: string[];
   resultCount: number;
+  emptyTitle: string;
   sortOptions: BrowseSortOption[];
   defaultSortValue?: string;
   onSortChange?: (value: string) => void;
@@ -43,6 +45,7 @@ function BrowseSection({
   maxSelectedTags = 5,
   defaultSelectedTagValues = [],
   resultCount,
+  emptyTitle,
   sortOptions,
   defaultSortValue,
   onSortChange,
@@ -149,45 +152,54 @@ function BrowseSection({
           </div>
         </div>
 
-        {children}
+        {resultCount === 0 ? (
+          <BrowseEmpty
+            title={emptyTitle}
+            onResetTags={() => setSelectedTagValues([])}
+          />
+        ) : (
+          children
+        )}
 
-        <div className="flex items-center justify-center gap-6 pt-2">
-          <Button
-            variant="outline"
-            size="small"
-            aria-label="이전 페이지"
-            disabled={page <= 1}
-            onClick={() => setPage((current) => Math.max(1, current - 1))}
-            leftIcon={
-              <span
-                aria-hidden
-                className="size-4 bg-current mask-[url(/icons/chevron-left.svg)] mask-center mask-contain mask-no-repeat"
-              />
-            }
-          />
-          <p className="text-h4 text-text-default">
-            {String(page).padStart(2, '0')}
-            <span className="text-text-disabled">
-              {' / '}
-              {String(totalPages).padStart(2, '0')}
-            </span>
-          </p>
-          <Button
-            variant="outline"
-            size="small"
-            aria-label="다음 페이지"
-            disabled={page >= totalPages}
-            onClick={() =>
-              setPage((current) => Math.min(totalPages, current + 1))
-            }
-            leftIcon={
-              <span
-                aria-hidden
-                className="size-4 bg-current mask-[url(/icons/chevron-right.svg)] mask-center mask-contain mask-no-repeat"
-              />
-            }
-          />
-        </div>
+        {resultCount === 0 ? null : (
+          <div className="flex items-center justify-center gap-6 pt-2">
+            <Button
+              variant="outline"
+              size="small"
+              aria-label="이전 페이지"
+              disabled={page <= 1}
+              onClick={() => setPage((current) => Math.max(1, current - 1))}
+              leftIcon={
+                <span
+                  aria-hidden
+                  className="size-4 bg-current mask-[url(/icons/chevron-left.svg)] mask-center mask-contain mask-no-repeat"
+                />
+              }
+            />
+            <p className="text-h4 text-text-default">
+              {String(page).padStart(2, '0')}
+              <span className="text-text-disabled">
+                {' / '}
+                {String(totalPages).padStart(2, '0')}
+              </span>
+            </p>
+            <Button
+              variant="outline"
+              size="small"
+              aria-label="다음 페이지"
+              disabled={page >= totalPages}
+              onClick={() =>
+                setPage((current) => Math.min(totalPages, current + 1))
+              }
+              leftIcon={
+                <span
+                  aria-hidden
+                  className="size-4 bg-current mask-[url(/icons/chevron-right.svg)] mask-center mask-contain mask-no-repeat"
+                />
+              }
+            />
+          </div>
+        )}
       </div>
     </section>
   );
