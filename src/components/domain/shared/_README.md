@@ -51,6 +51,8 @@ import { RankedList } from '@/components/domain/shared/RankedList';
 
 지금은 검색·태그·정렬·페이지를 컴포넌트 안에서만 다룹니다. API 붙일 때 상태로 올리면 됩니다.
 
+`resultCount === 0`이면 `children` 대신 `BrowseEmpty`를 보여주고 페이지네이션은 숨깁니다. 홈/QA 카피는 `emptyTitle`로 받습니다.
+
 ### Props
 
 | prop                       | type                | default | 설명 |
@@ -62,10 +64,11 @@ import { RankedList } from '@/components/domain/shared/RankedList';
 | `tags`                     | `BrowseTag[]`       | —       | `{ value, label }` |
 | `maxSelectedTags`          | `number`            | `5`     | |
 | `defaultSelectedTagValues` | `string[]`          | `[]`    | 초기 선택 태그 |
-| `resultCount`              | `number`            | —       | `검색 결과 n건` |
+| `resultCount`              | `number`            | —       | `검색 결과 n건`. `0`이면 빈 화면 |
+| `emptyTitle`               | `string`            | —       | 0건일 때 `BrowseEmpty` 제목 |
 | `sortOptions`              | `BrowseSortOption[]`| —       | `{ value, label }` |
 | `defaultSortValue`         | `string`            | 첫 옵션 | |
-| `children`                 | `ReactNode`         | —       | 카드 리스트 자리 |
+| `children`                 | `ReactNode`         | —       | 카드 리스트 자리. 0건이면 안 그림 |
 | `totalPages`               | `number`            | `1`     | |
 | `className`                | `string`            | —       | |
 
@@ -82,6 +85,7 @@ import { BrowseSection } from '@/components/domain/shared/BrowseSection';
   searchPlaceholder="관심 있는 키워드나 프로젝트를 검색해 보세요"
   tags={[{ value: 'web', label: '#웹' }]}
   resultCount={12}
+  emptyTitle="조건에 맞는 프로젝트가 없어요"
   sortOptions={[
     { value: 'latest', label: '최신순' },
     { value: 'views', label: '조회수순' },
@@ -90,4 +94,39 @@ import { BrowseSection } from '@/components/domain/shared/BrowseSection';
 >
   {/* 홈: ProjectBrowseCard / QA: QaBrowseCard */}
 </BrowseSection>
+```
+
+---
+
+## BrowseEmpty
+
+검색 결과가 0건일 때 목록 자리에 넣는 빈 화면입니다. `BrowseSection`이 `resultCount === 0`이면 직접 렌더합니다. 페이지에서 따로 부르지 않습니다.
+
+홈·QA가 같은 레이아웃을 쓰고 제목만 다릅니다. 설명·이미지·태그 초기화 버튼은 여기 고정입니다.
+
+태그 상태는 `BrowseSection`이 가지고 있어서, 초기화는 `onResetTags`로 받습니다.
+
+### Props
+
+| prop          | type         | default | 설명 |
+| ------------- | ------------ | ------- | ---- |
+| `title`       | `string`     | —       | 홈/QA 카피. 예: `조건에 맞는 프로젝트가 없어요` |
+| `onResetTags` | `() => void` | —       | 태그 초기화 클릭 |
+| `className`   | `string`     | —       | 패널 추가 클래스 |
+
+### 사용 예
+
+```tsx
+import { BrowseEmpty } from '@/components/domain/shared/BrowseEmpty';
+
+<BrowseEmpty
+  title="조건에 맞는 프로젝트가 없어요"
+  onResetTags={() => setSelectedTagValues([])}
+/>
+
+// QA
+<BrowseEmpty
+  title="조건에 맞는 QA 모집 글이 없어요"
+  onResetTags={() => setSelectedTagValues([])}
+/>
 ```
