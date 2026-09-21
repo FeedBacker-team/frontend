@@ -1,8 +1,6 @@
+import { HomeRankedProjects } from '@/components/domain/home/HomeRankedProjects';
 import { ProjectDetail } from '@/components/domain/project/ProjectDetail';
-import {
-  RankedList,
-  type RankedListItem,
-} from '@/components/domain/shared/RankedList';
+import { type RankedListItem } from '@/components/domain/shared/RankedList';
 
 const MOCK_RANKED_ITEMS: RankedListItem[] = Array.from(
   { length: 5 },
@@ -69,17 +67,7 @@ export default function ProjectDetailPage() {
         />
       </div>
       <aside className="flex w-80 shrink-0 flex-col gap-14">
-        <RankedList
-          title="지금 인기 있는 프로젝트"
-          items={MOCK_RANKED_ITEMS}
-          skeletonCount={5}
-        />
-        <RankedList
-          title="요즘 뜨는 #AI 분야 프로젝트"
-          items={MOCK_RANKED_ITEMS}
-          isLoading={true}
-          skeletonCount={5}
-        />
+        <HomeRankedProjects />
       </aside>
     </div>
   );

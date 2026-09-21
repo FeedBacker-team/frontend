@@ -14,9 +14,9 @@ AI-Biz는 이런 고민에서 출발했습니다.
 - AI 이탈 지점 자동 탐지: 유저의 웹 행동 패턴을 실시간 학습해 가장 이탈률이 높은 핵심 구간을 알아서 집어냅니다.
 - 실행 중심의 AI 리포트: 복잡한 그래프 대신 "OO 페이지의 CTA 버튼 위치를 변경해보세요"처럼 제품팀이 즉시 행동할 수 있는 리포트를 제공합니다.
 - B2B 맞춤 유저 여정 추적: 단순 방문이 아닌 구매 전환 가능성이 높은 리드의 흐름을 집중적으로 분석합니다.`,
-  tags: ['web', 'ai-ml'],
+  tags: ['WEB', 'AI_ML'],
   image: { name: 'AI-Biz_Logo', type: 'image/png', size: 4 * 1024 * 1024 },
-  url: 'https://aibiz.example.com',
+  url: 'https://www.example.com',
 };
 
 export default function ProjectEditPage() {

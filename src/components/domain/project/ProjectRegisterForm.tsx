@@ -17,29 +17,16 @@ import { Textarea } from '@/components/common/Textarea';
 import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE_BYTES } from '@/constants/file';
 import {
   PROJECT_DESCRIPTION_MAX_LENGTH,
+  PROJECT_TAGS,
   PROJECT_TITLE_MAX_LENGTH,
   PROJECT_URL_MAX_LENGTH,
 } from '@/constants/project';
 import { cn } from '@/lib/utils';
-import type { ProjectFormErrors, ProjectFormValues } from '@/types/project';
-
-const PROJECT_FIELD_TAGS = [
-  { value: 'web', label: '# 웹' },
-  { value: 'app', label: '# 앱' },
-  { value: 'ai-ml', label: '# AI · ML' },
-  { value: 'data', label: '# 데이터' },
-  { value: 'cloud', label: '# 클라우드' },
-  { value: 'commerce', label: '# 커머스' },
-  { value: 'fintech', label: '# 핀테크' },
-  { value: 'b2b-saas', label: '# B2B · SaaS' },
-  { value: 'contents', label: '# 콘텐츠 · 미디어' },
-  { value: 'game', label: '# 게임' },
-  { value: 'uxui', label: '# UXUI' },
-  { value: 'security', label: '# 보안' },
-  { value: 'productivity', label: '# 생산성' },
-  { value: 'healthcare', label: '# 헬스케어' },
-  { value: 'global', label: '# 글로벌' },
-];
+import type {
+  ProjectFormErrors,
+  ProjectFormValues,
+  ProjectTag,
+} from '@/types/project';
 
 const INITIAL_VALUES: ProjectFormValues = {
   title: '',
@@ -153,11 +140,13 @@ function ProjectRegisterForm({
   };
 
   const handleToggleTag = (value: string) => {
+    const selectedTag = value as ProjectTag;
+
     setValues((prev) => ({
       ...prev,
-      tags: prev.tags.includes(value)
-        ? prev.tags.filter((tag) => tag !== value)
-        : [...prev.tags, value],
+      tags: prev.tags.includes(selectedTag)
+        ? prev.tags.filter((tag) => tag !== selectedTag)
+        : [...prev.tags, selectedTag],
     }));
   };
 
@@ -250,7 +239,7 @@ function ProjectRegisterForm({
           aria-label="이 프로젝트의 분야"
           className="flex flex-wrap gap-2"
         >
-          {PROJECT_FIELD_TAGS.map((tag) => (
+          {PROJECT_TAGS.map((tag) => (
             <Tag
               key={tag.value}
               value={tag.value}
