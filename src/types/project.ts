@@ -43,8 +43,26 @@ type ProjectListResponse = {
   projects: ProjectCard[];
 };
 
+type ProjectImageValue = Pick<File, 'name' | 'type' | 'size'>;
+
+type ProjectFormValues = {
+  title: string;
+  description: string;
+  tags: ProjectTag[];
+  image: ProjectImageValue | null;
+  url: string;
+};
+
+type ProjectFormErrors = Record<
+  Exclude<keyof ProjectFormValues, 'tags'>,
+  boolean
+>;
+
 export type {
   ProjectCard,
+  ProjectFormErrors,
+  ProjectFormValues,
+  ProjectImageValue,
   ProjectListParams,
   ProjectListResponse,
   ProjectSort,

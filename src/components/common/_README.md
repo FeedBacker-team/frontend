@@ -355,16 +355,80 @@ const [checked, setChecked] = useState(false);
 
 ---
 
+## Textarea
+
+여러 줄 텍스트 입력. 스타일은 `Input`과 같은 `inputVariants`를 씁니다. 높이만 내용에 맞게 늘어나며(`min-h-27`), 사용자 리사이즈는 막아 두었습니다(`resize-none`).
+
+### Props
+
+| prop        | type                                  | default     | 설명                                                                 |
+| ----------- | ------------------------------------- | ----------- | -------------------------------------------------------------------- |
+| `state`     | `'default' \| 'error' \| 'completed'` | `'default'` | 테두리 색으로 상태 표시                                              |
+| `size`      | `'small' \| 'medium' \| 'large'`      | `'medium'`  | 패딩·글자 크기만 적용 (높이는 `min-h-27`로 고정, `className`으로 변경) |
+| `disabled`  | `boolean`                             | `false`     |                                                                      |
+| `className` | `string`                              | —           |                                                                      |
+| …           | `textarea` attrs                      | —           | `value`, `onChange`, `rows` 등                                       |
+
+### 사용 예
+
+```tsx
+import { Textarea } from '@/components/common/Textarea';
+
+<Textarea placeholder="내용을 입력하세요" />
+
+// 상태
+<Textarea state="error" placeholder="에러" />
+```
+
+---
+
+## FileDropzone
+
+파일을 드래그하거나 클릭해서 고르는 점선 영역. 안쪽에 투명한 `<input type="file">`이 영역 전체를 덮고 있어 클릭으로 선택할 수 있고, 드롭은 직접 처리합니다(드래그 중 테두리 강조, 드롭한 파일을 input에 넣고 `change`를 발생시켜 클릭 선택과 같은 `onChange`로 받음. `multiple`이 아니면 첫 파일만). 선택된 파일 표시·형식/용량 검사는 이 컴포넌트가 하지 않고, 사용하는 쪽에서 `onChange`로 처리합니다.
+
+### Props
+
+| prop                 | type        | default                  | 설명                                                          |
+| -------------------- | ----------- | ------------------------ | ------------------------------------------------------------- |
+| `title`              | `ReactNode` | —                        | 안내 문구 (필수)                                              |
+| `description`        | `ReactNode` | —                        | 제목 아래 보조 문구 (지원 형식·용량 등)                       |
+| `icon`               | `ReactNode` | 업로드 구름 아이콘       | 상단 아이콘                                                   |
+| `state`              | `'default' \| 'error'` | `'default'` | `error`면 점선 테두리가 빨간색                          |
+| `accept`             | `string`    | —                        | 허용 형식. 예: `image/png,image/jpeg`                         |
+| `multiple`           | `boolean`   | `false`                  |                                                               |
+| `disabled`           | `boolean`   | `false`                  |                                                               |
+| `containerClassName` | `string`    | —                        | 점선 영역(바깥 `label`) 클래스                                |
+| `className`          | `string`    | —                        | 안쪽 `input` 클래스                                           |
+| …                    | `input` attrs | —                      | `id`, `name`, `onChange` 등 (`type`은 `file`로 고정)          |
+
+### 사용 예
+
+```tsx
+import { FileDropzone } from '@/components/common/FileDropzone';
+
+<FileDropzone
+  id="project-image"
+  name="image"
+  accept="image/png,image/jpeg"
+  title="파일을 이곳으로 드래그하거나 클릭하여 업로드하세요"
+  description="PNG, JPG 형식 지원 · 파일당 최대 5MB (최대 1개)"
+/>;
+```
+
+---
+
 ## 컴포넌트 목록
 
-| 컴포넌트 | 상태 | 담당   |
-| -------- | ---- | ------ |
-| Button   | ✅   | 이찬우 |
-| Sonner   | ✅   | 이찬우 |
-| Radio    | ✅   | 이찬우 |
-| Dialog   | ✅   | 이찬우 |
-| Calendar | ✅   | 김지은 |
-| Chip     | ✅   | 김지은 |
-| Input    | ✅   | 김지은 |
-| Tag      | ✅   | 김지은 |
-| Toggle   | ✅   | 김지은 |
+| 컴포넌트     | 상태 | 담당   |
+| ------------ | ---- | ------ |
+| Button       | ✅   | 이찬우 |
+| Sonner       | ✅   | 이찬우 |
+| Radio        | ✅   | 이찬우 |
+| Dialog       | ✅   | 이찬우 |
+| Calendar     | ✅   | 김지은 |
+| Chip         | ✅   | 김지은 |
+| Input        | ✅   | 김지은 |
+| Tag          | ✅   | 김지은 |
+| Toggle       | ✅   | 김지은 |
+| Textarea     | ✅   | 김지은 |
+| FileDropzone | ✅   | 김지은 |
