@@ -28,8 +28,7 @@ const NAV_ITEMS = [
 ] as const;
 
 function Sidebar() {
-  // const [isLoggedIn] = useState(false);
-  const [isLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
@@ -126,35 +125,75 @@ function Sidebar() {
 
       {isCollapsed ? (
         isLoggedIn ? (
-          <div className="flex items-center justify-center border-t border-gray-400 px-4 pt-4">
+          <div className="flex flex-col items-center gap-3 border-t border-gray-400 px-4 pt-4">
             <div className="size-8 shrink-0 rounded-full bg-gray-200" />
+            <Button
+              variant="outline"
+              size="medium"
+              aria-label="로그아웃"
+              onClick={() => setIsLoggedIn(false)}
+            >
+              <Image
+                src="/icons/log-out.svg"
+                alt=""
+                aria-hidden
+                width={20}
+                height={20}
+                unoptimized
+              />
+            </Button>
           </div>
         ) : null
       ) : (
         <>
           <div className="h-px bg-gray-400" />
           {isLoggedIn ? (
-            <div className="flex items-center gap-3 p-4">
-              <div className="size-8 shrink-0 rounded-full bg-gray-200" />
-              <div className="flex min-w-0 flex-1 flex-col gap-1">
-                <span className="text-c1 text-gray-900">닉네임</span>
-                <span className="flex items-center gap-2">
+            <div className="flex flex-col gap-3 p-4">
+              <div className="flex items-center gap-3">
+                <div className="size-8 shrink-0 rounded-full bg-gray-200" />
+                <div className="flex min-w-0 flex-1 flex-col gap-1">
+                  <span className="text-c1 text-gray-900">닉네임</span>
+                  <span className="flex items-center gap-2">
+                    <Image
+                      src="/images/acorn.svg"
+                      alt=""
+                      aria-hidden
+                      width={12}
+                      height={16}
+                      unoptimized
+                      className="h-4 w-3 object-contain"
+                    />
+                    <span className="text-c1 text-yellow-800">60</span>
+                  </span>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                size="medium"
+                className="w-full"
+                leftIcon={
                   <Image
-                    src="/images/acorn.svg"
+                    src="/icons/log-out.svg"
                     alt=""
                     aria-hidden
-                    width={12}
-                    height={16}
+                    width={20}
+                    height={20}
                     unoptimized
-                    className="h-4 w-3 object-contain"
                   />
-                  <span className="text-c1 text-yellow-800">60</span>
-                </span>
-              </div>
+                }
+                onClick={() => setIsLoggedIn(false)}
+              >
+                로그아웃
+              </Button>
             </div>
           ) : (
             <div className="flex h-30 flex-col justify-end gap-2 p-4">
-              <Button variant="primary" size="medium" className="w-full">
+              <Button
+                variant="primary"
+                size="medium"
+                className="w-full"
+                onClick={() => setIsLoggedIn(true)}
+              >
                 로그인
               </Button>
               <Button variant="outline" size="medium" className="w-full">
