@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import { Toaster } from '@/components/common/Sonner';
 import { AppShell } from '@/components/layout/AppShell';
+import { QueryProvider } from '@/lib/QueryProvider';
 
 import './globals.css';
 
@@ -34,8 +35,10 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
     <html lang="ko">
       <body>
-        <AppShell>{children}</AppShell>
-        <Toaster />
+        <QueryProvider>
+          <AppShell>{children}</AppShell>
+          <Toaster />
+        </QueryProvider>
       </body>
     </html>
   );
