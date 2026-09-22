@@ -21,7 +21,7 @@ function AuthLayout({ children, size = 'login' }: AuthLayoutProps) {
     <div className="flex min-h-dvh items-center justify-center bg-bg-deep px-4 py-10">
       <div
         className={cn(
-          'relative w-full rounded-[12px] bg-bg-default px-8 pt-8 pb-10',
+          'relative w-full rounded-[12px] bg-bg-default px-12 pt-13 pb-9',
           CARD_MAX_WIDTH[size]
         )}
       >

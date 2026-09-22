@@ -10,9 +10,42 @@ type LoginResponse = {
   expires_in: number;
 };
 
-type LoginErrorResponse = {
+type SignupRequest = {
+  email: string;
+  password: string;
+};
+
+type SignupResponse = {
+  user_id: string;
+  email: string;
+  access_token: string;
+  expires_in: number;
+};
+
+type SendEmailCodeRequest = {
+  email: string;
+};
+
+type SendEmailCodeResponse = {
+  message: string;
+  expires_in: number;
+};
+
+type VerifyEmailCodeRequest = {
+  email: string;
+  code: string;
+};
+
+type VerifyEmailCodeResponse = {
+  verified: boolean;
   message: string;
 };
+
+type AuthErrorResponse = {
+  message: string;
+};
+
+type LoginErrorResponse = AuthErrorResponse;
 
 class AuthError extends Error {
   status: number;
@@ -25,4 +58,15 @@ class AuthError extends Error {
 }
 
 export { AuthError };
-export type { LoginErrorResponse, LoginRequest, LoginResponse };
+export type {
+  AuthErrorResponse,
+  LoginErrorResponse,
+  LoginRequest,
+  LoginResponse,
+  SendEmailCodeRequest,
+  SendEmailCodeResponse,
+  SignupRequest,
+  SignupResponse,
+  VerifyEmailCodeRequest,
+  VerifyEmailCodeResponse,
+};

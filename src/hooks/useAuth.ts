@@ -1,6 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { login } from '@/apis/auth';
+import {
+  login,
+  sendEmailVerification,
+  signup,
+  verifyEmailCode,
+} from '@/apis/auth';
 
 const authKeys = {
   all: ['auth'] as const,
@@ -13,4 +18,28 @@ function useLogin() {
   });
 }
 
-export { authKeys, useLogin };
+function useSendEmailVerification() {
+  return useMutation({
+    mutationFn: sendEmailVerification,
+  });
+}
+
+function useVerifyEmailCode() {
+  return useMutation({
+    mutationFn: verifyEmailCode,
+  });
+}
+
+function useSignup() {
+  return useMutation({
+    mutationFn: signup,
+  });
+}
+
+export {
+  authKeys,
+  useLogin,
+  useSendEmailVerification,
+  useSignup,
+  useVerifyEmailCode,
+};
