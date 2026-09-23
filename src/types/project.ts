@@ -13,6 +13,7 @@ type ProjectTag =
   | 'SECURITY'
   | 'PRODUCTIVITY'
   | 'HEALTHCARE'
+  | 'EDUCATION'
   | 'GLOBAL';
 
 type ProjectSort = 'LATEST' | 'VIEW_COUNT';
