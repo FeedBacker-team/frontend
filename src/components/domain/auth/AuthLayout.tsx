@@ -9,6 +9,7 @@ type AuthLayoutSize = 'login' | 'signup';
 type AuthLayoutProps = {
   children?: ReactNode;
   size?: AuthLayoutSize;
+  showLogo?: boolean;
 };
 
 const CARD_MAX_WIDTH: Record<AuthLayoutSize, string> = {
@@ -16,7 +17,11 @@ const CARD_MAX_WIDTH: Record<AuthLayoutSize, string> = {
   signup: 'max-w-150',
 };
 
-function AuthLayout({ children, size = 'login' }: AuthLayoutProps) {
+function AuthLayout({
+  children,
+  size = 'login',
+  showLogo = true,
+}: AuthLayoutProps) {
   return (
     <div className="flex min-h-dvh items-center justify-center bg-bg-deep px-4 py-10">
       <div
@@ -40,14 +45,16 @@ function AuthLayout({ children, size = 'login' }: AuthLayoutProps) {
           />
         </Link>
         <div className="flex flex-col gap-8">
-          <Image
-            src="/images/Logo_main.svg"
-            alt="Feedbacker"
-            width={220}
-            height={40}
-            unoptimized
-            className="h-10 w-auto"
-          />
+          {showLogo ? (
+            <Image
+              src="/images/Logo_main.svg"
+              alt="Feedbacker"
+              width={220}
+              height={40}
+              unoptimized
+              className="h-10 w-auto"
+            />
+          ) : null}
           {children}
         </div>
       </div>
