@@ -15,6 +15,7 @@ const PROJECT_TAGS: { value: ProjectTag; label: string }[] = [
   { value: 'SECURITY', label: '# 보안' },
   { value: 'PRODUCTIVITY', label: '# 생산성' },
   { value: 'HEALTHCARE', label: '# 헬스케어' },
+  { value: 'EDUCATION', label: '# 교육' },
   { value: 'GLOBAL', label: '# 글로벌' },
 ];
 

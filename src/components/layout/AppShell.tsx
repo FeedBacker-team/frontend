@@ -6,7 +6,7 @@ import type { ReactNode } from 'react';
 import { Footer } from '@/components/layout/Footer';
 import { Sidebar } from '@/components/layout/Sidebar';
 
-const HIDE_SHELL = ['/ex'];
+const HIDE_SHELL = ['/ex', '/login', '/signup', '/profile'];
 const HIDE_FOOTER = ['/projects/new'];
 
 /**
