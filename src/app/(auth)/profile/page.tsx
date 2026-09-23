@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: '프로필 완성하기',
 };
 
-export default function ProfileCompletePage() {
+export default function ProfilePage() {
   return (
     <AuthLayout size="signup" showLogo={false}>
       <ProfileCompleteForm />
