@@ -157,6 +157,85 @@ Tooltip 내용은 짧고 명확하게 작성합니다. 클릭해야 확인할 �
 
 ---
 
+## Dropdown
+
+목록에서 하나의 값을 선택하는 드롭다운입니다. 기본 상태, 선택 상태와 비활성 상태를 지원합니다.
+
+### Props
+
+**Dropdown**
+
+| prop            | type                              | default | 설명               |
+| --------------- | --------------------------------- | ------- | ------------------ |
+| `value`         | `string`                          | —       | 제어 선택값        |
+| `defaultValue`  | `string`                          | —       | 비제어 초기 선택값 |
+| `onValueChange` | `(value: string \| null) => void` | —       | 값 변경 시 호출    |
+| `disabled`      | `boolean`                         | `false` | 전체 비활성화      |
+
+**DropdownTrigger** — 현재 값과 열림 상태를 표시하는 버튼입니다.
+
+**DropdownValue** — Trigger에 표시할 텍스트입니다.
+
+**DropdownContent**
+
+| prop         | type                                               | default    | 설명                  |
+| ------------ | -------------------------------------------------- | ---------- | --------------------- |
+| `side`       | `'top' \| 'bottom' \| 'left' \| 'right' \| ...` | `'bottom'` | 목록이 표시될 방향    |
+| `sideOffset` | `number`                                           | `0`        | Trigger와 목록의 간격 |
+| `align`      | `'start' \| 'center' \| 'end'`                   | `'start'`  | Trigger 기준 정렬     |
+| `className`  | `string`                                           | —          | 추가 클래스           |
+
+**DropdownItem**
+
+| prop       | type        | default | 설명                 |
+| ---------- | ----------- | ------- | -------------------- |
+| `value`    | `string`    | —       | 선택값 (필수)        |
+| `disabled` | `boolean`   | `false` | 해당 옵션 비활성화   |
+| `children` | `ReactNode` | —       | 화면에 표시할 텍스트 |
+
+### 사용 예
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+
+import {
+  Dropdown,
+  DropdownContent,
+  DropdownItem,
+  DropdownTrigger,
+  DropdownValue,
+} from '@/components/common/Dropdown';
+
+const [value, setValue] = useState<string | null>(null);
+
+<Dropdown value={value} onValueChange={setValue}>
+  <DropdownTrigger>
+    <DropdownValue placeholder="선택해주세요" />
+  </DropdownTrigger>
+  <DropdownContent>
+    <DropdownItem value="single">객관식 - 단일선택</DropdownItem>
+    <DropdownItem value="multiple">객관식 - 복수선택</DropdownItem>
+    <DropdownItem value="subjective">주관식</DropdownItem>
+  </DropdownContent>
+</Dropdown>
+
+// 전체 비활성
+<Dropdown disabled>
+  <DropdownTrigger>
+    <DropdownValue placeholder="선택해주세요" />
+  </DropdownTrigger>
+  <DropdownContent>
+    <DropdownItem value="single">객관식 - 단일선택</DropdownItem>
+  </DropdownContent>
+</Dropdown>
+```
+
+폼에서 사용할 때는 `value`와 `onValueChange`를 연결합니다. 옵션의 `value`는 중복되지 않는 안정적인 값으로 지정합니다.
+
+---
+
 ## Sonner
 
 상단 중앙에 뜨는 알림. `Toaster`는 루트 레이아웃에 한 번만 둡니다.
@@ -538,6 +617,7 @@ import { FileDropzone } from '@/components/common/FileDropzone';
 | Button       | ✅   | 이찬우 |
 | Badge        | ✅   | 이찬우 |
 | Tooltip      | ✅   | 이찬우 |
+| Dropdown     | ✅   | 이찬우 |
 | Sonner       | ✅   | 이찬우 |
 | Radio        | ✅   | 이찬우 |
 | Dialog       | ✅   | 이찬우 |
