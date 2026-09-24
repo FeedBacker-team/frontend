@@ -92,6 +92,71 @@ import { Badge } from '@/components/common/Badge';
 
 ---
 
+## Tooltip
+
+요소를 호버하거나 키보드로 포커스했을 때 짧은 설명을 표시합니다. 기본 방향은 trigger 아래쪽이며, Tooltip 상단에 화살표가 표시됩니다.
+
+### Props
+
+**TooltipProvider**
+
+| prop    | type     | default | 설명                   |
+| ------- | -------- | ------- | ---------------------- |
+| `delay` | `number` | `0`     | Tooltip 표시 지연 시간 |
+
+**Tooltip** — Tooltip의 열림 상태를 관리하는 root입니다.
+
+**TooltipTrigger** — hover와 focus를 감지할 요소입니다. `render`로 실제 trigger 요소를 지정할 수 있습니다.
+
+**TooltipContent**
+
+| prop          | type                                            | default    | 설명                    |
+| ------------- | ----------------------------------------------- | ---------- | ----------------------- |
+| `side`        | `'top' \| 'bottom' \| 'left' \| 'right' \| ...` | `'bottom'` | Tooltip이 표시될 방향   |
+| `sideOffset`  | `number`                                        | `4`        | trigger와의 간격        |
+| `align`       | `'start' \| 'center' \| 'end'`                  | `'center'` | trigger 기준 정렬       |
+| `alignOffset` | `number`                                        | `0`        | 정렬 위치의 추가 이동값 |
+| `className`   | `string`                                        | —          | 추가 클래스             |
+| `children`    | `ReactNode`                                     | —          | 표시할 설명             |
+
+### Provider 설정
+
+`TooltipProvider`는 루트 레이아웃에 한 번만 둡니다.
+
+```tsx
+import { TooltipProvider } from '@/components/common/Tooltip';
+
+<TooltipProvider>{children}</TooltipProvider>;
+```
+
+### 사용 예
+
+```tsx
+import { Button } from '@/components/common/Button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/common/Tooltip';
+
+<Tooltip>
+  <TooltipTrigger render={<button type="button" />}>도움말</TooltipTrigger>
+  <TooltipContent>tooltip</TooltipContent>
+</Tooltip>
+
+// disabled 요소는 hover 이벤트를 받지 않으므로 wrapper를 trigger로 사용합니다.
+<Tooltip>
+  <TooltipTrigger render={<span className="inline-flex" />}>
+    <Button disabled>툴팁 보기</Button>
+  </TooltipTrigger>
+  <TooltipContent>tooltip</TooltipContent>
+</Tooltip>
+```
+
+Tooltip 내용은 짧고 명확하게 작성합니다. 클릭해야 확인할 수 있는 중요한 정보나 긴 설명에는 사용하지 않습니다.
+
+---
+
 ## Sonner
 
 상단 중앙에 뜨는 알림. `Toaster`는 루트 레이아웃에 한 번만 둡니다.
@@ -472,6 +537,7 @@ import { FileDropzone } from '@/components/common/FileDropzone';
 | ------------ | ---- | ------ |
 | Button       | ✅   | 이찬우 |
 | Badge        | ✅   | 이찬우 |
+| Tooltip      | ✅   | 이찬우 |
 | Sonner       | ✅   | 이찬우 |
 | Radio        | ✅   | 이찬우 |
 | Dialog       | ✅   | 이찬우 |
