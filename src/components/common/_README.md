@@ -43,6 +43,55 @@ import { Button } from '@/components/common/Button';
 
 ---
 
+## Badge
+
+상태, 분류, 남은 기간 등의 짧은 정보를 표시하는 비상호작용 라벨입니다.
+
+### Props
+
+| prop        | type                                         | default     | 설명                      |
+| ----------- | -------------------------------------------- | ----------- | ------------------------- |
+| `variant`   | `'default' \| 'green' \| 'rust' \| 'yellow'` | `'default'` | Badge의 색상 종류         |
+| `icon`      | `ReactNode`                                  | —           | 텍스트 앞에 표시할 아이콘 |
+| `className` | `string`                                     | —           | 추가 클래스               |
+| `children`  | `ReactNode`                                  | —           | 표시할 내용               |
+| …           | `span` attrs                                 | —           | `aria-label` 등           |
+
+### 사용 예
+
+```tsx
+import Image from 'next/image';
+
+import { Badge } from '@/components/common/Badge';
+
+<Badge>이미지형</Badge>
+
+<Badge variant="green">D-4</Badge>
+
+<Badge variant="rust">D-2</Badge>
+
+<Badge
+  variant="yellow"
+  icon={
+    <Image
+      src="/images/acorn.svg"
+      alt=""
+      width={17}
+      height={17}
+      aria-hidden
+    />
+  }
+>
+  60
+</Badge>
+```
+
+`Badge`는 클릭이나 선택 기능이 없는 정보 표시용 컴포넌트입니다. 사용자 입력이 필요한 경우에는 `Button`, `Chip` 또는 `Tag`를 사용합니다.
+
+아이콘은 `icon` prop으로 전달합니다. 장식용 아이콘은 `alt=""`와 `aria-hidden`을 지정해 스크린 리더에서 중복으로 읽히지 않도록 합니다.
+
+---
+
 ## Sonner
 
 상단 중앙에 뜨는 알림. `Toaster`는 루트 레이아웃에 한 번만 둡니다.
@@ -361,13 +410,13 @@ const [checked, setChecked] = useState(false);
 
 ### Props
 
-| prop        | type                                  | default     | 설명                                                                 |
-| ----------- | ------------------------------------- | ----------- | -------------------------------------------------------------------- |
-| `state`     | `'default' \| 'error' \| 'completed'` | `'default'` | 테두리 색으로 상태 표시                                              |
+| prop        | type                                  | default     | 설명                                                                   |
+| ----------- | ------------------------------------- | ----------- | ---------------------------------------------------------------------- |
+| `state`     | `'default' \| 'error' \| 'completed'` | `'default'` | 테두리 색으로 상태 표시                                                |
 | `size`      | `'small' \| 'medium' \| 'large'`      | `'medium'`  | 패딩·글자 크기만 적용 (높이는 `min-h-27`로 고정, `className`으로 변경) |
-| `disabled`  | `boolean`                             | `false`     |                                                                      |
-| `className` | `string`                              | —           |                                                                      |
-| …           | `textarea` attrs                      | —           | `value`, `onChange`, `rows` 등                                       |
+| `disabled`  | `boolean`                             | `false`     |                                                                        |
+| `className` | `string`                              | —           |                                                                        |
+| …           | `textarea` attrs                      | —           | `value`, `onChange`, `rows` 등                                         |
 
 ### 사용 예
 
@@ -388,18 +437,18 @@ import { Textarea } from '@/components/common/Textarea';
 
 ### Props
 
-| prop                 | type        | default                  | 설명                                                          |
-| -------------------- | ----------- | ------------------------ | ------------------------------------------------------------- |
-| `title`              | `ReactNode` | —                        | 안내 문구 (필수)                                              |
-| `description`        | `ReactNode` | —                        | 제목 아래 보조 문구 (지원 형식·용량 등)                       |
-| `icon`               | `ReactNode` | 업로드 구름 아이콘       | 상단 아이콘                                                   |
-| `state`              | `'default' \| 'error'` | `'default'` | `error`면 점선 테두리가 빨간색                          |
-| `accept`             | `string`    | —                        | 허용 형식. 예: `image/png,image/jpeg`                         |
-| `multiple`           | `boolean`   | `false`                  |                                                               |
-| `disabled`           | `boolean`   | `false`                  |                                                               |
-| `containerClassName` | `string`    | —                        | 점선 영역(바깥 `label`) 클래스                                |
-| `className`          | `string`    | —                        | 안쪽 `input` 클래스                                           |
-| …                    | `input` attrs | —                      | `id`, `name`, `onChange` 등 (`type`은 `file`로 고정)          |
+| prop                 | type                   | default            | 설명                                                 |
+| -------------------- | ---------------------- | ------------------ | ---------------------------------------------------- |
+| `title`              | `ReactNode`            | —                  | 안내 문구 (필수)                                     |
+| `description`        | `ReactNode`            | —                  | 제목 아래 보조 문구 (지원 형식·용량 등)              |
+| `icon`               | `ReactNode`            | 업로드 구름 아이콘 | 상단 아이콘                                          |
+| `state`              | `'default' \| 'error'` | `'default'`        | `error`면 점선 테두리가 빨간색                       |
+| `accept`             | `string`               | —                  | 허용 형식. 예: `image/png,image/jpeg`                |
+| `multiple`           | `boolean`              | `false`            |                                                      |
+| `disabled`           | `boolean`              | `false`            |                                                      |
+| `containerClassName` | `string`               | —                  | 점선 영역(바깥 `label`) 클래스                       |
+| `className`          | `string`               | —                  | 안쪽 `input` 클래스                                  |
+| …                    | `input` attrs          | —                  | `id`, `name`, `onChange` 등 (`type`은 `file`로 고정) |
 
 ### 사용 예
 
@@ -422,6 +471,7 @@ import { FileDropzone } from '@/components/common/FileDropzone';
 | 컴포넌트     | 상태 | 담당   |
 | ------------ | ---- | ------ |
 | Button       | ✅   | 이찬우 |
+| Badge        | ✅   | 이찬우 |
 | Sonner       | ✅   | 이찬우 |
 | Radio        | ✅   | 이찬우 |
 | Dialog       | ✅   | 이찬우 |
