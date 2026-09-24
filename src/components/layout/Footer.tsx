@@ -22,6 +22,23 @@ const LINK_ITEMS = [
   { href: '/faq', label: 'FAQ' },
 ] as const;
 
+const SOCIAL_ITEMS = [
+  {
+    href: 'https://www.instagram.com/feedbacker.team/',
+    label: 'Feedbacker Instagram',
+    icon: '/icons/Instagram.svg',
+    width: 28,
+    height: 28,
+  },
+  {
+    href: 'https://www.threads.com/@feedbacker.team',
+    label: 'Feedbacker Threads',
+    icon: '/icons/threads.svg',
+    width: 24,
+    height: 27,
+  },
+] as const;
+
 function Footer() {
   return (
     <footer className="w-full border-t border-gray-400 bg-gray-200 px-6 py-10 md:px-30 md:py-15">
@@ -37,12 +54,24 @@ function Footer() {
               className="h-6.75 w-50 object-contain"
             />
           </Link>
-          <div className="flex gap-3.25" aria-hidden>
-            {[0, 1, 2].map((index) => (
-              <span
-                key={index}
-                className="size-10 shrink-0 rounded-full bg-gray-300"
-              />
+          <div className="flex gap-3.25">
+            {SOCIAL_ITEMS.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={item.label}
+                className="flex size-12 shrink-0 items-center justify-center rounded-full bg-bg-default"
+              >
+                <Image
+                  src={item.icon}
+                  alt=""
+                  width={item.width}
+                  height={item.height}
+                  unoptimized
+                />
+              </a>
             ))}
           </div>
         </div>
