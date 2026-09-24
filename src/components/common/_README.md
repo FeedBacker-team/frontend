@@ -43,6 +43,199 @@ import { Button } from '@/components/common/Button';
 
 ---
 
+## Badge
+
+상태, 분류, 남은 기간 등의 짧은 정보를 표시하는 비상호작용 라벨입니다.
+
+### Props
+
+| prop        | type                                         | default     | 설명                      |
+| ----------- | -------------------------------------------- | ----------- | ------------------------- |
+| `variant`   | `'default' \| 'green' \| 'rust' \| 'yellow'` | `'default'` | Badge의 색상 종류         |
+| `icon`      | `ReactNode`                                  | —           | 텍스트 앞에 표시할 아이콘 |
+| `className` | `string`                                     | —           | 추가 클래스               |
+| `children`  | `ReactNode`                                  | —           | 표시할 내용               |
+| …           | `span` attrs                                 | —           | `aria-label` 등           |
+
+### 사용 예
+
+```tsx
+import Image from 'next/image';
+
+import { Badge } from '@/components/common/Badge';
+
+<Badge>이미지형</Badge>
+
+<Badge variant="green">D-4</Badge>
+
+<Badge variant="rust">D-2</Badge>
+
+<Badge
+  variant="yellow"
+  icon={
+    <Image
+      src="/images/acorn.svg"
+      alt=""
+      width={17}
+      height={17}
+      aria-hidden
+    />
+  }
+>
+  60
+</Badge>
+```
+
+`Badge`는 클릭이나 선택 기능이 없는 정보 표시용 컴포넌트입니다. 사용자 입력이 필요한 경우에는 `Button`, `Chip` 또는 `Tag`를 사용합니다.
+
+아이콘은 `icon` prop으로 전달합니다. 장식용 아이콘은 `alt=""`와 `aria-hidden`을 지정해 스크린 리더에서 중복으로 읽히지 않도록 합니다.
+
+---
+
+## Tooltip
+
+요소를 호버하거나 키보드로 포커스했을 때 짧은 설명을 표시합니다. 기본 방향은 trigger 아래쪽이며, Tooltip 상단에 화살표가 표시됩니다.
+
+### Props
+
+**TooltipProvider**
+
+| prop    | type     | default | 설명                   |
+| ------- | -------- | ------- | ---------------------- |
+| `delay` | `number` | `0`     | Tooltip 표시 지연 시간 |
+
+**Tooltip** — Tooltip의 열림 상태를 관리하는 root입니다.
+
+**TooltipTrigger** — hover와 focus를 감지할 요소입니다. `render`로 실제 trigger 요소를 지정할 수 있습니다.
+
+**TooltipContent**
+
+| prop          | type                                            | default    | 설명                    |
+| ------------- | ----------------------------------------------- | ---------- | ----------------------- |
+| `side`        | `'top' \| 'bottom' \| 'left' \| 'right' \| ...` | `'bottom'` | Tooltip이 표시될 방향   |
+| `sideOffset`  | `number`                                        | `4`        | trigger와의 간격        |
+| `align`       | `'start' \| 'center' \| 'end'`                  | `'center'` | trigger 기준 정렬       |
+| `alignOffset` | `number`                                        | `0`        | 정렬 위치의 추가 이동값 |
+| `className`   | `string`                                        | —          | 추가 클래스             |
+| `children`    | `ReactNode`                                     | —          | 표시할 설명             |
+
+### Provider 설정
+
+`TooltipProvider`는 루트 레이아웃에 한 번만 둡니다.
+
+```tsx
+import { TooltipProvider } from '@/components/common/Tooltip';
+
+<TooltipProvider>{children}</TooltipProvider>;
+```
+
+### 사용 예
+
+```tsx
+import { Button } from '@/components/common/Button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/common/Tooltip';
+
+<Tooltip>
+  <TooltipTrigger render={<button type="button" />}>도움말</TooltipTrigger>
+  <TooltipContent>tooltip</TooltipContent>
+</Tooltip>
+
+// disabled 요소는 hover 이벤트를 받지 않으므로 wrapper를 trigger로 사용합니다.
+<Tooltip>
+  <TooltipTrigger render={<span className="inline-flex" />}>
+    <Button disabled>툴팁 보기</Button>
+  </TooltipTrigger>
+  <TooltipContent>tooltip</TooltipContent>
+</Tooltip>
+```
+
+Tooltip 내용은 짧고 명확하게 작성합니다. 클릭해야 확인할 수 있는 중요한 정보나 긴 설명에는 사용하지 않습니다.
+
+---
+
+## Dropdown
+
+목록에서 하나의 값을 선택하는 드롭다운입니다. 기본 상태, 선택 상태와 비활성 상태를 지원합니다.
+
+### Props
+
+**Dropdown**
+
+| prop            | type                              | default | 설명               |
+| --------------- | --------------------------------- | ------- | ------------------ |
+| `value`         | `string`                          | —       | 제어 선택값        |
+| `defaultValue`  | `string`                          | —       | 비제어 초기 선택값 |
+| `onValueChange` | `(value: string \| null) => void` | —       | 값 변경 시 호출    |
+| `disabled`      | `boolean`                         | `false` | 전체 비활성화      |
+
+**DropdownTrigger** — 현재 값과 열림 상태를 표시하는 버튼입니다.
+
+**DropdownValue** — Trigger에 표시할 텍스트입니다.
+
+**DropdownContent**
+
+| prop         | type                                               | default    | 설명                  |
+| ------------ | -------------------------------------------------- | ---------- | --------------------- |
+| `side`       | `'top' \| 'bottom' \| 'left' \| 'right' \| ...` | `'bottom'` | 목록이 표시될 방향    |
+| `sideOffset` | `number`                                           | `0`        | Trigger와 목록의 간격 |
+| `align`      | `'start' \| 'center' \| 'end'`                   | `'start'`  | Trigger 기준 정렬     |
+| `className`  | `string`                                           | —          | 추가 클래스           |
+
+**DropdownItem**
+
+| prop       | type        | default | 설명                 |
+| ---------- | ----------- | ------- | -------------------- |
+| `value`    | `string`    | —       | 선택값 (필수)        |
+| `disabled` | `boolean`   | `false` | 해당 옵션 비활성화   |
+| `children` | `ReactNode` | —       | 화면에 표시할 텍스트 |
+
+### 사용 예
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+
+import {
+  Dropdown,
+  DropdownContent,
+  DropdownItem,
+  DropdownTrigger,
+  DropdownValue,
+} from '@/components/common/Dropdown';
+
+const [value, setValue] = useState<string | null>(null);
+
+<Dropdown value={value} onValueChange={setValue}>
+  <DropdownTrigger>
+    <DropdownValue placeholder="선택해주세요" />
+  </DropdownTrigger>
+  <DropdownContent>
+    <DropdownItem value="single">객관식 - 단일선택</DropdownItem>
+    <DropdownItem value="multiple">객관식 - 복수선택</DropdownItem>
+    <DropdownItem value="subjective">주관식</DropdownItem>
+  </DropdownContent>
+</Dropdown>
+
+// 전체 비활성
+<Dropdown disabled>
+  <DropdownTrigger>
+    <DropdownValue placeholder="선택해주세요" />
+  </DropdownTrigger>
+  <DropdownContent>
+    <DropdownItem value="single">객관식 - 단일선택</DropdownItem>
+  </DropdownContent>
+</Dropdown>
+```
+
+폼에서 사용할 때는 `value`와 `onValueChange`를 연결합니다. 옵션의 `value`는 중복되지 않는 안정적인 값으로 지정합니다.
+
+---
+
 ## Sonner
 
 상단 중앙에 뜨는 알림. `Toaster`는 루트 레이아웃에 한 번만 둡니다.
@@ -361,13 +554,13 @@ const [checked, setChecked] = useState(false);
 
 ### Props
 
-| prop        | type                                  | default     | 설명                                                                 |
-| ----------- | ------------------------------------- | ----------- | -------------------------------------------------------------------- |
-| `state`     | `'default' \| 'error' \| 'completed'` | `'default'` | 테두리 색으로 상태 표시                                              |
+| prop        | type                                  | default     | 설명                                                                   |
+| ----------- | ------------------------------------- | ----------- | ---------------------------------------------------------------------- |
+| `state`     | `'default' \| 'error' \| 'completed'` | `'default'` | 테두리 색으로 상태 표시                                                |
 | `size`      | `'small' \| 'medium' \| 'large'`      | `'medium'`  | 패딩·글자 크기만 적용 (높이는 `min-h-27`로 고정, `className`으로 변경) |
-| `disabled`  | `boolean`                             | `false`     |                                                                      |
-| `className` | `string`                              | —           |                                                                      |
-| …           | `textarea` attrs                      | —           | `value`, `onChange`, `rows` 등                                       |
+| `disabled`  | `boolean`                             | `false`     |                                                                        |
+| `className` | `string`                              | —           |                                                                        |
+| …           | `textarea` attrs                      | —           | `value`, `onChange`, `rows` 등                                         |
 
 ### 사용 예
 
@@ -388,18 +581,18 @@ import { Textarea } from '@/components/common/Textarea';
 
 ### Props
 
-| prop                 | type        | default                  | 설명                                                          |
-| -------------------- | ----------- | ------------------------ | ------------------------------------------------------------- |
-| `title`              | `ReactNode` | —                        | 안내 문구 (필수)                                              |
-| `description`        | `ReactNode` | —                        | 제목 아래 보조 문구 (지원 형식·용량 등)                       |
-| `icon`               | `ReactNode` | 업로드 구름 아이콘       | 상단 아이콘                                                   |
-| `state`              | `'default' \| 'error'` | `'default'` | `error`면 점선 테두리가 빨간색                          |
-| `accept`             | `string`    | —                        | 허용 형식. 예: `image/png,image/jpeg`                         |
-| `multiple`           | `boolean`   | `false`                  |                                                               |
-| `disabled`           | `boolean`   | `false`                  |                                                               |
-| `containerClassName` | `string`    | —                        | 점선 영역(바깥 `label`) 클래스                                |
-| `className`          | `string`    | —                        | 안쪽 `input` 클래스                                           |
-| …                    | `input` attrs | —                      | `id`, `name`, `onChange` 등 (`type`은 `file`로 고정)          |
+| prop                 | type                   | default            | 설명                                                 |
+| -------------------- | ---------------------- | ------------------ | ---------------------------------------------------- |
+| `title`              | `ReactNode`            | —                  | 안내 문구 (필수)                                     |
+| `description`        | `ReactNode`            | —                  | 제목 아래 보조 문구 (지원 형식·용량 등)              |
+| `icon`               | `ReactNode`            | 업로드 구름 아이콘 | 상단 아이콘                                          |
+| `state`              | `'default' \| 'error'` | `'default'`        | `error`면 점선 테두리가 빨간색                       |
+| `accept`             | `string`               | —                  | 허용 형식. 예: `image/png,image/jpeg`                |
+| `multiple`           | `boolean`              | `false`            |                                                      |
+| `disabled`           | `boolean`              | `false`            |                                                      |
+| `containerClassName` | `string`               | —                  | 점선 영역(바깥 `label`) 클래스                       |
+| `className`          | `string`               | —                  | 안쪽 `input` 클래스                                  |
+| …                    | `input` attrs          | —                  | `id`, `name`, `onChange` 등 (`type`은 `file`로 고정) |
 
 ### 사용 예
 
@@ -422,6 +615,9 @@ import { FileDropzone } from '@/components/common/FileDropzone';
 | 컴포넌트     | 상태 | 담당   |
 | ------------ | ---- | ------ |
 | Button       | ✅   | 이찬우 |
+| Badge        | ✅   | 이찬우 |
+| Tooltip      | ✅   | 이찬우 |
+| Dropdown     | ✅   | 이찬우 |
 | Sonner       | ✅   | 이찬우 |
 | Radio        | ✅   | 이찬우 |
 | Dialog       | ✅   | 이찬우 |
