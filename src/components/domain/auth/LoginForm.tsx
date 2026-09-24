@@ -8,6 +8,11 @@ import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/common/Button';
 import { Input } from '@/components/common/Input';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/common/Tooltip';
 import { KakaoLoginButton } from '@/components/domain/auth/KakaoLoginButton';
 import { useLogin } from '@/hooks/useAuth';
 import { loginSchema, type LoginFormValues } from '@/lib/schemas/auth';
@@ -51,9 +56,7 @@ function LoginForm() {
     mutate(values, {
       onError: (error) => {
         const message =
-          error instanceof AuthError
-            ? error.message
-            : '로그인에 실패했습니다';
+          error instanceof AuthError ? error.message : '로그인에 실패했습니다';
 
         setError('password', { message });
       },
@@ -157,9 +160,22 @@ function LoginForm() {
             회원가입
           </Link>
           <span className="h-4 w-px bg-divider-default" />
-          <Link href="#" className="flex-1 text-c1 text-center text-text-sub">
-            비밀번호 찾기
-          </Link>
+          <Tooltip>
+            <TooltipTrigger
+              closeOnClick={false}
+              render={
+                <button
+                  type="button"
+                  className="flex-1 cursor-pointer text-center text-c1 text-text-sub"
+                />
+              }
+            >
+              비밀번호 찾기
+            </TooltipTrigger>
+            <TooltipContent sideOffset={12}>
+              준비 중인 기능이에요.
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
     </form>
