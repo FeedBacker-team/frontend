@@ -6,7 +6,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from 'cn';
 
 const chipVariants = cva(
-  'inline-flex items-center justify-center rounded-full border px-3 py-1.5 text-[0.875rem] font-medium whitespace-nowrap transition-colors outline-none disabled:pointer-events-none',
+  'inline-flex items-center justify-center gap-1 rounded-full border px-3 py-1.5 text-c1 whitespace-nowrap transition-colors outline-none disabled:pointer-events-none',
   {
     variants: {
       state: {
@@ -32,6 +32,8 @@ export interface ChipProps
     VariantProps<typeof chipVariants> {
   label: string;
   state?: ChipState;
+  /** 해시태그 용도일 때만 true로. 직군 선택 등 일반 선택 칩은 기본값(false)을 씁니다. */
+  hash?: boolean;
   onClick?: () => void;
 }
 
@@ -39,6 +41,7 @@ function Chip({
   className,
   label,
   state = 'unchecked',
+  hash = false,
   onClick,
   ...props
 }: ChipProps) {
@@ -53,6 +56,12 @@ function Chip({
       className={cn(chipVariants({ state }), className)}
       {...props}
     >
+      {hash ? (
+        <span
+          aria-hidden
+          className="size-3 shrink-0 bg-current mask-[url(/icons/hash.svg)] mask-center mask-contain mask-no-repeat"
+        />
+      ) : null}
       {label}
     </TogglePrimitive>
   );

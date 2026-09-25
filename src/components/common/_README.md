@@ -178,12 +178,12 @@ Tooltip 내용은 짧고 명확하게 작성합니다. 클릭해야 확인할 �
 
 **DropdownContent**
 
-| prop         | type                                               | default    | 설명                  |
-| ------------ | -------------------------------------------------- | ---------- | --------------------- |
+| prop         | type                                            | default    | 설명                  |
+| ------------ | ----------------------------------------------- | ---------- | --------------------- |
 | `side`       | `'top' \| 'bottom' \| 'left' \| 'right' \| ...` | `'bottom'` | 목록이 표시될 방향    |
-| `sideOffset` | `number`                                           | `0`        | Trigger와 목록의 간격 |
-| `align`      | `'start' \| 'center' \| 'end'`                   | `'start'`  | Trigger 기준 정렬     |
-| `className`  | `string`                                           | —          | 추가 클래스           |
+| `sideOffset` | `number`                                        | `0`        | Trigger와 목록의 간격 |
+| `align`      | `'start' \| 'center' \| 'end'`                  | `'start'`  | Trigger 기준 정렬     |
+| `className`  | `string`                                        | —          | 추가 클래스           |
 
 **DropdownItem**
 
@@ -258,6 +258,101 @@ import { toast } from '@/components/common/Sonner';
 toast.error('토스트');
 toast.success('토스트');
 toast.undo('항목이 삭제되었습니다.');
+```
+
+---
+
+## ToastLarge
+
+QA 모집 등록 완료, 새 피드백 도착 등 사용자에게 결과를 알리는 알림 카드입니다. 화면 우하단에 고정 표시됩니다.
+
+### Props
+
+| prop          | type                    | default     | 설명                                         |
+| ------------- | ----------------------- | ----------- | -------------------------------------------- |
+| `variant`     | `'success' \| 'notice'` | `'success'` | `success`는 green, `notice`는 yellow 톤      |
+| `title`       | `ReactNode`             | —           | 제목 (필수)                                  |
+| `description` | `ReactNode`             | —           | 본문                                         |
+| `icon`        | `ReactNode`             | —           | 왼쪽 아이콘. 없으면 variant 기본 아이콘 사용 |
+| `onClose`     | `() => void`            | —           | X 버튼 클릭 시 호출 (필수)                   |
+| `className`   | `string`                | —           | 추가 클래스                                  |
+
+### 사용 예
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { ToastLarge } from '@/components/common/ToastLarge';
+
+const [showQaToast, setShowQaToast] = useState(true);
+
+{
+  showQaToast && (
+    <ToastLarge
+      variant="success"
+      title="QA 모집 등록 완료!"
+      description="100 도토리를 사용해 모집 글을 등록했어요 · 잔여 도토리 40"
+      onClose={() => setShowQaToast(false)}
+    />
+  );
+}
+
+// 새 피드백 도착 알림 (기본 아이콘: bell)
+<ToastLarge
+  variant="notice"
+  title="새로운 피드백 3건이 도착했어요!"
+  description="제출된 피드백은 72시간 내에 수락 여부를 결정해 주세요."
+  onClose={() => setShowFeedbackToast(false)}
+/>;
+```
+
+---
+
+## CheckBox
+
+체크박스 + 라벨 + 부가설명. `Radio`와 달리 그룹 없이 각 항목을 독립적으로 사용하며(체크 여부가 서로 영향을 주지 않음), 라벨·부가설명 색상은 체크·비활성 여부와 상관없이 고정입니다.
+
+### Props
+
+| prop              | type                       | default   | 설명                           |
+| ----------------- | -------------------------- | --------- | ------------------------------ |
+| `size`            | `'large' \| 'medium'`      | `'large'` |                                |
+| `checked`         | `boolean`                  | —         | 제어 값                        |
+| `defaultChecked`  | `boolean`                  | `false`   | 비제어 초기값                  |
+| `onCheckedChange` | `(checked) => void`        | —         |                                |
+| `disabled`        | `boolean`                  | `false`   |                                |
+| `label`           | `ReactNode`                | —         |                                |
+| `description`     | `ReactNode`                | —         | 부가 설명                      |
+| `className`       | `string`                   | —         |                                |
+| …                 | `Checkbox` primitive attrs | —         | `name`, `value`, `required` 등 |
+
+### 사용 예
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { CheckBox } from '@/components/common/CheckBox';
+
+const [checked, setChecked] = useState(false);
+
+<CheckBox
+  checked={checked}
+  onCheckedChange={setChecked}
+  label="체크박스"
+  description="부가적인 설명이 들어갑니다."
+/>
+
+// 크기
+<CheckBox size="medium" label="체크박스" description="부가적인 설명이 들어갑니다." />
+
+// 비활성
+<CheckBox disabled label="체크박스" description="부가적인 설명이 들어갑니다." />
+<CheckBox disabled defaultChecked label="체크박스" description="부가적인 설명이 들어갑니다." />
+
+// 라벨 없이 단독 사용
+<CheckBox checked={checked} onCheckedChange={setChecked} />
 ```
 
 ---
@@ -404,15 +499,18 @@ const [date, setDate] = useState<Date | undefined>(undefined);
 
 ### Props
 
-| prop        | type                                     | default       | 설명                                |
-| ----------- | ---------------------------------------- | ------------- | ----------------------------------- |
-| `label`     | `string`                                 | —             | 표시 텍스트 (필수)                  |
-| `state`     | `'unchecked' \| 'checked' \| 'disabled'` | `'unchecked'` | 시각적 상태                         |
-| `onClick`   | `() => void`                             | —             | 클릭 시 호출                        |
-| `className` | `string`                                 | —             |                                     |
-| …           | `Toggle` primitive attrs                 | —             | `pressed` 등은 내부 제어이므로 제외 |
+| prop        | type                                     | default       | 설명                                                                       |
+| ----------- | ---------------------------------------- | ------------- | -------------------------------------------------------------------------- |
+| `label`     | `string`                                 | —             | 표시 텍스트 (필수)                                                         |
+| `state`     | `'unchecked' \| 'checked' \| 'disabled'` | `'unchecked'` | 시각적 상태                                                                |
+| `hash`      | `boolean`                                | `false`       | 해시태그 용도일 때만 `true`. `#` 아이콘이 라벨 색과 같은 색으로 표시됩니다 |
+| `onClick`   | `() => void`                             | —             | 클릭 시 호출                                                               |
+| `className` | `string`                                 | —             |                                                                            |
+| …           | `Toggle` primitive attrs                 | —             | `pressed` 등은 내부 제어이므로 제외                                        |
 
 `disabled`는 별도 boolean prop이 아니라 `state="disabled"`로 표현합니다.
+
+`hash`는 프로젝트 분야·관심 분야 같은 해시태그 칩에만 켭니다. 직군 선택처럼 일반 선택지에는 기본값(`false`)을 그대로 둡니다. 해시태그로 쓰는 칩은 `Chip`을 직접 쓰지 말고 `Tag`를 쓰면 자동으로 켜집니다.
 
 ### 사용 예
 
@@ -471,7 +569,7 @@ import { Input } from '@/components/common/Input';
 
 ## Tag
 
-`Chip`을 감싸 선택형 태그로 쓰는 컴포넌트. `value` 기준으로 선택 상태를 관리합니다.
+`Chip`을 감싸 선택형 태그로 쓰는 컴포넌트. `value` 기준으로 선택 상태를 관리하고, `Chip`의 `hash`를 항상 켜서 라벨 앞에 `#` 아이콘을 붙입니다.
 
 ### Props
 
@@ -575,9 +673,9 @@ import { Textarea } from '@/components/common/Textarea';
 
 ---
 
-## FileDropzone
+## FileUpload
 
-파일을 드래그하거나 클릭해서 고르는 점선 영역. 안쪽에 투명한 `<input type="file">`이 영역 전체를 덮고 있어 클릭으로 선택할 수 있고, 드롭은 직접 처리합니다(드래그 중 테두리 강조, 드롭한 파일을 input에 넣고 `change`를 발생시켜 클릭 선택과 같은 `onChange`로 받음. `multiple`이 아니면 첫 파일만). 선택된 파일 표시·형식/용량 검사는 이 컴포넌트가 하지 않고, 사용하는 쪽에서 `onChange`로 처리합니다.
+파일을 드래그하거나 클릭해서 고르는 점선 영역. 안쪽에 투명한 `<input type="file">`이 영역 전체를 덮고 있어 클릭으로 선택할 수 있고, 드롭은 직접 처리합니다(드래그 중 테두리 강조, 드롭한 파일을 input에 넣고 `change`를 발생시켜 클릭 선택과 같은 `onChange`로 받음. `multiple`이 아니면 첫 파일만). 선택된 파일 표시·형식/용량 검사는 이 컴포넌트가 하지 않고, 사용하는 쪽에서 `onChange`로 처리한 뒤 결과를 `FileUploadItem`으로 보여줍니다.
 
 ### Props
 
@@ -597,9 +695,9 @@ import { Textarea } from '@/components/common/Textarea';
 ### 사용 예
 
 ```tsx
-import { FileDropzone } from '@/components/common/FileDropzone';
+import { FileUpload } from '@/components/common/FileUpload';
 
-<FileDropzone
+<FileUpload
   id="project-image"
   name="image"
   accept="image/png,image/jpeg"
@@ -610,21 +708,63 @@ import { FileDropzone } from '@/components/common/FileDropzone';
 
 ---
 
+## FileUploadItem
+
+`FileUpload`로 고른 파일 한 개를 보여주는 행. 형식·용량 위반처럼 파일 자체가 잘못됐을 때는 `state="error"`와 `errorMessage`로 행 안에 바로 안내합니다. 필수값이 비어 있는 것 같은 필드 단위 에러는 `FileUpload`의 `state`(점선 테두리)만으로 표시합니다.
+
+### Props
+
+| prop           | type                   | default     | 설명                                    |
+| -------------- | ---------------------- | ----------- | --------------------------------------- |
+| `label`        | `ReactNode`            | —           | 파일명 등 표시할 내용 (필수)            |
+| `state`        | `'default' \| 'error'` | `'default'` | 테두리 색과 안내 문구 표시 여부         |
+| `errorMessage` | `ReactNode`            | —           | `state="error"`일 때만 구분선 아래 표시 |
+| `onRemove`     | `() => void`           | —           | 삭제 버튼 클릭 시 호출                  |
+| `className`    | `string`               | —           |                                         |
+
+### 사용 예
+
+```tsx
+import { FileUploadItem } from '@/components/common/FileUpload';
+
+// 정상 선택
+<FileUploadItem label="AI-Biz_Logo.png [PNG, 4MB]" onRemove={() => {}} />
+
+// 에러
+<FileUploadItem
+  label="AI-Biz_Logo.png [PNG, 24MB]"
+  state="error"
+  errorMessage={
+    <>
+      등록 가능한 파일 용량을 초과했어요.
+      <br />
+      이미지는 파일당 최대 5MB까지 등록할 수 있어요.
+    </>
+  }
+  onRemove={() => {}}
+/>;
+```
+
+---
+
 ## 컴포넌트 목록
 
-| 컴포넌트     | 상태 | 담당   |
-| ------------ | ---- | ------ |
-| Button       | ✅   | 이찬우 |
-| Badge        | ✅   | 이찬우 |
-| Tooltip      | ✅   | 이찬우 |
-| Dropdown     | ✅   | 이찬우 |
-| Sonner       | ✅   | 이찬우 |
-| Radio        | ✅   | 이찬우 |
-| Dialog       | ✅   | 이찬우 |
-| Calendar     | ✅   | 김지은 |
-| Chip         | ✅   | 김지은 |
-| Input        | ✅   | 김지은 |
-| Tag          | ✅   | 김지은 |
-| Toggle       | ✅   | 김지은 |
-| Textarea     | ✅   | 김지은 |
-| FileDropzone | ✅   | 김지은 |
+| 컴포넌트       | 상태 | 담당   |
+| -------------- | ---- | ------ |
+| Button         | ✅   | 이찬우 |
+| Badge          | ✅   | 이찬우 |
+| Tooltip        | ✅   | 이찬우 |
+| Dropdown       | ✅   | 이찬우 |
+| Sonner         | ✅   | 이찬우 |
+| ToastLarge     | ✅   | 김지은 |
+| Radio          | ✅   | 이찬우 |
+| CheckBox       | ✅   | 김지은 |
+| Dialog         | ✅   | 이찬우 |
+| Calendar       | ✅   | 김지은 |
+| Chip           | ✅   | 김지은 |
+| Input          | ✅   | 김지은 |
+| Tag            | ✅   | 김지은 |
+| Toggle         | ✅   | 김지은 |
+| Textarea       | ✅   | 김지은 |
+| FileUpload     | ✅   | 김지은 |
+| FileUploadItem | ✅   | 김지은 |

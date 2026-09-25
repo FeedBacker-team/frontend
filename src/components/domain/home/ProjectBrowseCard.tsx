@@ -44,6 +44,10 @@ function ProjectBrowseCard({
         <ul className="flex flex-wrap gap-2">
           {tags.map((tag) => (
             <li key={tag} className={chipVariants({ state: 'unchecked' })}>
+              <span
+                aria-hidden
+                className="size-3 shrink-0 bg-current mask-[url(/icons/hash.svg)] mask-center mask-contain mask-no-repeat"
+              />
               {tag}
             </li>
           ))}

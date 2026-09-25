@@ -9,9 +9,8 @@ import {
 } from 'react';
 
 import { Button } from '@/components/common/Button';
-import { FileDropzone } from '@/components/common/FileDropzone';
+import { FileUpload, FileUploadItem } from '@/components/common/FileUpload';
 import { Input } from '@/components/common/Input';
-import { toast } from '@/components/common/Sonner';
 import { Tag } from '@/components/common/Tag';
 import { Textarea } from '@/components/common/Textarea';
 import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE_BYTES } from '@/constants/file';
@@ -129,6 +128,10 @@ function ProjectRegisterForm({
   const isEdit = mode === 'edit';
   const [values, setValues] = useState<ProjectFormValues>(initialValues);
   const [errors, setErrors] = useState<ProjectFormErrors>(INITIAL_ERRORS);
+  const [imageError, setImageError] = useState<{
+    file: Pick<File, 'name' | 'type' | 'size'>;
+    message: ReactNode;
+  } | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (
@@ -152,25 +155,52 @@ function ProjectRegisterForm({
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] ?? null;
+    event.target.value = '';
 
-    if (file && !ALLOWED_IMAGE_TYPES.includes(file.type)) {
-      toast.error('PNG, JPG 형식의 이미지만 등록할 수 있어요.');
-    } else if (file && file.size > MAX_IMAGE_SIZE_BYTES) {
-      toast.error('이미지는 파일당 최대 5MB까지 등록할 수 있어요.');
-    } else {
-      setValues((prev) => ({ ...prev, image: file }));
-      setErrors((prev) => ({ ...prev, image: false }));
+    if (!file) {
       return;
     }
 
-    event.target.value = '';
-    setValues((prev) => ({ ...prev, image: null }));
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      setImageError({
+        file,
+        message: (
+          <>
+            지원하지 않는 파일 형식이에요.
+            <br />
+            PNG, JPG 형식의 이미지만 등록할 수 있어요.
+          </>
+        ),
+      });
+      setValues((prev) => ({ ...prev, image: null }));
+      return;
+    }
+
+    if (file.size > MAX_IMAGE_SIZE_BYTES) {
+      setImageError({
+        file,
+        message: (
+          <>
+            등록 가능한 파일 용량을 초과했어요.
+            <br />
+            이미지는 파일당 최대 5MB까지 등록할 수 있어요.
+          </>
+        ),
+      });
+      setValues((prev) => ({ ...prev, image: null }));
+      return;
+    }
+
+    setImageError(null);
+    setValues((prev) => ({ ...prev, image: file }));
+    setErrors((prev) => ({ ...prev, image: false }));
   };
 
   const handleImageRemove = () => {
     if (imageInputRef.current) {
       imageInputRef.current.value = '';
     }
+    setImageError(null);
     setValues((prev) => ({ ...prev, image: null }));
   };
 
@@ -252,7 +282,7 @@ function ProjectRegisterForm({
       </FormField>
 
       <FormField label="프로젝트 대표 이미지" required htmlFor="project-image">
-        <FileDropzone
+        <FileUpload
           ref={imageInputRef}
           id="project-image"
           name="image"
@@ -262,21 +292,18 @@ function ProjectRegisterForm({
           title="파일을 이곳으로 드래그하거나 클릭하여 업로드하세요"
           description="PNG, JPG 형식 지원 · 파일당 최대 5MB (최대 1개)"
         />
-        {values.image ? (
-          <div className="flex h-12 items-center justify-between rounded-xl border border-gray-400 bg-white px-4">
-            <span className="min-w-0 truncate text-c1 text-text-default">
-              {values.image.name} [{formatFileType(values.image.type)},{' '}
-              {formatFileSize(values.image.size)}]
-            </span>
-            <button
-              type="button"
-              onClick={handleImageRemove}
-              className="ml-4 inline-flex shrink-0 cursor-pointer items-center gap-1 text-c1 text-text-default"
-            >
-              삭제
-              <img src="/icons/x.svg" alt="" aria-hidden className="size-5" />
-            </button>
-          </div>
+        {imageError ? (
+          <FileUploadItem
+            state="error"
+            errorMessage={imageError.message}
+            onRemove={handleImageRemove}
+            label={`${imageError.file.name} [${formatFileType(imageError.file.type)}, ${formatFileSize(imageError.file.size)}]`}
+          />
+        ) : values.image ? (
+          <FileUploadItem
+            onRemove={handleImageRemove}
+            label={`${values.image.name} [${formatFileType(values.image.type)}, ${formatFileSize(values.image.size)}]`}
+          />
         ) : null}
       </FormField>
 
