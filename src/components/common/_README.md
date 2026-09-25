@@ -747,6 +747,41 @@ import { FileUploadItem } from '@/components/common/FileUpload';
 
 ---
 
+## Pagination
+
+페이지 번호와 이전/다음 버튼으로 구성된 페이지네이션입니다.
+
+### Props
+
+| prop           | type                     | default | 설명                       |
+| -------------- | ------------------------ | ------- | -------------------------- |
+| `page`         | `number`                 | —       | 현재 페이지 (필수)         |
+| `totalPages`   | `number`                 | —       | 전체 페이지 수 (필수)      |
+| `onPageChange` | `(page: number) => void` | —       | 페이지 변경 시 호출 (필수) |
+| `className`    | `string`                 | —       | 추가 클래스                |
+
+### 사용 예
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { Pagination } from '@/components/common/Pagination';
+
+const [page, setPage] = useState(1);
+const totalPages = 5;
+
+{
+  resultCount > 0 && (
+    <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+  );
+}
+```
+
+이전/다음 버튼은 각각 `page`가 1 이하, `totalPages` 이상일 때 자동으로 비활성화됩니다.
+
+---
+
 ## 컴포넌트 목록
 
 | 컴포넌트       | 상태 | 담당   |
@@ -768,3 +803,4 @@ import { FileUploadItem } from '@/components/common/FileUpload';
 | Textarea       | ✅   | 김지은 |
 | FileUpload     | ✅   | 김지은 |
 | FileUploadItem | ✅   | 김지은 |
+| Pagination     | ✅   | 김지은 |
