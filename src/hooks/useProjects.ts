@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { getProjects } from '@/apis/project';
+import { createProject, getProjects } from '@/apis/project';
 import type { ProjectListParams } from '@/types/project';
 
 const projectKeys = {
@@ -16,4 +16,10 @@ function useProjects(params: ProjectListParams = {}) {
   });
 }
 
-export { projectKeys, useProjects };
+function useCreateProject() {
+  return useMutation({
+    mutationFn: createProject,
+  });
+}
+
+export { projectKeys, useCreateProject, useProjects };

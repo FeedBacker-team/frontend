@@ -24,7 +24,15 @@ export interface FileUploadProps extends Omit<
 function FileUpload({
   title,
   description,
-  icon = <img src="/icons/upload.svg" alt="파일 업로드" aria-hidden />,
+  icon = (
+    <Image
+      src="/icons/upload.svg"
+      alt="파일 업로드"
+      width={20}
+      height={20}
+      aria-hidden
+    />
+  ),
   state = 'default',
   className,
   containerClassName,
@@ -140,7 +148,14 @@ function FileUploadItem({
           className="inline-flex shrink-0 cursor-pointer items-center gap-1 text-c1 text-text-default"
         >
           삭제
-          <img src="/icons/x.svg" alt="" aria-hidden className="size-5" />
+          <Image
+            src="/icons/x.svg"
+            alt=""
+            width={20}
+            height={20}
+            aria-hidden
+            className="size-5"
+          />
         </button>
       </div>
       {isError && errorMessage ? (

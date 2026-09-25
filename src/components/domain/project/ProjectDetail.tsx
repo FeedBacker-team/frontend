@@ -51,7 +51,7 @@ function ProjectDetail({
               </li>
             ))}
           </ul>
-          <h1 className="text-t2 font-normal text-text-default">{title}</h1>
+          <h1 className="text-t3 font-normal text-text-default">{title}</h1>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <div className="size-8 shrink-0 rounded-full bg-gray-200" />
@@ -63,14 +63,14 @@ function ProjectDetail({
               <span>조회 {viewCount}</span>
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex w-125 items-center gap-2">
             <div className="min-w-0 flex-1">
               <Input
                 readOnly
                 aria-label="프로젝트 URL"
                 value={url}
                 size="large"
-                className="h-12.5 border-gray-400"
+                className="h-10 border-gray-400"
               />
             </div>
             <Button
@@ -80,7 +80,7 @@ function ProjectDetail({
               render={
                 <Link href={url} target="_blank" rel="noopener noreferrer" />
               }
-              className="h-12.5 gap-2.5 rounded-xl px-4 font-normal"
+              className="h-10 shrink-0 gap-2.5 rounded-xl px-4 font-normal"
               rightIcon={
                 <span
                   aria-hidden
@@ -100,7 +100,7 @@ function ProjectDetail({
 
       <section className="flex flex-col gap-3">
         <h2 className="text-b2 text-text-info">프로젝트 설명</h2>
-        <div className="text-b1 text-text-default">{description}</div>
+        <div className="text-h4 text-text-default">{description}</div>
       </section>
 
       {isOwner ? <ProjectActionBar /> : null}
