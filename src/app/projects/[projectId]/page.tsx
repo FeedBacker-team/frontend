@@ -56,7 +56,7 @@ export default function ProjectDetailPage() {
       <div className="min-w-0 flex-1">
         <ProjectDetail
           title="AI 기반 B2B 웹 분석 플랫폼, AI-Biz"
-          tags={['# 웹', '# AI · ML', '# B2B · SaaS']}
+          tags={['웹', 'AI · ML', 'B2B · SaaS']}
           authorNickname="닉네임"
           publishedAt="2026-09-09"
           viewCount={128}

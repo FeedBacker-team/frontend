@@ -1,22 +1,23 @@
 import type { ProjectSort, ProjectTag } from '@/types/project';
 
+// Tag/Chip이 해시 아이콘을 붙여 렌더링하므로 label에는 '#'을 넣지 않는다.
 const PROJECT_TAGS: { value: ProjectTag; label: string }[] = [
-  { value: 'WEB', label: '# 웹' },
-  { value: 'APP', label: '# 앱' },
-  { value: 'AI_ML', label: '# AI · ML' },
-  { value: 'DATA', label: '# 데이터' },
-  { value: 'CLOUD', label: '# 클라우드' },
-  { value: 'COMMERCE', label: '# 커머스' },
-  { value: 'FINTECH', label: '# 핀테크' },
-  { value: 'B2B_SAAS', label: '# B2B · SaaS' },
-  { value: 'CONTENT_MEDIA', label: '# 콘텐츠 · 미디어' },
-  { value: 'GAME', label: '# 게임' },
-  { value: 'UXUI', label: '# UXUI' },
-  { value: 'SECURITY', label: '# 보안' },
-  { value: 'PRODUCTIVITY', label: '# 생산성' },
-  { value: 'HEALTHCARE', label: '# 헬스케어' },
-  { value: 'EDUCATION', label: '# 교육' },
-  { value: 'GLOBAL', label: '# 글로벌' },
+  { value: 'WEB', label: '웹' },
+  { value: 'APP', label: '앱' },
+  { value: 'AI_ML', label: 'AI · ML' },
+  { value: 'DATA', label: '데이터' },
+  { value: 'CLOUD', label: '클라우드' },
+  { value: 'COMMERCE', label: '커머스' },
+  { value: 'FINTECH', label: '핀테크' },
+  { value: 'B2B_SAAS', label: 'B2B · SaaS' },
+  { value: 'CONTENT_MEDIA', label: '콘텐츠 · 미디어' },
+  { value: 'GAME', label: '게임' },
+  { value: 'UXUI', label: 'UXUI' },
+  { value: 'SECURITY', label: '보안' },
+  { value: 'PRODUCTIVITY', label: '생산성' },
+  { value: 'HEALTHCARE', label: '헬스케어' },
+  { value: 'EDUCATION', label: '교육' },
+  { value: 'GLOBAL', label: '글로벌' },
 ];
 
 const PROJECT_SORT_OPTIONS: { value: ProjectSort; label: string }[] = [
