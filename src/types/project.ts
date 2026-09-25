@@ -54,14 +54,33 @@ type ProjectFormValues = {
   url: string;
 };
 
-type ProjectFormErrors = Record<
-  Exclude<keyof ProjectFormValues, 'tags'>,
-  boolean
->;
+type ProjectCreateRequest = {
+  title: string;
+  description: string;
+  tags: ProjectTag[];
+  image_url: string;
+  url: string;
+};
 
+type ProjectCreateResponse = {
+  project_id: number;
+};
+
+class ProjectError extends Error {
+  status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = 'ProjectError';
+    this.status = status;
+  }
+}
+
+export { ProjectError };
 export type {
   ProjectCard,
-  ProjectFormErrors,
+  ProjectCreateRequest,
+  ProjectCreateResponse,
   ProjectFormValues,
   ProjectImageValue,
   ProjectListParams,

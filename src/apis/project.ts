@@ -1,10 +1,13 @@
 import { DEFAULT_PROJECT_PAGE_SIZE } from '@/constants/project';
-import type {
-  ProjectCard,
-  ProjectListParams,
-  ProjectListResponse,
-  ProjectSort,
-  ProjectTag,
+import {
+  ProjectError,
+  type ProjectCard,
+  type ProjectCreateRequest,
+  type ProjectCreateResponse,
+  type ProjectListParams,
+  type ProjectListResponse,
+  type ProjectSort,
+  type ProjectTag,
 } from '@/types/project';
 
 const MOCK_PROJECTS: ProjectCard[] = [
@@ -349,4 +352,50 @@ async function getProjects(
   return response.json();
 }
 
-export { getProjects };
+async function parseProjectError(response: Response, fallbackMessage: string) {
+  try {
+    const data: unknown = await response.json();
+
+    if (
+      typeof data === 'object' &&
+      data !== null &&
+      'message' in data &&
+      typeof data.message === 'string'
+    ) {
+      return data.message;
+    }
+  } catch {
+    // 에러 body가 JSON이 아닌 경우
+  }
+
+  return fallbackMessage;
+}
+
+async function createProject(
+  body: ProjectCreateRequest
+): Promise<ProjectCreateResponse> {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  if (!apiBaseUrl) {
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    return { project_id: Date.now() };
+  }
+
+  const response = await fetch(`${apiBaseUrl}/api/projects`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    throw new ProjectError(
+      await parseProjectError(response, '프로젝트 등록에 실패했습니다'),
+      response.status
+    );
+  }
+
+  return response.json();
+}
+
+export { createProject, getProjects };
