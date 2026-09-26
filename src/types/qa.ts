@@ -4,6 +4,27 @@ type QaRecruitmentStatus = 'RECRUITING' | 'CLOSED';
 
 type QaTargetType = 'SERVICE_LINK' | 'IMAGE';
 
+type QaRecruitDialogState = 'IN_PROGRESS' | 'RECRUIT_STEP';
+
+type QaRecruitStep = 'PROJECT_SELECT' | 'TEST_METHOD';
+
+type ActiveQaSummary = {
+  feedbackPostId: number;
+  title: string;
+  thumbnailUrl: string | null;
+  startAt: string;
+  endAt: string;
+};
+
+type QaRecruitableProject = {
+  projectId: number;
+  title: string;
+  description: string;
+  thumbnailUrl: string | null;
+  hasActiveQa: boolean;
+  activeQa: ActiveQaSummary | null;
+};
+
 type QaSort = 'LATEST' | 'DEADLINE' | 'REWARD';
 
 type QaRecruitmentListParams = {
@@ -40,10 +61,14 @@ type QaRecruitmentListResponse = {
 };
 
 export type {
+  ActiveQaSummary,
+  QaRecruitableProject,
+  QaRecruitDialogState,
   QaRecruitmentCard,
   QaRecruitmentListParams,
   QaRecruitmentListResponse,
   QaRecruitmentStatus,
+  QaRecruitStep,
   QaSort,
   QaTargetType,
 };

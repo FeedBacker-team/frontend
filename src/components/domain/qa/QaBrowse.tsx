@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react';
 import { differenceInCalendarDays } from 'date-fns';
 
-import { Button } from '@/components/common/Button';
 import { toast } from '@/components/common/Sonner';
 import { QaBrowseCard } from '@/components/domain/qa/QaBrowseCard';
+import { QaRecruitStart } from '@/components/domain/qa/QaRecruitStart';
 import { BrowseCardSkeleton } from '@/components/domain/shared/BrowseCardSkeleton';
 import { BrowseSection } from '@/components/domain/shared/BrowseSection';
 import { PROJECT_TAG_LABEL, PROJECT_TAGS } from '@/constants/project';
@@ -70,19 +70,7 @@ function QaBrowse() {
     <BrowseSection
       title="모집 중인 QA"
       description="동료들의 프로젝트를 직접 테스트하고 피드백을 남겨 포인트를 모아보세요."
-      action={
-        <Button
-          size="medium"
-          leftIcon={
-            <span
-              aria-hidden
-              className="size-5 bg-gray-50 mask-[url(/icons/megaphone.svg)] mask-center mask-contain mask-no-repeat"
-            />
-          }
-        >
-          내 QA 모집글 작성하기
-        </Button>
-      }
+      action={<QaRecruitStart />}
       searchPlaceholder="관심 있는 프로젝트나 QA를 검색해 보세요"
       keyword={keywordInput}
       onKeywordChange={setKeywordInput}

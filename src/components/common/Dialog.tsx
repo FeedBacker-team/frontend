@@ -104,11 +104,11 @@ function DialogHeader({
         </div>
       )}
       <div className="flex w-full flex-col items-center gap-1 text-center">
-        <DialogPrimitive.Title className="text-t3 text-gray-900">
+        <DialogPrimitive.Title className="text-t3 text-text-default">
           {title}
         </DialogPrimitive.Title>
         {description != null && (
-          <DialogPrimitive.Description className="text-b2 text-gray-800">
+          <DialogPrimitive.Description className="text-b2 text-text-sub">
             {description}
           </DialogPrimitive.Description>
         )}
@@ -119,7 +119,11 @@ function DialogHeader({
 
 function DialogBody({ className, ...props }: ComponentProps<'div'>) {
   return (
-    <div data-slot="dialog-body" className={cn('w-full', className)} {...props} />
+    <div
+      data-slot="dialog-body"
+      className={cn('w-full', className)}
+      {...props}
+    />
   );
 }
 

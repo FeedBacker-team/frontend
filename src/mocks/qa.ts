@@ -1,4 +1,40 @@
-import type { QaRecruitmentCard } from '@/types/qa';
+import type {
+  QaRecruitableProject,
+  QaRecruitmentCard,
+} from '@/types/qa';
+
+const MOCK_QA_RECRUITABLE_PROJECTS: QaRecruitableProject[] = [
+  {
+    projectId: 1,
+    title: 'Feedbacker',
+    description: '동료의 프로젝트를 테스트하고 피드백을 나누는 서비스',
+    thumbnailUrl: null,
+    hasActiveQa: true,
+    activeQa: {
+      feedbackPostId: 21,
+      title: 'Feedbacker 회원가입 사용성 테스트',
+      thumbnailUrl: null,
+      startAt: '2026-09-24T09:00:00+09:00',
+      endAt: '2026-09-30T23:59:59+09:00',
+    },
+  },
+  {
+    projectId: 2,
+    title: '핀테크 결제 대시보드',
+    description: '결제 현황과 매출 데이터를 한눈에 확인하는 대시보드',
+    thumbnailUrl: null,
+    hasActiveQa: false,
+    activeQa: null,
+  },
+  {
+    projectId: 3,
+    title: 'AI 추천 쇼핑 앱',
+    description: '취향에 맞는 상품을 추천하고 비교할 수 있는 쇼핑 앱',
+    thumbnailUrl: null,
+    hasActiveQa: false,
+    activeQa: null,
+  },
+];
 
 const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
   {
@@ -323,4 +359,4 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
   },
 ];
 
-export { MOCK_QA_RECRUITMENTS };
+export { MOCK_QA_RECRUITABLE_PROJECTS, MOCK_QA_RECRUITMENTS };
