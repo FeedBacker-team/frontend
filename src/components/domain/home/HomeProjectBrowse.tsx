@@ -4,10 +4,8 @@ import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/common/Button';
 import { toast } from '@/components/common/Sonner';
-import {
-  ProjectBrowseCard,
-  ProjectBrowseCardSkeleton,
-} from '@/components/domain/home/ProjectBrowseCard';
+import { ProjectBrowseCard } from '@/components/domain/home/ProjectBrowseCard';
+import { BrowseCardSkeleton } from '@/components/domain/shared/BrowseCardSkeleton';
 import { BrowseSection } from '@/components/domain/shared/BrowseSection';
 import {
   BROWSE_PROJECT_PAGE_SIZE,
@@ -124,7 +122,7 @@ function HomeProjectBrowse() {
         {isPending
           ? Array.from({ length: BROWSE_PROJECT_PAGE_SIZE }, (_, index) => (
               <li key={index}>
-                <ProjectBrowseCardSkeleton />
+                <BrowseCardSkeleton />
               </li>
             ))
           : isError
