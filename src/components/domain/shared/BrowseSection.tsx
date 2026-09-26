@@ -2,8 +2,8 @@
 
 import type { ReactNode } from 'react';
 
-import { Button } from '@/components/common/Button';
 import { Input } from '@/components/common/Input';
+import { Pagination } from '@/components/common/Pagination';
 import { Tag } from '@/components/common/Tag';
 import { BrowseEmpty } from '@/components/domain/shared/BrowseEmpty';
 import { cn } from '@/lib/utils';
@@ -26,14 +26,14 @@ type BrowseSectionProps = {
   keyword: string;
   onKeywordChange: (value: string) => void;
   onSearch: () => void;
-  tags: BrowseTag[];
+  tags: readonly BrowseTag[];
   selectedTagValues: string[];
   onToggleTag: (value: string) => void;
   onResetTags: () => void;
   maxSelectedTags?: number;
   resultCount: number;
   emptyTitle: string;
-  sortOptions: BrowseSortOption[];
+  sortOptions: readonly BrowseSortOption[];
   sortValue: string;
   onSortChange: (value: string) => void;
   children: ReactNode;
@@ -169,41 +169,11 @@ function BrowseSection({
         )}
 
         {showPagination ? (
-          <div className="flex items-center justify-center gap-6 pt-2">
-            <Button
-              variant="outline"
-              size="small"
-              aria-label="이전 페이지"
-              disabled={page <= 1}
-              onClick={() => onPageChange(Math.max(1, page - 1))}
-              leftIcon={
-                <span
-                  aria-hidden
-                  className="size-4 bg-current mask-[url(/icons/chevron-left.svg)] mask-center mask-contain mask-no-repeat"
-                />
-              }
-            />
-            <p className="text-h4 text-text-default">
-              {String(page).padStart(2, '0')}
-              <span className="text-text-disabled">
-                {' / '}
-                {String(totalPages).padStart(2, '0')}
-              </span>
-            </p>
-            <Button
-              variant="outline"
-              size="small"
-              aria-label="다음 페이지"
-              disabled={page >= totalPages}
-              onClick={() => onPageChange(Math.min(totalPages, page + 1))}
-              leftIcon={
-                <span
-                  aria-hidden
-                  className="size-4 bg-current mask-[url(/icons/chevron-right.svg)] mask-center mask-contain mask-no-repeat"
-                />
-              }
-            />
-          </div>
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={onPageChange}
+          />
         ) : null}
       </div>
     </section>
