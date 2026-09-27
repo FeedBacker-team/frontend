@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { Badge } from '@/components/common/Badge';
 import { chipVariants } from '@/components/common/Chip';
@@ -13,6 +14,7 @@ type MyQaRecruitListItemProps = {
 
 function MyQaRecruitListItem({ recruit }: MyQaRecruitListItemProps) {
   const {
+    id,
     title,
     tags,
     startDate,
@@ -26,7 +28,10 @@ function MyQaRecruitListItem({ recruit }: MyQaRecruitListItemProps) {
   const isRecruiting = daysLeft !== null;
 
   return (
-    <article className="flex items-center gap-4 py-5">
+    <Link
+      href={`/mypage/my-qa/${id}`}
+      className="flex items-center gap-4 py-5"
+    >
       <div className="size-27 shrink-0 rounded-lg bg-gray-200" />
       <div className="flex min-w-0 flex-1 flex-col gap-3">
         <div className="flex items-start justify-between gap-4">
@@ -55,7 +60,7 @@ function MyQaRecruitListItem({ recruit }: MyQaRecruitListItemProps) {
                 icon={
                   <Image
                     src="/images/acorn.svg"
-                    alt=""
+                    alt="도토리"
                     aria-hidden
                     width={17}
                     height={17}
@@ -87,7 +92,7 @@ function MyQaRecruitListItem({ recruit }: MyQaRecruitListItemProps) {
           ))}
         </ul>
       </div>
-    </article>
+    </Link>
   );
 }
 

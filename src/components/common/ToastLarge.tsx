@@ -61,7 +61,7 @@ function ToastLarge({
         {icon ?? (
           <Image
             src={DEFAULT_ICON_SRC[variant ?? 'success']}
-            alt=""
+            alt="아이콘"
             width={52}
             height={52}
             aria-hidden

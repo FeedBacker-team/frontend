@@ -1,39 +1,56 @@
 'use client';
 
+import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { MyProjectListItem } from '@/components/domain/mypage/MyProjectListItem';
+import { MyQaParticipationDetailDialog } from '@/components/domain/mypage/MyQaParticipationDetailDialog';
 import { MyQaParticipationListItem } from '@/components/domain/mypage/MyQaParticipationListItem';
 import { MyQaRecruitListItem } from '@/components/domain/mypage/MyQaRecruitListItem';
+import {
+  getMyQaParticipationDetailById,
+  MY_PAGE_TAB_LABEL,
+  MY_PAGE_TAB_ORDER,
+} from '@/constants/mypage';
 import { cn } from '@/lib/utils';
 import type {
+  MyPageTab,
   MyProjectItem,
   MyQaParticipationItem,
   MyQaRecruitItem,
 } from '@/types/mypage';
 
-type MyPageTab = 'PROJECT' | 'QA_RECRUIT' | 'QA_PARTICIPATION';
-
-const TAB_LABEL: Record<MyPageTab, string> = {
-  PROJECT: '내 프로젝트',
-  QA_RECRUIT: '내 QA 모집',
-  QA_PARTICIPATION: '내 QA 참여',
-};
-
-const TAB_ORDER: MyPageTab[] = ['PROJECT', 'QA_RECRUIT', 'QA_PARTICIPATION'];
+const TAB_QUERY_KEY = 'tab';
 
 type MyPageTabsProps = {
   projects: MyProjectItem[];
   qaRecruits: MyQaRecruitItem[];
   qaParticipations: MyQaParticipationItem[];
+  initialTab?: MyPageTab;
 };
 
 function MyPageTabs({
   projects,
   qaRecruits,
   qaParticipations,
+  initialTab,
 }: MyPageTabsProps) {
-  const [activeTab, setActiveTab] = useState<MyPageTab>('PROJECT');
+  const router = useRouter();
+  const pathname = usePathname();
+  const [activeTab, setActiveTab] = useState<MyPageTab>(
+    initialTab ?? 'PROJECT'
+  );
+  const [selectedParticipationId, setSelectedParticipationId] = useState<
+    string | null
+  >(null);
+  const selectedParticipationDetail = selectedParticipationId
+    ? (getMyQaParticipationDetailById(selectedParticipationId) ?? null)
+    : null;
+
+  const handleTabChange = (tab: MyPageTab) => {
+    setActiveTab(tab);
+    router.replace(`${pathname}?${TAB_QUERY_KEY}=${tab}`, { scroll: false });
+  };
 
   const countByTab: Record<MyPageTab, number> = {
     PROJECT: projects.length,
@@ -48,13 +65,13 @@ function MyPageTabs({
         aria-label="마이페이지 활동 내역"
         className="flex border-b border-gray-300"
       >
-        {TAB_ORDER.map((tab) => (
+        {MY_PAGE_TAB_ORDER.map((tab) => (
           <button
             key={tab}
             type="button"
             role="tab"
             aria-selected={activeTab === tab}
-            onClick={() => setActiveTab(tab)}
+            onClick={() => handleTabChange(tab)}
             className={cn(
               'flex-1 cursor-pointer pb-4 text-center text-h4 transition-colors',
               activeTab === tab
@@ -62,7 +79,7 @@ function MyPageTabs({
                 : 'text-text-disabled'
             )}
           >
-            {TAB_LABEL[tab]} {countByTab[tab]}
+            {MY_PAGE_TAB_LABEL[tab]} {countByTab[tab]}
           </button>
         ))}
       </div>
@@ -99,11 +116,28 @@ function MyPageTabs({
         <ul className="flex flex-col divide-y divide-gray-300">
           {qaParticipations.map((participation) => (
             <li key={participation.id}>
-              <MyQaParticipationListItem participation={participation} />
+              <MyQaParticipationListItem
+                participation={participation}
+                onClick={
+                  getMyQaParticipationDetailById(participation.id)
+                    ? () => setSelectedParticipationId(participation.id)
+                    : undefined
+                }
+              />
             </li>
           ))}
         </ul>
       ) : null}
+
+      <MyQaParticipationDetailDialog
+        open={selectedParticipationDetail != null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedParticipationId(null);
+          }
+        }}
+        detail={selectedParticipationDetail}
+      />
     </section>
   );
 }
