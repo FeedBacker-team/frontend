@@ -1,5 +1,5 @@
-import { MyQaStatus } from '@/components/domain/qa/MyQaStatus';
-import { QaRewardRankings } from '@/components/domain/qa/QaRewardRankings';
+import { MyQaStatus } from '@/components/domain/qa/browse/MyQaStatus';
+import { QaRewardRankings } from '@/components/domain/qa/browse/QaRewardRankings';
 
 function QaSidebar() {
   return (

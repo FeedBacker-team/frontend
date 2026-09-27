@@ -1,14 +1,19 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/common/Button';
-import { QaRecruitDialog } from '@/components/domain/qa/QaRecruitDialog';
-import { QaRecruitInProgressDialog } from '@/components/domain/qa/QaRecruitInProgressDialog';
+import {
+  QaRecruitDialog,
+  type QaRecruitSubmitParams,
+} from '@/components/domain/qa/recruit/QaRecruitDialog';
+import { QaRecruitInProgressDialog } from '@/components/domain/qa/recruit/QaRecruitInProgressDialog';
 import { MOCK_QA_RECRUITABLE_PROJECTS } from '@/mocks/qa';
 import type { QaRecruitDialogState } from '@/types/qa';
 
 function QaRecruitStart() {
+  const router = useRouter();
   const [openDialog, setOpenDialog] =
     useState<QaRecruitDialogState | null>(null);
   // const [isAllProjectsRecruiting] = useState(true);
@@ -44,8 +49,17 @@ function QaRecruitStart() {
     setOpenDialog(null);
   };
 
-  const handleRecruitSubmit = () => {
+  const handleRecruitSubmit = ({
+    projectId,
+    targetType,
+  }: QaRecruitSubmitParams) => {
     setOpenDialog(null);
+    const searchParams = new URLSearchParams({
+      projectId: String(projectId),
+      target: targetType,
+    });
+
+    router.push(`/qa/new?${searchParams.toString()}`);
   };
 
   return (

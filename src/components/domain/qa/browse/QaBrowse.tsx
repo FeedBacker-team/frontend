@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { differenceInCalendarDays } from 'date-fns';
 
 import { toast } from '@/components/common/Sonner';
-import { QaBrowseCard } from '@/components/domain/qa/QaBrowseCard';
-import { QaRecruitStart } from '@/components/domain/qa/QaRecruitStart';
+import { QaBrowseCard } from '@/components/domain/qa/browse/QaBrowseCard';
+import { QaRecruitStart } from '@/components/domain/qa/recruit/QaRecruitStart';
 import { BrowseCardSkeleton } from '@/components/domain/shared/BrowseCardSkeleton';
 import { BrowseSection } from '@/components/domain/shared/BrowseSection';
 import { PROJECT_TAG_LABEL, PROJECT_TAGS } from '@/constants/project';

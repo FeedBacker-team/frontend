@@ -7,7 +7,7 @@ import { Footer } from '@/components/layout/Footer';
 import { Sidebar } from '@/components/layout/Sidebar';
 
 const HIDE_SHELL = ['/ex', '/login', '/signup', '/profile'];
-const HIDE_FOOTER = ['/projects/new'];
+const HIDE_FOOTER = ['/projects/new', '/qa/new'];
 
 /**
  * 기본: 사이드바 + 푸터

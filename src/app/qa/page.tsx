@@ -1,5 +1,5 @@
-import { QaBrowse } from '@/components/domain/qa/QaBrowse';
-import { QaSidebar } from '@/components/domain/qa/QaSidebar';
+import { QaBrowse } from '@/components/domain/qa/browse/QaBrowse';
+import { QaSidebar } from '@/components/domain/qa/browse/QaSidebar';
 
 export default function QaPage() {
   return (

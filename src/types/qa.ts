@@ -8,6 +8,43 @@ type QaRecruitDialogState = 'IN_PROGRESS' | 'RECRUIT_STEP';
 
 type QaRecruitStep = 'PROJECT_SELECT' | 'TEST_METHOD';
 
+type QaRecruitFormStep = 'BASIC' | 'QUESTIONS' | 'SUBMITTING';
+
+type QaRecruitChoiceQuestionFormValue = {
+  clientId: string;
+  type: 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE';
+  questionText: string;
+  options: string[];
+  maxSelectionCount: number;
+  isRequire: boolean;
+  allowImageAttachment: boolean;
+};
+
+type QaRecruitSubjectiveQuestionFormValue = {
+  clientId: string;
+  type: 'SUBJECTIVE';
+  questionText: string;
+  minimumLength: number | null;
+  isRequire: boolean;
+  allowImageAttachment: boolean;
+};
+
+type QaRecruitQuestionFormValue =
+  | QaRecruitChoiceQuestionFormValue
+  | QaRecruitSubjectiveQuestionFormValue;
+
+type QaRecruitFormValues = {
+  projectId: string;
+  target: QaTargetType;
+  title: string;
+  description: string;
+  slotCapacity: number | undefined;
+  endAt: string;
+  serviceUrl: string;
+  testImages: File[];
+  questions: QaRecruitQuestionFormValue[];
+};
+
 type ActiveQaSummary = {
   feedbackPostId: number;
   title: string;
@@ -63,12 +100,17 @@ type QaRecruitmentListResponse = {
 export type {
   ActiveQaSummary,
   QaRecruitableProject,
+  QaRecruitChoiceQuestionFormValue,
   QaRecruitDialogState,
+  QaRecruitFormStep,
+  QaRecruitFormValues,
+  QaRecruitQuestionFormValue,
   QaRecruitmentCard,
   QaRecruitmentListParams,
   QaRecruitmentListResponse,
   QaRecruitmentStatus,
   QaRecruitStep,
+  QaRecruitSubjectiveQuestionFormValue,
   QaSort,
   QaTargetType,
 };
