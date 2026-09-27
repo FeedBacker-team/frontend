@@ -117,6 +117,32 @@ function DialogHeader({
   );
 }
 
+function DialogTitle({
+  className,
+  ...props
+}: DialogPrimitive.Title.Props) {
+  return (
+    <DialogPrimitive.Title
+      data-slot="dialog-title"
+      className={cn('text-t3 text-text-default', className)}
+      {...props}
+    />
+  );
+}
+
+function DialogClose({ className, ...props }: DialogPrimitive.Close.Props) {
+  return (
+    <DialogPrimitive.Close
+      data-slot="dialog-close"
+      className={cn(
+        'flex size-7 shrink-0 cursor-pointer items-center justify-center',
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
 function DialogBody({ className, ...props }: ComponentProps<'div'>) {
   return (
     <div
@@ -140,9 +166,11 @@ function DialogFooter({ className, ...props }: ComponentProps<'div'>) {
 export {
   Dialog,
   DialogBody,
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 };
 export type { DialogHeaderProps, DialogProps };

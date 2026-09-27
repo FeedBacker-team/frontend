@@ -150,7 +150,7 @@ function FileUploadItem({
           삭제
           <Image
             src="/icons/x.svg"
-            alt=""
+            alt="삭제 버튼"
             width={20}
             height={20}
             aria-hidden

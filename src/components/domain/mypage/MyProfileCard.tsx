@@ -1,17 +1,25 @@
 'use client';
 
+import { useState } from 'react';
+
 import { Button } from '@/components/common/Button';
 import { chipVariants } from '@/components/common/Chip';
 import { Input } from '@/components/common/Input';
+import { ProfileEditDialog } from '@/components/domain/mypage/ProfileEditDialog';
+import { PROFILE_ROLE_LABEL } from '@/constants/profile';
+import { PROJECT_TAG_LABEL } from '@/constants/project';
+import type { ProfileInterest, ProfileRole } from '@/types/profile';
 
 type MyProfileCardProps = {
   nickname: string;
-  role: string;
+  role: ProfileRole;
   introLink: string;
-  tags: string[];
+  tags: ProfileInterest[];
 };
 
 function MyProfileCard({ nickname, role, introLink, tags }: MyProfileCardProps) {
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
   return (
     <section className="flex flex-col gap-6 rounded-2xl bg-gray-50 p-8">
       <div className="flex items-center justify-between gap-4">
@@ -19,10 +27,15 @@ function MyProfileCard({ nickname, role, introLink, tags }: MyProfileCardProps) 
           <div className="size-15 shrink-0 rounded-full bg-gray-200" />
           <div className="flex flex-col gap-1">
             <h2 className="text-h2 text-text-default">{nickname}</h2>
-            <p className="text-b3 text-text-sub">{role}</p>
+            <p className="text-b3 text-text-sub">{PROFILE_ROLE_LABEL[role]}</p>
           </div>
         </div>
-        <Button type="button" variant="outline" size="medium">
+        <Button
+          type="button"
+          variant="outline"
+          size="medium"
+          onClick={() => setIsEditOpen(true)}
+        >
           프로필 수정
         </Button>
       </div>
@@ -51,11 +64,17 @@ function MyProfileCard({ nickname, role, introLink, tags }: MyProfileCardProps) 
                 aria-hidden
                 className="size-3 shrink-0 bg-current mask-[url(/icons/hash.svg)] mask-center mask-contain mask-no-repeat"
               />
-              {tag}
+              {PROJECT_TAG_LABEL[tag]}
             </li>
           ))}
         </ul>
       </div>
+
+      <ProfileEditDialog
+        open={isEditOpen}
+        onOpenChange={setIsEditOpen}
+        defaultValues={{ nickname, role, intro_link: introLink, interests: tags }}
+      />
     </section>
   );
 }

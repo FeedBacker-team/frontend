@@ -2,26 +2,12 @@
 
 import React from 'react';
 import { Toggle as TogglePrimitive } from '@base-ui/react/toggle';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { type VariantProps } from 'class-variance-authority';
 import { cn } from 'cn';
 
-const chipVariants = cva(
-  'inline-flex items-center justify-center gap-1 rounded-full border px-3 py-1.5 text-c1 whitespace-nowrap transition-colors outline-none disabled:pointer-events-none',
-  {
-    variants: {
-      state: {
-        unchecked: 'border-gray-400 bg-white text-black',
-        checked: 'border-yellow-300 bg-yellow-50 text-yellow-500',
-        disabled: 'border-gray-300 bg-gray-200 text-gray-500',
-      },
-    },
-    defaultVariants: {
-      state: 'unchecked',
-    },
-  }
-);
+import { chipVariants, type ChipState } from '@/components/common/chip-variants';
 
-export type ChipState = 'unchecked' | 'checked' | 'disabled';
+export type { ChipState };
 
 export interface ChipProps
   extends
