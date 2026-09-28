@@ -4,6 +4,8 @@ import {
   type ProjectCard,
   type ProjectCreateRequest,
   type ProjectCreateResponse,
+  type ProjectDetail,
+  type ProjectDetailResponse,
   type ProjectListParams,
   type ProjectListResponse,
   type ProjectSort,
@@ -371,6 +373,95 @@ async function parseProjectError(response: Response, fallbackMessage: string) {
   return fallbackMessage;
 }
 
+function mapProjectDetailResponse(
+  response: ProjectDetailResponse
+): ProjectDetail {
+  return {
+    projectId: response.project_id,
+    title: response.title,
+    description: response.description,
+    thumbnailUrl: response.thumbnail_url,
+    tags: response.tags,
+    serviceUrl: response.url,
+    owner: {
+      userId: response.owner.user_id,
+      nickname: response.owner.nickname,
+      profileImageUrl: response.owner.profile_image_url,
+    },
+  };
+}
+
+function getMockProjectDetailResponse(
+  projectId: string
+): ProjectDetailResponse | undefined {
+  const project = MOCK_PROJECTS.find(
+    (item) => String(item.project_id) === projectId
+  );
+
+  if (!project) {
+    return undefined;
+  }
+
+  const isMockCurrentUserOwner = projectId === '2';
+
+  return {
+    project_id: String(project.project_id),
+    title: project.title,
+    description: project.description,
+    thumbnail_url: project.thumbnail_url,
+    tags: project.tags,
+    url: `https://project-${project.project_id}.example.com`,
+    owner: {
+      user_id: isMockCurrentUserOwner
+        ? '00000000-0000-4000-8000-000000000001'
+        : '00000000-0000-4000-8000-000000000002',
+      nickname: isMockCurrentUserOwner ? '닉네임' : '프로젝트 작성자',
+      profile_image_url: null,
+    },
+  };
+}
+
+async function getProjectDetail(
+  projectId: string,
+  signal?: AbortSignal
+): Promise<ProjectDetail> {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  if (!apiBaseUrl) {
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    const response = getMockProjectDetailResponse(projectId);
+
+    if (!response) {
+      throw new ProjectError('프로젝트를 찾을 수 없습니다', 404);
+    }
+
+    return mapProjectDetailResponse(response);
+  }
+
+  const baseUrl = apiBaseUrl.replace(/\/$/, '');
+  // TODO: 실제 API 연동 시 메모리 access token을 Bearer 헤더로 주입한다.
+  const response = await fetch(
+    `${baseUrl}/api/projects/${encodeURIComponent(projectId)}`,
+    { signal }
+  );
+
+  if (!response.ok) {
+    throw new ProjectError(
+      await parseProjectError(
+        response,
+        response.status === 404
+          ? '프로젝트를 찾을 수 없습니다'
+          : '프로젝트를 불러오지 못했습니다'
+      ),
+      response.status
+    );
+  }
+
+  const data: ProjectDetailResponse = await response.json();
+
+  return mapProjectDetailResponse(data);
+}
+
 async function createProject(
   body: ProjectCreateRequest
 ): Promise<ProjectCreateResponse> {
@@ -398,4 +489,9 @@ async function createProject(
   return response.json();
 }
 
-export { createProject, getProjects };
+export {
+  createProject,
+  getProjectDetail,
+  getProjects,
+  mapProjectDetailResponse,
+};
