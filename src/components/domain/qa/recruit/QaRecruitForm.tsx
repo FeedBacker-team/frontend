@@ -6,6 +6,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 
 import { QaRecruitBasicStep } from '@/components/domain/qa/recruit/QaRecruitBasicStep';
 import { QaRecruitQuestionStep } from '@/components/domain/qa/recruit/QaRecruitQuestionStep';
+import { QaRecruitSubmitConfirmDialog } from '@/components/domain/qa/recruit/QaRecruitSubmitConfirmDialog';
 import { qaRecruitFormSchema } from '@/lib/schemas/qa';
 import { cn } from '@/lib/utils';
 import type {
@@ -89,6 +90,7 @@ type QaRecruitFormProps = {
 
 function QaRecruitForm({ project, target }: QaRecruitFormProps) {
   const [step, setStep] = useState<QaRecruitFormStep>('BASIC');
+  const [isSubmitConfirmOpen, setIsSubmitConfirmOpen] = useState(false);
   const form = useForm<QaRecruitFormValues>({
     resolver: zodResolver(qaRecruitFormSchema),
     mode: 'onBlur',
@@ -129,7 +131,11 @@ function QaRecruitForm({ project, target }: QaRecruitFormProps) {
       return;
     }
 
-    void form.handleSubmit(() => undefined)(event);
+    void form.handleSubmit(() => setIsSubmitConfirmOpen(true))(event);
+  };
+
+  const handleConfirmedSubmit = () => {
+    setIsSubmitConfirmOpen(false);
   };
 
   return (
@@ -172,6 +178,12 @@ function QaRecruitForm({ project, target }: QaRecruitFormProps) {
           />
         ) : null}
       </form>
+
+      <QaRecruitSubmitConfirmDialog
+        open={isSubmitConfirmOpen}
+        onClose={() => setIsSubmitConfirmOpen(false)}
+        onConfirm={handleConfirmedSubmit}
+      />
     </FormProvider>
   );
 }
