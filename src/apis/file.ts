@@ -3,10 +3,12 @@ import {
   type FileErrorCode,
   type FileErrorResponse,
   type UploadImageResponse,
+  type UploadQaImagesResponse,
 } from '@/types/file';
 
 const FILE_PATHS = {
   upload: '/api/files',
+  uploadImages: '/api/images',
   delete: (fileId: number) => `/api/files/${fileId}`,
 } as const;
 
@@ -39,6 +41,15 @@ function getMockUploadResponse(file: File): UploadImageResponse {
     status: 'TEMP',
     created_at: new Date().toISOString(),
   };
+}
+
+function getMockQaImagePaths(files: File[]): UploadQaImagesResponse {
+  const timestamp = Date.now();
+
+  return files.map((file, index) => {
+    const extension = file.name.split('.').pop()?.toLowerCase() || 'png';
+    return `images/mock-${timestamp}-${index}.${extension}`;
+  });
 }
 
 async function parseFileError(response: Response, fallbackMessage: string) {
@@ -105,6 +116,33 @@ async function uploadImage(file: File): Promise<UploadImageResponse> {
   return response.json();
 }
 
+async function uploadQaImages(
+  files: File[]
+): Promise<UploadQaImagesResponse> {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  if (!apiBaseUrl) {
+    await delay(400);
+    return getMockQaImagePaths(files);
+  }
+
+  const body = new FormData();
+  files.forEach((file) => body.append('images', file));
+
+  const response = await requestFile(
+    FILE_PATHS.uploadImages,
+    { method: 'POST', body },
+    '테스트 이미지 업로드에 실패했습니다'
+  );
+  const data: unknown = await response.json();
+
+  if (!Array.isArray(data) || !data.every((path) => typeof path === 'string')) {
+    throw new FileError('이미지 업로드 응답 형식이 올바르지 않습니다', 500);
+  }
+
+  return data;
+}
+
 async function deleteImage(fileId: number): Promise<void> {
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -120,4 +158,4 @@ async function deleteImage(fileId: number): Promise<void> {
   );
 }
 
-export { deleteImage, uploadImage };
+export { deleteImage, uploadImage, uploadQaImages };

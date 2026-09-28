@@ -45,6 +45,52 @@ type QaRecruitFormValues = {
   questions: QaRecruitQuestionFormValue[];
 };
 
+type QaRecruitImageType = 'POST_THUMBNAIL';
+
+type QaRecruitImageRequest = {
+  type: QaRecruitImageType;
+  order: number;
+  path: string;
+};
+
+type QaRecruitChoiceQuestionRequest = {
+  order: number;
+  questionText: string;
+  optionText: string[];
+  maxSelectionCount: number;
+  images?: QaRecruitImageRequest[];
+  isRequire: boolean;
+};
+
+type QaRecruitSubjectiveQuestionRequest = {
+  order: number;
+  questionText: string;
+  images?: QaRecruitImageRequest[];
+  isRequire: boolean;
+  minimumLength?: number;
+};
+
+type CreateQaRecruitmentRequest = {
+  projectId: string;
+  title: string;
+  description: string;
+  slotCapacity: number;
+  depositAcorn: number;
+  rewardAcorn: number;
+  startAt: string;
+  endAt: string;
+  target: QaTargetType;
+  tags?: ProjectTag[];
+  serviceUrl: string;
+  images?: QaRecruitImageRequest[];
+  choiceQuestions?: QaRecruitChoiceQuestionRequest[];
+  subjectiveQuestions?: QaRecruitSubjectiveQuestionRequest[];
+};
+
+type CreateQaRecruitmentResponse = {
+  feedbackPostId: string;
+};
+
 type ActiveQaSummary = {
   feedbackPostId: number;
   title: string;
@@ -99,17 +145,23 @@ type QaRecruitmentListResponse = {
 
 export type {
   ActiveQaSummary,
+  CreateQaRecruitmentRequest,
+  CreateQaRecruitmentResponse,
   QaRecruitableProject,
+  QaRecruitChoiceQuestionRequest,
   QaRecruitChoiceQuestionFormValue,
   QaRecruitDialogState,
   QaRecruitFormStep,
   QaRecruitFormValues,
   QaRecruitQuestionFormValue,
+  QaRecruitImageRequest,
+  QaRecruitImageType,
   QaRecruitmentCard,
   QaRecruitmentListParams,
   QaRecruitmentListResponse,
   QaRecruitmentStatus,
   QaRecruitStep,
+  QaRecruitSubjectiveQuestionRequest,
   QaRecruitSubjectiveQuestionFormValue,
   QaSort,
   QaTargetType,

@@ -2,11 +2,14 @@
 
 import { useState, type FormEvent } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 
+import { toast } from '@/components/common/Sonner';
 import { QaRecruitBasicStep } from '@/components/domain/qa/recruit/QaRecruitBasicStep';
 import { QaRecruitQuestionStep } from '@/components/domain/qa/recruit/QaRecruitQuestionStep';
 import { QaRecruitSubmitConfirmDialog } from '@/components/domain/qa/recruit/QaRecruitSubmitConfirmDialog';
+import { useCreateQaRecruitment } from '@/hooks/useQaRecruitments';
 import { qaRecruitFormSchema } from '@/lib/schemas/qa';
 import { cn } from '@/lib/utils';
 import type {
@@ -89,8 +92,11 @@ type QaRecruitFormProps = {
 };
 
 function QaRecruitForm({ project, target }: QaRecruitFormProps) {
+  const router = useRouter();
   const [step, setStep] = useState<QaRecruitFormStep>('BASIC');
   const [isSubmitConfirmOpen, setIsSubmitConfirmOpen] = useState(false);
+  const { mutate: createQaRecruitment, isPending: isSubmitting } =
+    useCreateQaRecruitment();
   const form = useForm<QaRecruitFormValues>({
     resolver: zodResolver(qaRecruitFormSchema),
     mode: 'onBlur',
@@ -135,7 +141,19 @@ function QaRecruitForm({ project, target }: QaRecruitFormProps) {
   };
 
   const handleConfirmedSubmit = () => {
-    setIsSubmitConfirmOpen(false);
+    createQaRecruitment(form.getValues(), {
+      onSuccess: ({ feedbackPostId }) => {
+        setIsSubmitConfirmOpen(false);
+        router.push(`/qa/${encodeURIComponent(feedbackPostId)}`);
+      },
+      onError: (error) => {
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : 'QA 모집 글 등록에 실패했습니다'
+        );
+      },
+    });
   };
 
   return (
@@ -181,7 +199,12 @@ function QaRecruitForm({ project, target }: QaRecruitFormProps) {
 
       <QaRecruitSubmitConfirmDialog
         open={isSubmitConfirmOpen}
-        onClose={() => setIsSubmitConfirmOpen(false)}
+        isPending={isSubmitting}
+        onClose={() => {
+          if (!isSubmitting) {
+            setIsSubmitConfirmOpen(false);
+          }
+        }}
         onConfirm={handleConfirmedSubmit}
       />
     </FormProvider>
