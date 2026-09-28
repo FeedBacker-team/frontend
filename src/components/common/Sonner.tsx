@@ -4,6 +4,7 @@ import type { CSSProperties } from 'react';
 import {
   toast as sonnerToast,
   Toaster as Sonner,
+  type ExternalToast,
   type ToasterProps,
 } from 'sonner';
 
@@ -62,17 +63,24 @@ function ToastView({ id, variant, message }: ToastViewProps) {
   );
 }
 
-function showToast(variant: ToastVariant, message: string) {
+function showToast(
+  variant: ToastVariant,
+  message: string,
+  options?: ExternalToast
+) {
   return sonnerToast.custom(
     (id) => <ToastView id={id} variant={variant} message={message} />,
-    { duration: 3000 }
+    { duration: 3000, ...options }
   );
 }
 
 const toast = {
-  error: (message: string) => showToast('error', message),
-  success: (message: string) => showToast('success', message),
-  undo: (message: string) => showToast('undo', message),
+  error: (message: string, options?: ExternalToast) =>
+    showToast('error', message, options),
+  success: (message: string, options?: ExternalToast) =>
+    showToast('success', message, options),
+  undo: (message: string, options?: ExternalToast) =>
+    showToast('undo', message, options),
 };
 
 function Toaster(props: ToasterProps) {

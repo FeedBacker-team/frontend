@@ -1,5 +1,7 @@
 import { MOCK_QA_RECRUITMENTS } from '@/mocks/qa';
 import type {
+  CreateQaRecruitmentRequest,
+  CreateQaRecruitmentResponse,
   QaRecruitmentCard,
   QaRecruitmentListParams,
   QaRecruitmentListResponse,
@@ -7,6 +9,9 @@ import type {
 } from '@/types/qa';
 
 const DEFAULT_QA_PAGE_SIZE = 5;
+const QA_PATHS = {
+  recruitments: '/api/feedback-posts',
+} as const;
 
 type NormalizedQaRecruitmentListParams = {
   keyword?: string;
@@ -114,7 +119,7 @@ async function getQaRecruitments(
 
   const query = buildQaRecruitmentListQuery(normalized);
   const baseUrl = apiBaseUrl.replace(/\/$/, '');
-  const response = await fetch(`${baseUrl}/api/feedback-posts?${query}`, {
+  const response = await fetch(`${baseUrl}${QA_PATHS.recruitments}?${query}`, {
     signal,
   });
 
@@ -125,4 +130,61 @@ async function getQaRecruitments(
   return response.json();
 }
 
-export { getQaRecruitments };
+async function parseQaError(response: Response, fallbackMessage: string) {
+  try {
+    const data: unknown = await response.json();
+
+    if (
+      typeof data === 'object' &&
+      data !== null &&
+      'message' in data &&
+      typeof data.message === 'string'
+    ) {
+      return data.message;
+    }
+  } catch {
+    // 에러 body가 JSON이 아닌 경우
+  }
+
+  return fallbackMessage;
+}
+
+async function createQaRecruitment(
+  body: CreateQaRecruitmentRequest
+): Promise<CreateQaRecruitmentResponse> {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  if (!apiBaseUrl) {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    return { feedbackPostId: '660e8400-e29b-41d4-a716-446655440000' };
+  }
+
+  const baseUrl = apiBaseUrl.replace(/\/$/, '');
+  const response = await fetch(`${baseUrl}${QA_PATHS.recruitments}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      await parseQaError(response, 'QA 모집 글 등록에 실패했습니다')
+    );
+  }
+
+  const data: unknown = await response.json();
+
+  if (
+    typeof data !== 'object' ||
+    data === null ||
+    !('feedbackPostId' in data) ||
+    typeof data.feedbackPostId !== 'string'
+  ) {
+    throw new Error('QA 모집 글 등록 응답 형식이 올바르지 않습니다');
+  }
+
+  return { feedbackPostId: data.feedbackPostId };
+}
+
+export { createQaRecruitment, getQaRecruitments };

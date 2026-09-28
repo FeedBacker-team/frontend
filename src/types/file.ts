@@ -10,6 +10,8 @@ type UploadImageResponse = {
   created_at: string;
 };
 
+type UploadQaImagesResponse = string[];
+
 type FileErrorCode =
   | 'FILE_REQUIRED'
   | 'UNSUPPORTED_IMAGE_TYPE'
@@ -43,4 +45,5 @@ export type {
   FileErrorResponse,
   FileUploadStatus,
   UploadImageResponse,
+  UploadQaImagesResponse,
 };

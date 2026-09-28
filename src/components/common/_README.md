@@ -238,7 +238,8 @@ const [value, setValue] = useState<string | null>(null);
 
 ## Sonner
 
-상단 중앙에 뜨는 알림. `Toaster`는 루트 레이아웃에 한 번만 둡니다.
+기본적으로 상단 중앙에 뜨는 알림. `Toaster`는 루트 레이아웃에 한 번만 둡니다.
+호출별 옵션으로 위치와 노출 시간 등 Sonner의 `ExternalToast` 옵션을 덮어쓸 수 있습니다.
 
 ### API
 
@@ -258,6 +259,7 @@ import { toast } from '@/components/common/Sonner';
 toast.error('토스트');
 toast.success('토스트');
 toast.undo('항목이 삭제되었습니다.');
+toast.undo('항목이 삭제되었습니다.', { position: 'bottom-right' });
 ```
 
 ---
