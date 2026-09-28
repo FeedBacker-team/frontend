@@ -312,9 +312,7 @@ function QaRecruitBasicStep({ project, target }: QaRecruitBasicStepProps) {
                 size="medium"
                 aria-invalid={!!errors.slotCapacity}
                 aria-describedby={
-                  errors.slotCapacity
-                    ? 'qa-recruit-capacity-error'
-                    : undefined
+                  errors.slotCapacity ? 'qa-recruit-capacity-error' : undefined
                 }
                 state={errors.slotCapacity ? 'error' : 'default'}
                 placeholder="00"
@@ -393,7 +391,7 @@ function QaRecruitBasicStep({ project, target }: QaRecruitBasicStepProps) {
                       sideOffset={8}
                       className="z-50"
                     >
-                      <Popover.Popup className="origin-[var(--transform-origin)] outline-none transition-[scale,opacity] duration-100 data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0">
+                      <Popover.Popup className="origin-(--transform-origin) outline-none transition-[scale,opacity] duration-100 data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0">
                         <Calendar
                           mode="single"
                           selected={selectedDate}

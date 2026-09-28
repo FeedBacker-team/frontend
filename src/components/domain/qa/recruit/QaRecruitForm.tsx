@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { QaRecruitBasicStep } from '@/components/domain/qa/recruit/QaRecruitBasicStep';
+import { QaRecruitQuestionStep } from '@/components/domain/qa/recruit/QaRecruitQuestionStep';
 import { qaRecruitFormSchema } from '@/lib/schemas/qa';
 import { cn } from '@/lib/utils';
 import type {
@@ -87,7 +88,7 @@ type QaRecruitFormProps = {
 };
 
 function QaRecruitForm({ project, target }: QaRecruitFormProps) {
-  const [step] = useState<QaRecruitFormStep>('BASIC');
+  const [step, setStep] = useState<QaRecruitFormStep>('BASIC');
   const form = useForm<QaRecruitFormValues>({
     resolver: zodResolver(qaRecruitFormSchema),
     mode: 'onBlur',
@@ -106,28 +107,69 @@ function QaRecruitForm({ project, target }: QaRecruitFormProps) {
     shouldUnregister: false,
   });
 
+  const handleBasicNext = async () => {
+    const fields: Array<keyof QaRecruitFormValues> = [
+      'title',
+      'description',
+      'slotCapacity',
+      'endAt',
+      target === 'SERVICE_LINK' ? 'serviceUrl' : 'testImages',
+    ];
+    const isValid = await form.trigger(fields, { shouldFocus: true });
+
+    if (isValid) {
+      setStep('QUESTIONS');
+    }
+  };
+
+  const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
+    if (step === 'BASIC') {
+      event.preventDefault();
+      void handleBasicNext();
+      return;
+    }
+
+    void form.handleSubmit(() => undefined)(event);
+  };
+
   return (
     <FormProvider {...form}>
       <form
         noValidate
-        onSubmit={form.handleSubmit(() => undefined)}
+        onSubmit={handleFormSubmit}
         className={cn(
           'flex w-full flex-col gap-8',
           step === 'BASIC' && 'mx-auto max-w-220'
         )}
       >
-        <header className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h1 className="text-t3 text-text-default">QA 모집 글 작성하기</h1>
-            <span className="rounded-full bg-green-100 px-3 py-2 text-c2 text-green-700">
-              {TARGET_LABEL[target]}
-            </span>
+        <header
+          className={cn(
+            step === 'QUESTIONS' &&
+              'grid grid-cols-[minmax(0,1fr)_18rem] gap-8'
+          )}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <h1 className="text-t3 text-text-default">
+                QA 모집 글 작성하기
+              </h1>
+              <span className="rounded-full bg-green-100 px-3 py-2 text-c2 text-green-700">
+                {TARGET_LABEL[target]}
+              </span>
+            </div>
+            <RecruitProgress currentStep={step} />
           </div>
-          <RecruitProgress currentStep={step} />
         </header>
 
         {step === 'BASIC' ? (
           <QaRecruitBasicStep project={project} target={target} />
+        ) : null}
+
+        {step === 'QUESTIONS' ? (
+          <QaRecruitQuestionStep
+            target={target}
+            onBack={() => setStep('BASIC')}
+          />
         ) : null}
       </form>
     </FormProvider>

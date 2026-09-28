@@ -4,6 +4,47 @@
 
 > `domain/shared`의 컴포넌트를 생성·삭제하거나 공개 props 및 동작을 변경하면 이 문서도 같은 작업에서 갱신합니다.
 
+## ImageViewer
+
+여러 이미지를 모달에서 크게 확인하는 controlled 이미지 뷰어입니다. QA 작성 화면의 로컬 미리보기와 상세 화면의 서버 이미지처럼 URL로 표현할 수 있는 이미지에 공통으로 사용합니다.
+
+- 미리보기 이미지, 현재 순서와 전체 이미지 수를 표시합니다.
+- 이전·다음 버튼은 처음과 마지막 이미지를 순환합니다.
+- 하단 썸네일을 눌러 원하는 이미지로 바로 이동할 수 있습니다.
+- 키보드의 좌우 방향키로 이동하고 `Escape` 또는 닫기 버튼으로 종료합니다.
+
+### Props
+
+| prop | type | 설명 |
+| --- | --- | --- |
+| `open` | `boolean` | 뷰어 열림 상태 |
+| `images` | `ImageViewerItem[]` | 표시할 이미지 목록 |
+| `currentIndex` | `number` | 현재 표시할 이미지 인덱스 |
+| `onIndexChange` | `(index: number) => void` | 현재 이미지 변경 |
+| `onOpenChange` | `(open: boolean) => void` | 뷰어 열림 상태 변경 |
+
+**ImageViewerItem**
+
+| field | type | 설명 |
+| --- | --- | --- |
+| `id` | `string` | 목록 및 썸네일의 React key |
+| `src` | `string` | 서버 URL 또는 로컬 data URL |
+| `alt` | `string` | 큰 이미지의 대체 텍스트 |
+
+```tsx
+<ImageViewer
+  open={viewerIndex !== null}
+  images={images}
+  currentIndex={viewerIndex ?? 0}
+  onIndexChange={setViewerIndex}
+  onOpenChange={(open) => {
+    if (!open) setViewerIndex(null);
+  }}
+/>
+```
+
+---
+
 ## RankedList
 
 제목과 흰색 카드 안에 썸네일·제목·보조 콘텐츠 행을 표시합니다. 홈 프로젝트 랭킹과 QA 도토리 랭킹에서 사용합니다.

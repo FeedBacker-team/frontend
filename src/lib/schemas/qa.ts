@@ -11,10 +11,13 @@ import { z } from 'zod';
 import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE_BYTES } from '@/constants/file';
 import type {
   QaRecruitFormValues,
-  QaRecruitQuestionFormValue,
 } from '@/types/qa';
 
 const MAX_TEST_IMAGE_COUNT = 3;
+const MIN_QUESTION_COUNT = 1;
+const MAX_QUESTION_COUNT = 10;
+const MIN_CHOICE_OPTION_COUNT = 2;
+const MAX_CHOICE_OPTION_COUNT = 5;
 
 function isHttpUrl(value: string) {
   try {
@@ -53,6 +56,67 @@ const testImageSchema = z
     message: '이미지는 파일당 최대 5MB까지 등록할 수 있어요',
   });
 
+const qaRecruitQuestionSharedFields = {
+  clientId: z.string().min(1),
+  questionText: z.string().trim().min(1, '질문을 입력해 주세요'),
+  isRequire: z.boolean(),
+  allowImageAttachment: z.boolean(),
+};
+
+const choiceOptionsSchema = z
+  .array(z.string().trim().min(1, '선택지 문구를 입력해 주세요'))
+  .min(
+    MIN_CHOICE_OPTION_COUNT,
+    `선택지를 ${MIN_CHOICE_OPTION_COUNT}개 이상 추가해 주세요`
+  )
+  .max(
+    MAX_CHOICE_OPTION_COUNT,
+    `선택지는 최대 ${MAX_CHOICE_OPTION_COUNT}개까지 추가할 수 있어요`
+  );
+
+const singleChoiceQuestionSchema = z.object({
+  ...qaRecruitQuestionSharedFields,
+  type: z.literal('SINGLE_CHOICE'),
+  options: choiceOptionsSchema,
+  maxSelectionCount: z.literal(1),
+  allowImageAttachment: z.literal(false),
+});
+
+const multipleChoiceQuestionSchema = z
+  .object({
+    ...qaRecruitQuestionSharedFields,
+    type: z.literal('MULTIPLE_CHOICE'),
+    options: choiceOptionsSchema,
+    maxSelectionCount: z
+      .number({ error: '최대 선택 개수를 확인해 주세요' })
+      .int('최대 선택 개수는 정수여야 해요')
+      .min(1, '최대 선택 개수는 1개 이상이어야 해요'),
+    allowImageAttachment: z.literal(false),
+  })
+  .refine(
+    (question) => question.maxSelectionCount <= question.options.length,
+    {
+      path: ['maxSelectionCount'],
+      message: '최대 선택 개수는 전체 선택지 수보다 클 수 없어요',
+    }
+  );
+
+const subjectiveQuestionSchema = z.object({
+  ...qaRecruitQuestionSharedFields,
+  type: z.literal('SUBJECTIVE'),
+  minimumLength: z
+    .number({ error: '최소 답변 글자 수를 확인해 주세요' })
+    .int('최소 답변 글자 수는 정수여야 해요')
+    .min(1, '최소 답변 글자 수는 1자 이상이어야 해요')
+    .nullable(),
+});
+
+const qaRecruitQuestionSchema = z.discriminatedUnion('type', [
+  singleChoiceQuestionSchema,
+  multipleChoiceQuestionSchema,
+  subjectiveQuestionSchema,
+]);
+
 const qaRecruitSharedFields = {
   projectId: z.string().min(1),
   title: z.string().trim().min(1, '제목을 입력해 주세요'),
@@ -68,7 +132,16 @@ const qaRecruitSharedFields = {
     .refine(isRecruitEndDate, {
       message: '모집 종료일은 오늘부터 28일 이내로 선택해 주세요',
     }),
-  questions: z.array(z.custom<QaRecruitQuestionFormValue>()),
+  questions: z
+    .array(qaRecruitQuestionSchema)
+    .min(
+      MIN_QUESTION_COUNT,
+      `질문을 ${MIN_QUESTION_COUNT}개 이상 추가해 주세요`
+    )
+    .max(
+      MAX_QUESTION_COUNT,
+      `질문은 최대 ${MAX_QUESTION_COUNT}개까지 추가할 수 있어요`
+    ),
 };
 
 const qaRecruitServiceLinkSchema = z.object({
@@ -110,4 +183,4 @@ const qaRecruitFormSchema: z.ZodType<
   qaRecruitImageSchema,
 ]);
 
-export { qaRecruitFormSchema };
+export { qaRecruitFormSchema, qaRecruitQuestionSchema };
