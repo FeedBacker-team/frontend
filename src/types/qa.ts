@@ -143,20 +143,71 @@ type QaRecruitmentListResponse = {
   feedbackPosts: QaRecruitmentCard[];
 };
 
+type QaImageType = 'POST_THUMBNAIL';
+
+type ImageResponse = {
+  type: QaImageType;
+  order: number;
+  url: string;
+};
+
+type QuestionConfigResponse = {
+  totalQuestionCount: number;
+  choiceQuestionCount: number;
+  subjectiveQuestionCount: number;
+  estimatedTime: number;
+};
+
+type QaRecruitmentDetailResponse = {
+  feedbackPostId: string;
+  projectId: string;
+  title: string;
+  description: string;
+  status: QaRecruitmentStatus;
+  targetType: QaTargetType;
+  serviceUrl: string | null;
+  images: ImageResponse[];
+  slotCapacity: number;
+  remainSlotCount: number;
+  completedParticipantCount: number;
+  depositAcorn: number;
+  rewardAcorn: number;
+  startAt: string;
+  endAt: string;
+  expireAt: string | null;
+  tags: ProjectTag[];
+  questionConfig: QuestionConfigResponse;
+};
+
+class QaApiError extends Error {
+  status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = 'QaApiError';
+    this.status = status;
+  }
+}
+
+export { QaApiError };
 export type {
   ActiveQaSummary,
   CreateQaRecruitmentRequest,
   CreateQaRecruitmentResponse,
+  ImageResponse,
+  QuestionConfigResponse,
   QaRecruitableProject,
   QaRecruitChoiceQuestionRequest,
   QaRecruitChoiceQuestionFormValue,
   QaRecruitDialogState,
   QaRecruitFormStep,
   QaRecruitFormValues,
+  QaImageType,
   QaRecruitQuestionFormValue,
   QaRecruitImageRequest,
   QaRecruitImageType,
   QaRecruitmentCard,
+  QaRecruitmentDetailResponse,
   QaRecruitmentListParams,
   QaRecruitmentListResponse,
   QaRecruitmentStatus,

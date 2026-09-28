@@ -1,16 +1,25 @@
-import { MOCK_QA_RECRUITMENTS } from '@/mocks/qa';
+import {
+  MOCK_QA_RECRUITMENT_DETAILS,
+  MOCK_QA_RECRUITMENTS,
+} from '@/mocks/qa';
 import type {
   CreateQaRecruitmentRequest,
   CreateQaRecruitmentResponse,
   QaRecruitmentCard,
+  QaRecruitmentDetailResponse,
   QaRecruitmentListParams,
   QaRecruitmentListResponse,
   QaSort,
 } from '@/types/qa';
+import { QaApiError } from '@/types/qa';
 
 const DEFAULT_QA_PAGE_SIZE = 5;
 const QA_PATHS = {
   recruitments: '/api/feedback-posts',
+  detail: (feedbackPostId: string) =>
+    `/api/feedback-posts/${encodeURIComponent(feedbackPostId)}`,
+  participations: (feedbackPostId: string) =>
+    `/api/feedback-posts/${encodeURIComponent(feedbackPostId)}/participations`,
 } as const;
 
 type NormalizedQaRecruitmentListParams = {
@@ -149,6 +158,46 @@ async function parseQaError(response: Response, fallbackMessage: string) {
   return fallbackMessage;
 }
 
+async function getQaRecruitmentDetail(
+  feedbackPostId: string,
+  signal?: AbortSignal
+): Promise<QaRecruitmentDetailResponse> {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  if (!apiBaseUrl) {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    const detail = MOCK_QA_RECRUITMENT_DETAILS.find(
+      (item) => item.feedbackPostId === feedbackPostId
+    );
+
+    if (!detail) {
+      throw new Error('피드백 모집글을 찾을 수 없습니다.');
+    }
+
+    return detail;
+  }
+
+  const baseUrl = apiBaseUrl.replace(/\/$/, '');
+  // TODO: 실제 인증 연동 시 메모리에서 관리하는 access token을
+  // Authorization: Bearer 헤더로 공통 API 클라이언트에서 주입한다.
+  const response = await fetch(`${baseUrl}${QA_PATHS.detail(feedbackPostId)}`, {
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      await parseQaError(
+        response,
+        response.status === 404
+          ? '피드백 모집글을 찾을 수 없습니다.'
+          : 'QA 모집글을 불러오지 못했습니다'
+      )
+    );
+  }
+
+  return response.json();
+}
+
 async function createQaRecruitment(
   body: CreateQaRecruitmentRequest
 ): Promise<CreateQaRecruitmentResponse> {
@@ -156,7 +205,12 @@ async function createQaRecruitment(
 
   if (!apiBaseUrl) {
     await new Promise((resolve) => setTimeout(resolve, 500));
-    return { feedbackPostId: '660e8400-e29b-41d4-a716-446655440000' };
+    return {
+      feedbackPostId:
+        body.target === 'IMAGE'
+          ? '660e8400-e29b-41d4-a716-446655440001'
+          : '660e8400-e29b-41d4-a716-446655440000',
+    };
   }
 
   const baseUrl = apiBaseUrl.replace(/\/$/, '');
@@ -187,4 +241,34 @@ async function createQaRecruitment(
   return { feedbackPostId: data.feedbackPostId };
 }
 
-export { createQaRecruitment, getQaRecruitments };
+async function participateInQa(feedbackPostId: string): Promise<void> {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  if (!apiBaseUrl) {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return;
+  }
+
+  const baseUrl = apiBaseUrl.replace(/\/$/, '');
+  // TODO: 실제 인증 연동 시 메모리 access token을 Bearer 헤더로 주입한다.
+  const response = await fetch(
+    `${baseUrl}${QA_PATHS.participations(feedbackPostId)}`,
+    { method: 'POST' }
+  );
+
+  if (!response.ok) {
+    throw new QaApiError(
+      await parseQaError(response, 'QA 참여 신청에 실패했습니다'),
+      response.status
+    );
+  }
+
+  // TODO: 참여 성공 응답 명세가 확정되면 참여 ID 등 필요한 값을 반환한다.
+}
+
+export {
+  createQaRecruitment,
+  getQaRecruitmentDetail,
+  getQaRecruitments,
+  participateInQa,
+};

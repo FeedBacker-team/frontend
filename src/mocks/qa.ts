@@ -1,7 +1,79 @@
 import type {
   QaRecruitableProject,
+  QaRecruitmentDetailResponse,
   QaRecruitmentCard,
 } from '@/types/qa';
+
+const MOCK_QA_RECRUITMENT_DETAILS: QaRecruitmentDetailResponse[] = [
+  {
+    feedbackPostId: '660e8400-e29b-41d4-a716-446655440000',
+    projectId: '2',
+    title: '신규 결제 기능 모듈 및 해외 처리 플로우 QA',
+    description:
+      '[테스트 대상 & 가이드]\n이번 스토어 신규 결제 기능 테스트입니다. 아래 작성된 질문 순서대로 직접 서비스를 사용해 보신 뒤 답변을 작성해 주세요.\n\n[권장 테스트 환경]\n- Chrome 브라우저 / 모바일 Web 환경 권장\n- 오류 발견 시 마지막 주문서 문항에 캡처나 재현 경로를 함께 남겨주시면 큰 도움이 됩니다!',
+    status: 'RECRUITING',
+    targetType: 'SERVICE_LINK',
+    serviceUrl: 'https://aibiz.example.com',
+    images: [],
+    slotCapacity: 5,
+    remainSlotCount: 5,
+    completedParticipantCount: 0,
+    depositAcorn: 100,
+    rewardAcorn: 20,
+    startAt: '2026-09-28T09:00:00',
+    endAt: '2026-10-04T18:00:00',
+    expireAt: '2026-10-04T18:00:00',
+    tags: ['WEB', 'B2B_SAAS', 'AI_ML'],
+    questionConfig: {
+      totalQuestionCount: 3,
+      choiceQuestionCount: 2,
+      subjectiveQuestionCount: 1,
+      estimatedTime: 8,
+    },
+  },
+  {
+    feedbackPostId: '660e8400-e29b-41d4-a716-446655440001',
+    projectId: '3',
+    title: '메인 홈 화면 구성 시안 비교',
+    description:
+      '신규 앱에 예정인 메인 홈 레이아웃 두 가지 시안입니다.\n주요 기능(검색, 카테고리)의 가독성과 한눈에 들어오는 시인성 측면을 비교하려고 합니다.',
+    status: 'RECRUITING',
+    targetType: 'IMAGE',
+    serviceUrl: null,
+    images: [
+      {
+        type: 'POST_THUMBNAIL',
+        order: 0,
+        url: '/banner/squirrel_O.png',
+      },
+      {
+        type: 'POST_THUMBNAIL',
+        order: 1,
+        url: '/banner/squirrel_X.png',
+      },
+      {
+        type: 'POST_THUMBNAIL',
+        order: 2,
+        url: '/banner/squirrel_O.png',
+      },
+    ],
+    slotCapacity: 5,
+    remainSlotCount: 3,
+    completedParticipantCount: 2,
+    depositAcorn: 75,
+    rewardAcorn: 15,
+    startAt: '2026-09-28T09:00:00',
+    endAt: '2026-10-04T18:00:00',
+    expireAt: '2026-10-04T18:00:00',
+    tags: ['APP', 'UXUI'],
+    questionConfig: {
+      totalQuestionCount: 2,
+      choiceQuestionCount: 1,
+      subjectiveQuestionCount: 1,
+      estimatedTime: 6,
+    },
+  },
+];
 
 const MOCK_QA_RECRUITABLE_PROJECTS: QaRecruitableProject[] = [
   {
@@ -359,4 +431,8 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
   },
 ];
 
-export { MOCK_QA_RECRUITABLE_PROJECTS, MOCK_QA_RECRUITMENTS };
+export {
+  MOCK_QA_RECRUITABLE_PROJECTS,
+  MOCK_QA_RECRUITMENT_DETAILS,
+  MOCK_QA_RECRUITMENTS,
+};
