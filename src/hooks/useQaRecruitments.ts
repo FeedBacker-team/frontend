@@ -7,7 +7,7 @@ import {
   getQaRecruitments,
   participateInQa,
 } from '@/apis/qa';
-import { buildQaRecruitmentRequest } from '@/lib/qaRecruit';
+import { buildQaRecruitmentRequest } from '@/lib/qa/recruit';
 import type {
   QaRecruitFormValues,
   QaRecruitmentListParams,
