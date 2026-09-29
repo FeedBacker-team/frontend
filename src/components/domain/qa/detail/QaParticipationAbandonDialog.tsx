@@ -29,11 +29,11 @@ function QaParticipationAbandonDialog({
               className="block size-8 bg-rust-600 mask-[url(/icons/alert-circle.svg)] mask-center mask-contain mask-no-repeat"
             />
           }
-          title="피드백 작성을 포기하시겠어요?"
+          title="피드백을 포기할까요?"
           description={
             <>
-              포기하면 QA 참여가 취소되며,
-              <br />작성 중인 피드백은 저장되지 않아요.
+              지금 중단하면 이 QA에 다시 참여할 수 없어요.
+              <br />작성한 내용은 삭제되며, 보상 도토리는 받을 수 없어요.
             </>
           }
         />
@@ -53,7 +53,7 @@ function QaParticipationAbandonDialog({
             size="large"
             onClick={onConfirm}
           >
-            포기하기
+            피드백 포기하기
           </Button>
         </DialogFooter>
       </DialogContent>
