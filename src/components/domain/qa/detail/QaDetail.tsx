@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { Badge } from '@/components/common/Badge';
 import { Button } from '@/components/common/Button';
@@ -378,6 +379,7 @@ function QaRecruitmentStatusCard({
   qa,
   isOwner,
 }: QaRecruitmentStatusCardProps) {
+  const router = useRouter();
   const [isEarlyCloseDialogOpen, setIsEarlyCloseDialogOpen] = useState(false);
   const [isParticipationDialogOpen, setIsParticipationDialogOpen] =
     useState(false);
@@ -409,9 +411,9 @@ function QaRecruitmentStatusCard({
         <QaParticipationActiveCard
           deadlineAt={participationDeadlineAt}
           rewardAcorn={qa.rewardAcorn}
-          onFeedback={() => {
-            // TODO: QA 테스트 폼 경로가 확정되면 이동한다.
-          }}
+          onFeedback={() =>
+            router.push(`/qa/${qa.feedbackPostId}/feedback`)
+          }
           onAbandon={() => setIsAbandonDialogOpen(true)}
         />
 

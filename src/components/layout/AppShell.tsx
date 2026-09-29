@@ -33,7 +33,10 @@ function shouldHideFooter(pathname: string) {
     return true;
   }
 
-  return /^\/projects\/[^/]+\/edit\/?$/.test(pathname);
+  return (
+    /^\/projects\/[^/]+\/edit\/?$/.test(pathname) ||
+    /^\/qa\/[^/]+\/feedback\/?$/.test(pathname)
+  );
 }
 
 type AppShellProps = {
