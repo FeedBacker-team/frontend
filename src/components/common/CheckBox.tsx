@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 
 // 바깥 박스
 const checkboxControlVariants = cva(
-  'group/checkbox relative flex shrink-0 items-center justify-center rounded-[4px] border border-gray-300 outline-none focus-visible:ring-2 focus-visible:ring-ring data-checked:border-rust-600 data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-200',
+  'group/checkbox relative flex shrink-0 items-center justify-center rounded-[4px] border-[1.5px] border-gray-300 outline-none focus-visible:ring-2 focus-visible:ring-ring data-checked:border-rust-600 data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-200',
   {
     variants: {
       size: {
@@ -94,7 +94,9 @@ function CheckBox({
         data-slot="checkbox-indicator"
         className={checkboxIndicatorVariants({ size })}
         style={
-          { '--checkbox-icon': `url(/icons/check.svg)` } as CSSProperties
+          {
+            '--checkbox-icon': `url(/icons/checkbox-check.svg)`,
+          } as CSSProperties
         }
       />
     </CheckboxPrimitive.Root>

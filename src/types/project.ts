@@ -44,6 +44,38 @@ type ProjectListResponse = {
   projects: ProjectCard[];
 };
 
+type ProjectOwnerSummary = {
+  userId: string;
+  nickname: string;
+  profileImageUrl: string | null;
+};
+
+type ProjectOwnerResponse = {
+  user_id: string;
+  nickname: string;
+  profile_image_url: string | null;
+};
+
+type ProjectDetailResponse = {
+  project_id: string;
+  title: string;
+  description: string;
+  thumbnail_url: string | null;
+  tags: ProjectTag[];
+  url: string | null;
+  owner: ProjectOwnerResponse;
+};
+
+type ProjectDetail = {
+  projectId: string;
+  title: string;
+  description: string;
+  thumbnailUrl: string | null;
+  tags: ProjectTag[];
+  serviceUrl: string | null;
+  owner: ProjectOwnerSummary;
+};
+
 type ProjectImageValue = Pick<File, 'name' | 'type' | 'size'>;
 
 type ProjectFormValues = {
@@ -81,10 +113,14 @@ export type {
   ProjectCard,
   ProjectCreateRequest,
   ProjectCreateResponse,
+  ProjectDetail,
+  ProjectDetailResponse,
   ProjectFormValues,
   ProjectImageValue,
   ProjectListParams,
   ProjectListResponse,
+  ProjectOwnerSummary,
+  ProjectOwnerResponse,
   ProjectSort,
   ProjectTag,
 };

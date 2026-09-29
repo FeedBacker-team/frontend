@@ -144,7 +144,9 @@ function QaRecruitForm({ project, target }: QaRecruitFormProps) {
     createQaRecruitment(form.getValues(), {
       onSuccess: ({ feedbackPostId }) => {
         setIsSubmitConfirmOpen(false);
-        router.push(`/qa/${encodeURIComponent(feedbackPostId)}`);
+        // TODO: 실제 생성 API 연동 시 응답의 사용/잔여 도토리 정보를
+        // 상세 페이지의 1회성 완료 Toast에 전달한다.
+        router.push(`/qa/${encodeURIComponent(feedbackPostId)}?created=1`);
       },
       onError: (error) => {
         toast.error(
