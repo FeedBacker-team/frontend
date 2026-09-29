@@ -1,12 +1,16 @@
 import type {
+  QaFeedbackFormResponse,
   QaRecruitableProject,
   QaRecruitmentDetailResponse,
   QaRecruitmentCard,
 } from '@/types/qa';
 
+const LINK_QA_ID = '660e8400-e29b-41d4-a716-446655440000';
+const IMAGE_QA_ID = '660e8400-e29b-41d4-a716-446655440001';
+
 const MOCK_QA_RECRUITMENT_DETAILS: QaRecruitmentDetailResponse[] = [
   {
-    feedbackPostId: '660e8400-e29b-41d4-a716-446655440000',
+    feedbackPostId: LINK_QA_ID,
     projectId: '2',
     title: '신규 결제 기능 모듈 및 해외 처리 플로우 QA',
     description:
@@ -32,7 +36,7 @@ const MOCK_QA_RECRUITMENT_DETAILS: QaRecruitmentDetailResponse[] = [
     },
   },
   {
-    feedbackPostId: '660e8400-e29b-41d4-a716-446655440001',
+    feedbackPostId: IMAGE_QA_ID,
     projectId: '3',
     title: '메인 홈 화면 구성 시안 비교',
     description:
@@ -67,13 +71,98 @@ const MOCK_QA_RECRUITMENT_DETAILS: QaRecruitmentDetailResponse[] = [
     expireAt: '2026-10-04T18:00:00',
     tags: ['APP', 'UXUI'],
     questionConfig: {
-      totalQuestionCount: 2,
-      choiceQuestionCount: 1,
+      totalQuestionCount: 3,
+      choiceQuestionCount: 2,
       subjectiveQuestionCount: 1,
       estimatedTime: 6,
     },
   },
 ];
+
+const MOCK_QA_FEEDBACK_FORMS: Record<string, QaFeedbackFormResponse> = {
+  [LINK_QA_ID]: {
+    choiceQuestionResponses: [
+      {
+        order: 1,
+        questionText:
+          '신규 결제 모듈을 통한 결제 진행 및 해외 처리 과정(결제 수단 선택, 수수료 안내 등)이 전반적으로 직관적이었나요?',
+        optionText: [
+          '오류 없이 매우 빠르고 직관적으로 완료됨',
+          '결제는 완료됐으나 일부 화면에서 안내 문구가 모호함',
+          '결제 진행 중 알 수 없는 오류로 멈춤 현상 발생',
+          '결제 버튼 위치나 결제 정보 입력란을 찾기 어려움',
+        ],
+        maxSelectionCount: 1,
+        images: [],
+        isRequire: true,
+      },
+      {
+        order: 2,
+        questionText:
+          '사용하신 디바이스 및 브라우저 환경에서 요소 겹침, 텍스트 잘림 등 레이아웃이 깨지는 현상이 있었나요?',
+        optionText: [
+          '전혀 없었다',
+          '거의 없었다',
+          '보통이다',
+          '자주 있었다',
+          '매우 많았다',
+        ],
+        maxSelectionCount: 1,
+        images: [],
+        isRequire: true,
+      },
+    ],
+    subjectiveQuestionResponses: [
+      {
+        order: 3,
+        questionText:
+          '테스트 중 발견된 결제 플로우 오류나 개선 피드백을 작성해 주세요.',
+        images: [],
+        isRequire: false,
+        minimumLength: 50,
+      },
+    ],
+  },
+  [IMAGE_QA_ID]: {
+    choiceQuestionResponses: [
+      {
+        order: 1,
+        questionText: '어떤 시안이 메인 CTA 버튼의 위치가 가장 직관적인가요?',
+        optionText: [
+          '1번: 우측 상단 헤더',
+          '2번: 화면 하단 플로팅 바',
+          '3번: 콘텐츠 중앙',
+        ],
+        maxSelectionCount: 1,
+        images: [],
+        isRequire: true,
+      },
+      {
+        order: 3,
+        questionText:
+          '메인 CTA 버튼의 문구(UX 라이팅) 중 어떤 점이 다음 동작을 예측하는 데 도움이 되었나요?',
+        optionText: [
+          '한눈에 어떤 동작이 일어날지 명확하게 표현되어 있다.',
+          '다음 단계의 행동과 결과가 예측 가능한 단어이다.',
+          '사용자의 목적과 일치하는 직관적인 용어이다.',
+        ],
+        maxSelectionCount: 3,
+        images: [],
+        isRequire: true,
+      },
+    ],
+    subjectiveQuestionResponses: [
+      {
+        order: 2,
+        questionText:
+          '1번 문항에서 선택하신 시안에서 시각적으로 어색하거나, 동선을 방해할 것 같은 요소가 있다면 자유롭게 적어주세요.',
+        images: [],
+        isRequire: false,
+        minimumLength: 50,
+      },
+    ],
+  },
+};
 
 const MOCK_QA_RECRUITABLE_PROJECTS: QaRecruitableProject[] = [
   {
@@ -433,6 +522,7 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
 
 export {
   MOCK_QA_RECRUITABLE_PROJECTS,
+  MOCK_QA_FEEDBACK_FORMS,
   MOCK_QA_RECRUITMENT_DETAILS,
   MOCK_QA_RECRUITMENTS,
 };

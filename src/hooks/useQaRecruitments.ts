@@ -3,12 +3,17 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { uploadQaImages } from '@/apis/file';
 import {
   createQaRecruitment,
+  getQaFeedbackForm,
   getQaRecruitmentDetail,
   getQaRecruitments,
   participateInQa,
+  submitQaFeedback,
 } from '@/apis/qa';
+import { buildSubmitQaFeedbackRequest } from '@/lib/qa/feedback';
 import { buildQaRecruitmentRequest } from '@/lib/qa/recruit';
 import type {
+  QaFeedbackFormValues,
+  QaFeedbackQuestion,
   QaRecruitFormValues,
   QaRecruitmentListParams,
 } from '@/types/qa';
@@ -19,6 +24,8 @@ const qaRecruitmentKeys = {
     [...qaRecruitmentKeys.all, 'list', params] as const,
   detail: (feedbackPostId: string) =>
     [...qaRecruitmentKeys.all, 'detail', feedbackPostId] as const,
+  feedbackForm: (feedbackPostId: string) =>
+    [...qaRecruitmentKeys.all, 'feedback-form', feedbackPostId] as const,
 };
 
 function useQaRecruitments(params: QaRecruitmentListParams = {}) {
@@ -33,6 +40,13 @@ function useQaRecruitmentDetail(feedbackPostId: string) {
     queryKey: qaRecruitmentKeys.detail(feedbackPostId),
     queryFn: ({ signal }) =>
       getQaRecruitmentDetail(feedbackPostId, signal),
+  });
+}
+
+function useQaFeedbackForm(feedbackPostId: string) {
+  return useQuery({
+    queryKey: qaRecruitmentKeys.feedbackForm(feedbackPostId),
+    queryFn: ({ signal }) => getQaFeedbackForm(feedbackPostId, signal),
   });
 }
 
@@ -68,10 +82,37 @@ function useParticipateInQa(feedbackPostId: string) {
   });
 }
 
+type SubmitQaFeedbackVariables = {
+  questions: QaFeedbackQuestion[];
+  values: QaFeedbackFormValues;
+};
+
+function useSubmitQaFeedback(feedbackPostId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ questions, values }: SubmitQaFeedbackVariables) =>
+      submitQaFeedback(
+        buildSubmitQaFeedbackRequest(feedbackPostId, questions, values)
+      ),
+    onSuccess: () => {
+      queryClient.removeQueries({
+        queryKey: qaRecruitmentKeys.feedbackForm(feedbackPostId),
+      });
+
+      return queryClient.invalidateQueries({
+        queryKey: qaRecruitmentKeys.detail(feedbackPostId),
+      });
+    },
+  });
+}
+
 export {
   qaRecruitmentKeys,
   useCreateQaRecruitment,
   useParticipateInQa,
+  useQaFeedbackForm,
   useQaRecruitmentDetail,
   useQaRecruitments,
+  useSubmitQaFeedback,
 };

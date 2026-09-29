@@ -1,15 +1,19 @@
 import {
+  MOCK_QA_FEEDBACK_FORMS,
   MOCK_QA_RECRUITMENT_DETAILS,
   MOCK_QA_RECRUITMENTS,
 } from '@/mocks/qa';
 import type {
   CreateQaRecruitmentRequest,
   CreateQaRecruitmentResponse,
+  QaFeedbackFormResponse,
   QaRecruitmentCard,
   QaRecruitmentDetailResponse,
   QaRecruitmentListParams,
   QaRecruitmentListResponse,
   QaSort,
+  SubmitQaFeedbackRequest,
+  SubmitQaFeedbackResponse,
 } from '@/types/qa';
 import { QaApiError } from '@/types/qa';
 
@@ -18,8 +22,11 @@ const QA_PATHS = {
   recruitments: '/api/feedback-posts',
   detail: (feedbackPostId: string) =>
     `/api/feedback-posts/${encodeURIComponent(feedbackPostId)}`,
+  feedbackForm: (feedbackPostId: string) =>
+    `/api/feedback-posts/${encodeURIComponent(feedbackPostId)}/form`,
   participations: (feedbackPostId: string) =>
     `/api/feedback-posts/${encodeURIComponent(feedbackPostId)}/participations`,
+  feedbacks: '/api/feedbacks',
 } as const;
 
 type NormalizedQaRecruitmentListParams = {
@@ -198,6 +205,48 @@ async function getQaRecruitmentDetail(
   return response.json();
 }
 
+async function getQaFeedbackForm(
+  feedbackPostId: string,
+  signal?: AbortSignal
+): Promise<QaFeedbackFormResponse> {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  if (!apiBaseUrl) {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    const form = MOCK_QA_FEEDBACK_FORMS[feedbackPostId];
+
+    if (!form) {
+      throw new QaApiError('QA 작성 정보를 찾을 수 없습니다.', 404);
+    }
+
+    return form;
+  }
+
+  const baseUrl = apiBaseUrl.replace(/\/$/, '');
+  // TODO: 실제 인증 연동 시 메모리 access token을 Bearer 헤더로 주입한다.
+  const response = await fetch(
+    `${baseUrl}${QA_PATHS.feedbackForm(feedbackPostId)}`,
+    {
+      signal,
+      credentials: 'include',
+    }
+  );
+
+  if (!response.ok) {
+    throw new QaApiError(
+      await parseQaError(
+        response,
+        response.status === 404
+          ? 'QA 작성 정보를 찾을 수 없습니다.'
+          : 'QA 작성 화면을 불러오지 못했습니다'
+      ),
+      response.status
+    );
+  }
+
+  return response.json();
+}
+
 async function createQaRecruitment(
   body: CreateQaRecruitmentRequest
 ): Promise<CreateQaRecruitmentResponse> {
@@ -266,9 +315,55 @@ async function participateInQa(feedbackPostId: string): Promise<void> {
   // TODO: 참여 성공 응답 명세가 확정되면 참여 ID 등 필요한 값을 반환한다.
 }
 
+async function submitQaFeedback(
+  body: SubmitQaFeedbackRequest
+): Promise<SubmitQaFeedbackResponse> {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  if (!apiBaseUrl) {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    return { feedbackId: '770e8400-e29b-41d4-a716-446655440000' };
+  }
+
+  const baseUrl = apiBaseUrl.replace(/\/$/, '');
+  // TODO: 실제 인증 연동 시 메모리 access token을 Bearer 헤더로 주입한다.
+  const response = await fetch(`${baseUrl}${QA_PATHS.feedbacks}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    throw new QaApiError(
+      await parseQaError(response, '피드백 제출에 실패했습니다'),
+      response.status
+    );
+  }
+
+  const data: unknown = await response.json();
+
+  if (typeof data === 'string' && data.length > 0) {
+    return { feedbackId: data };
+  }
+
+  if (
+    typeof data === 'object' &&
+    data !== null &&
+    'feedbackId' in data &&
+    typeof data.feedbackId === 'string'
+  ) {
+    return { feedbackId: data.feedbackId };
+  }
+
+  throw new Error('피드백 제출 응답 형식이 올바르지 않습니다');
+}
+
 export {
   createQaRecruitment,
+  getQaFeedbackForm,
   getQaRecruitmentDetail,
   getQaRecruitments,
   participateInQa,
+  submitQaFeedback,
 };
