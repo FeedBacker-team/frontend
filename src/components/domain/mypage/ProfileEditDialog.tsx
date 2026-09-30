@@ -10,8 +10,8 @@ import {
   DialogTitle,
 } from '@/components/common/Dialog';
 import { ProfileForm } from '@/components/domain/shared/ProfileForm';
+import type { UpdateProfileResponse } from '@/apis/users';
 import type { ProfileCompleteFormValues } from '@/lib/schemas/profile';
-import type { UpdateProfileResponse } from '@/types/profile';
 
 type ProfileEditDialogProps = {
   open: boolean;

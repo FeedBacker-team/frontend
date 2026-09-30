@@ -7,8 +7,8 @@ import { chipVariants } from '@/components/common/Chip';
 import { Input } from '@/components/common/Input';
 import { ProfileEditDialog } from '@/components/domain/mypage/ProfileEditDialog';
 import { PROFILE_ROLE_LABEL } from '@/constants/profile';
-import { PROJECT_TAG_LABEL } from '@/constants/project';
-import type { ProfileInterest, ProfileRole } from '@/types/profile';
+import type { ProfileInterest, ProfileRole } from '@/apis/users';
+import { useTags } from '@/hooks/useTags';
 
 type MyProfileCardProps = {
   nickname: string;
@@ -19,6 +19,10 @@ type MyProfileCardProps = {
 
 function MyProfileCard({ nickname, role, introLink, tags }: MyProfileCardProps) {
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const { data: tagOptions = [] } = useTags();
+  const tagLabelByCode = Object.fromEntries(
+    tagOptions.map(({ code, displayName }) => [code, displayName])
+  );
 
   return (
     <section className="flex flex-col gap-6 rounded-2xl bg-gray-50 p-8">
@@ -64,7 +68,7 @@ function MyProfileCard({ nickname, role, introLink, tags }: MyProfileCardProps) 
                 aria-hidden
                 className="size-3 shrink-0 bg-current mask-[url(/icons/hash.svg)] mask-center mask-contain mask-no-repeat"
               />
-              {PROJECT_TAG_LABEL[tag]}
+              {tagLabelByCode[tag] ?? tag}
             </li>
           ))}
         </ul>

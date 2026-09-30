@@ -1,5 +1,3 @@
-import { PROJECT_TAGS } from '@/constants/project';
-
 const PROFILE_NICKNAME_MAX_LENGTH = 10;
 
 const PROFILE_JOBS = [
@@ -10,14 +8,11 @@ const PROFILE_JOBS = [
   { value: 'OTHER', label: '기타' },
 ] as const;
 
-const PROFILE_INTEREST_TAGS = PROJECT_TAGS;
-
 const PROFILE_ROLE_LABEL = Object.fromEntries(
   PROFILE_JOBS.map(({ value, label }) => [value, label])
 ) as Record<(typeof PROFILE_JOBS)[number]['value'], string>;
 
 export {
-  PROFILE_INTEREST_TAGS,
   PROFILE_JOBS,
   PROFILE_NICKNAME_MAX_LENGTH,
   PROFILE_ROLE_LABEL,

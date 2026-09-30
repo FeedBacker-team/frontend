@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 
-import { AuthLayout } from '@/components/domain/auth/AuthLayout';
 import { ProfileCompleteForm } from '@/components/domain/profile/ProfileCompleteForm';
 
 export const metadata: Metadata = {
@@ -8,9 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function ProfilePage() {
-  return (
-    <AuthLayout size="signup" showLogo={false}>
-      <ProfileCompleteForm />
-    </AuthLayout>
-  );
+  return <ProfileCompleteForm />;
 }
