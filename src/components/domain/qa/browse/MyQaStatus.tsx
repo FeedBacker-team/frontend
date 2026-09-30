@@ -3,6 +3,7 @@ type MyQaStatusProps = {
   pendingFeedbackCount: number;
   submissionPendingCount: number;
   reviewingCount: number;
+  isLoading?: boolean;
 };
 
 type StatusCountProps = {
@@ -21,12 +22,60 @@ function StatusCount({ label, count }: StatusCountProps) {
   );
 }
 
+function MyQaStatusSkeleton() {
+  const statuses = [
+    {
+      label: '모집 중인 QA',
+      iconClass: 'mask-[url(/icons/megaphone.svg)]',
+    },
+    { label: '참여 중인 QA', iconClass: 'mask-[url(/icons/check.svg)]' },
+  ] as const;
+
+  return (
+    <section
+      aria-label="나의 QA 현황을 불러오는 중"
+      aria-busy="true"
+      className="flex flex-col gap-3"
+    >
+      {statuses.map(({ label, iconClass }) => (
+        <div
+          key={label}
+          className="flex flex-col gap-4 rounded-xl border border-border-default bg-bg-default p-4"
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-c1 text-text-default">
+              <span
+                aria-hidden
+                className={`size-4 shrink-0 bg-current ${iconClass} mask-center mask-contain mask-no-repeat`}
+              />
+              {label}
+            </div>
+            <span
+              aria-hidden
+              className="size-5 shrink-0 bg-current mask-[url(/icons/chevron-right.svg)] mask-center mask-contain mask-no-repeat"
+            />
+          </div>
+          <div
+            aria-hidden
+            className="h-6 w-45 animate-pulse rounded-md bg-bg-deep"
+          />
+        </div>
+      ))}
+    </section>
+  );
+}
+
 function MyQaStatus({
   nickname,
   pendingFeedbackCount,
   submissionPendingCount,
   reviewingCount,
+  isLoading = false,
 }: MyQaStatusProps) {
+  if (isLoading) {
+    return <MyQaStatusSkeleton />;
+  }
+
   return (
     <section className="flex flex-col gap-3 rounded-xl bg-bg-default px-5 py-4">
       <h2 className="text-h4 text-text-default">
@@ -75,5 +124,5 @@ function MyQaStatus({
   );
 }
 
-export { MyQaStatus };
+export { MyQaStatus, MyQaStatusSkeleton };
 export type { MyQaStatusProps };
