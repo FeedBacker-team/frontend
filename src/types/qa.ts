@@ -68,6 +68,7 @@ type QaRecruitSubjectiveQuestionRequest = {
   images?: QaRecruitImageRequest[];
   isRequire: boolean;
   minimumLength?: number;
+  allowImageAttachment: boolean;
 };
 
 type CreateQaRecruitmentRequest = {
@@ -194,6 +195,7 @@ type QaFeedbackSubjectiveQuestionResponse = {
   images: ImageResponse[];
   isRequire: boolean;
   minimumLength: number | null;
+  allowImageAttachment?: boolean;
 };
 
 type QaFeedbackFormResponse = {
@@ -209,8 +211,12 @@ type QaFeedbackMultipleChoiceQuestion = QaFeedbackChoiceQuestionResponse & {
   type: 'MULTIPLE_CHOICE';
 };
 
-type QaFeedbackSubjectiveQuestion = QaFeedbackSubjectiveQuestionResponse & {
+type QaFeedbackSubjectiveQuestion = Omit<
+  QaFeedbackSubjectiveQuestionResponse,
+  'allowImageAttachment'
+> & {
   type: 'SUBJECTIVE';
+  allowImageAttachment: boolean;
 };
 
 type QaFeedbackQuestion =
@@ -221,6 +227,7 @@ type QaFeedbackQuestion =
 type QaFeedbackAnswerFormValue = {
   selectedOptions: number[];
   text: string;
+  image: File | null;
 };
 
 type QaFeedbackFormValues = {
@@ -236,6 +243,7 @@ type QaFeedbackChoiceAnswerRequest = {
 type QaFeedbackSubjectiveAnswerRequest = {
   order: number;
   text: string;
+  images: QaRecruitImageRequest[];
 };
 
 type SubmitQaFeedbackRequest = {

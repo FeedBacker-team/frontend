@@ -91,10 +91,41 @@ function useSubmitQaFeedback(feedbackPostId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ questions, values }: SubmitQaFeedbackVariables) =>
-      submitQaFeedback(
-        buildSubmitQaFeedbackRequest(feedbackPostId, questions, values)
-      ),
+    mutationFn: async ({ questions, values }: SubmitQaFeedbackVariables) => {
+      const imageAnswers = questions.flatMap((question) => {
+        if (question.type !== 'SUBJECTIVE') {
+          return [];
+        }
+
+        const image = values.answers[String(question.order)]?.image;
+
+        return image ? [{ order: question.order, image }] : [];
+      });
+      const uploadedPaths =
+        imageAnswers.length > 0
+          ? await uploadQaImages(imageAnswers.map(({ image }) => image))
+          : [];
+
+      if (uploadedPaths.length !== imageAnswers.length) {
+        throw new Error('피드백 이미지 업로드 결과를 확인해 주세요.');
+      }
+
+      const uploadedImagePaths = Object.fromEntries(
+        imageAnswers.map(({ order }, index) => [
+          order,
+          uploadedPaths[index] ? [uploadedPaths[index]] : [],
+        ])
+      );
+
+      return submitQaFeedback(
+        buildSubmitQaFeedbackRequest(
+          feedbackPostId,
+          questions,
+          values,
+          uploadedImagePaths
+        )
+      );
+    },
     onSuccess: () => {
       queryClient.removeQueries({
         queryKey: qaRecruitmentKeys.feedbackForm(feedbackPostId),

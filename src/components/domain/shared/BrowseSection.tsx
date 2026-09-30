@@ -80,7 +80,7 @@ function BrowseSection({
       <div className="flex flex-col gap-7">
         <header className="flex items-end justify-between gap-4">
           <div className="flex min-w-0 flex-col gap-1">
-            <h2 className="text-t2 text-text-default">{title}</h2>
+            <h2 className="text-t3 text-text-default">{title}</h2>
             <p className="text-b2 text-text-sub">{description}</p>
           </div>
           {action}

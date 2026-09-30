@@ -20,6 +20,7 @@ function normalizeQaFeedbackQuestions(
     response.subjectiveQuestionResponses.map((question) => ({
       ...question,
       type: 'SUBJECTIVE',
+      allowImageAttachment: question.allowImageAttachment ?? false,
     }));
 
   return [...choiceQuestions, ...subjectiveQuestions].sort(
@@ -34,7 +35,7 @@ function createQaFeedbackDefaultValues(
     answers: Object.fromEntries(
       questions.map((question) => [
         String(question.order),
-        { selectedOptions: [], text: '' },
+        { selectedOptions: [], text: '', image: null },
       ])
     ),
   };
@@ -56,6 +57,7 @@ function mergeQaFeedbackDraftValues(
 
     if (question.type === 'SUBJECTIVE') {
       values.answers[order].text = draftAnswer.text;
+      values.answers[order].image = null;
       return;
     }
 
@@ -75,14 +77,17 @@ function mergeQaFeedbackDraftValues(
 function hasQaFeedbackAnswers(values: QaFeedbackFormValues) {
   return Object.values(values.answers).some(
     (answer) =>
-      answer.selectedOptions.length > 0 || answer.text.trim().length > 0
+      answer.selectedOptions.length > 0 ||
+      answer.text.trim().length > 0 ||
+      answer.image !== null
   );
 }
 
 function buildSubmitQaFeedbackRequest(
   feedbackPostId: string,
   questions: QaFeedbackQuestion[],
-  values: QaFeedbackFormValues
+  values: QaFeedbackFormValues,
+  uploadedImagePaths: Partial<Record<number, string[]>> = {}
 ): SubmitQaFeedbackRequest {
   const choiceAnswers = questions
     .filter((question) => question.type !== 'SUBJECTIVE')
@@ -104,6 +109,11 @@ function buildSubmitQaFeedbackRequest(
     .map((question) => ({
       order: question.order,
       text: values.answers[String(question.order)]?.text.trim() ?? '',
+      images: (uploadedImagePaths[question.order] ?? []).map((path, index) => ({
+        type: 'POST_THUMBNAIL' as const,
+        order: index,
+        path,
+      })),
     }));
 
   return {

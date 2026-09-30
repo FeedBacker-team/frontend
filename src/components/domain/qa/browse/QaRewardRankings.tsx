@@ -12,6 +12,22 @@ import { useQaRecruitments } from '@/hooks/useQaRecruitments';
 
 const RANKING_QA_SIZE = 5;
 
+function QaRewardRankingsSkeleton() {
+  return (
+    <section
+      aria-label="QA 도토리 랭킹을 불러오는 중"
+      aria-busy="true"
+      className="flex animate-pulse items-center gap-4 rounded-xl bg-bg-default p-3"
+    >
+      <div aria-hidden className="size-18 shrink-0 rounded-md bg-[#D9D9D9]" />
+      <div aria-hidden className="flex min-w-0 flex-1 flex-col gap-2">
+        <div className="h-8 w-36 rounded-md bg-bg-deep" />
+        <div className="h-7 w-13 rounded-md bg-bg-deep" />
+      </div>
+    </section>
+  );
+}
+
 function QaRewardRankings() {
   const { data, isPending, isError } = useQaRecruitments({
     sort: 'REWARD',
@@ -46,14 +62,16 @@ function QaRewardRankings() {
       ),
     })) ?? [];
 
+  if (isPending) {
+    return <QaRewardRankingsSkeleton />;
+  }
+
   return (
     <RankedList
       title="도토리 가득! 혜택이 큰 QA"
       items={items}
-      isLoading={isPending}
-      skeletonCount={RANKING_QA_SIZE}
     />
   );
 }
 
-export { QaRewardRankings };
+export { QaRewardRankings, QaRewardRankingsSkeleton };
