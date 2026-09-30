@@ -50,11 +50,16 @@ GET /api/users/check-nickname?nickname=사용자닉네임
 
 ```text
 파일 선택
-→ POST /api/images
+→ 브라우저에서 로컬 미리보기 생성
+→ 프로필 저장 버튼 클릭
+→ 최종 선택된 파일만 POST /api/images
 → 응답으로 images/example.png 형태의 path 수신
 → PATCH /api/users/me/profile의 profile_image_path에 전달
 ```
 
+- 파일을 선택하거나 교체하는 동안에는 Storage에 업로드하지 않습니다.
+- 프로필 제출에 실패해 다시 시도할 때는 이미 업로드된 동일 파일의 path를
+  재사용합니다.
 - 수정 요청에는 완성된 URL이 아닌 `profile_image_path`를 전달합니다.
 - 이미지를 선택하지 않으면 `profile_image_path`를 생략합니다.
 - 조회 및 수정 응답에서는 서버가 완성한 `profile_image_url`을 반환합니다.

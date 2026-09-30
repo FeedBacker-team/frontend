@@ -1,28 +1,16 @@
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 
-import { useUploadImages } from '@/hooks/useImages';
 import { validateImageFile } from '@/lib/validateImageFile';
-
-type UploadedImage = {
-  image_path: string;
-};
 
 type UseImageUploadOptions = {
   onError?: (message: string) => void;
 };
 
-function getFileErrorMessage(error: unknown, fallbackMessage: string) {
-  return error instanceof Error ? error.message : fallbackMessage;
-}
-
 function useImageUpload({ onError }: UseImageUploadOptions = {}) {
   const inputRef = useRef<HTMLInputElement>(null);
   const previewUrlRef = useRef<string | null>(null);
-  const uploadedRef = useRef<UploadedImage | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [uploaded, setUploaded] = useState<UploadedImage | null>(null);
-  const { mutate: uploadImageFiles, isPending: isUploading } =
-    useUploadImages();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   useEffect(() => {
     return () => {
@@ -31,10 +19,6 @@ function useImageUpload({ onError }: UseImageUploadOptions = {}) {
       }
     };
   }, []);
-
-  const reportError = (error: unknown, fallbackMessage: string) => {
-    onError?.(getFileErrorMessage(error, fallbackMessage));
-  };
 
   const clear = () => {
     if (previewUrlRef.current) {
@@ -46,8 +30,7 @@ function useImageUpload({ onError }: UseImageUploadOptions = {}) {
       inputRef.current.value = '';
     }
 
-    uploadedRef.current = null;
-    setUploaded(null);
+    setSelectedFile(null);
     setPreviewUrl(null);
   };
 
@@ -61,21 +44,9 @@ function useImageUpload({ onError }: UseImageUploadOptions = {}) {
     setPreviewUrl(nextPreviewUrl);
   };
 
-  const uploadSelectedImage = (file: File) => {
+  const selectImage = (file: File) => {
     applyLocalPreview(file);
-    uploadImageFiles([file], {
-      onSuccess: ([imagePath]) => {
-        const nextUploaded = {
-          image_path: imagePath,
-        };
-        uploadedRef.current = nextUploaded;
-        setUploaded(nextUploaded);
-      },
-      onError: (error) => {
-        reportError(error, '이미지 업로드에 실패했습니다');
-        clear();
-      },
-    });
+    setSelectedFile(file);
   };
 
   const remove = () => {
@@ -97,18 +68,17 @@ function useImageUpload({ onError }: UseImageUploadOptions = {}) {
       return;
     }
 
-    uploadSelectedImage(file);
+    selectImage(file);
   };
 
   return {
     inputRef,
     previewUrl,
-    uploaded,
-    isPending: isUploading,
+    selectedFile,
     selectFile,
     remove,
   };
 }
 
 export { useImageUpload };
-export type { UploadedImage, UseImageUploadOptions };
+export type { UseImageUploadOptions };
