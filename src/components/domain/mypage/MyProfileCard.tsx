@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import Image from 'next/image';
+
 import { Button } from '@/components/common/Button';
 import { chipVariants } from '@/components/common/Chip';
 import { Input } from '@/components/common/Input';
@@ -28,7 +30,15 @@ function MyProfileCard({ nickname, role, introLink, tags }: MyProfileCardProps) 
     <section className="flex flex-col gap-6 rounded-2xl bg-gray-50 p-8">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="size-15 shrink-0 rounded-full bg-gray-200" />
+          <Image
+            src="/icons/basic-avatars.svg"
+            alt=""
+            aria-hidden
+            width={60}
+            height={60}
+            unoptimized
+            className="size-15 shrink-0 rounded-full"
+          />
           <div className="flex flex-col gap-1">
             <h2 className="text-h2 text-text-default">{nickname}</h2>
             <p className="text-b3 text-text-sub">{PROFILE_ROLE_LABEL[role]}</p>

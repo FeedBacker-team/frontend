@@ -41,7 +41,9 @@ const projectFormSchema = z.object({
       PROJECT_DESCRIPTION_MAX_LENGTH,
       `설명은 ${PROJECT_DESCRIPTION_MAX_LENGTH}자 이내로 입력해 주세요`
     ),
-  tags: z.array(projectTagSchema),
+  tags: z
+    .array(projectTagSchema)
+    .max(5, '태그는 최대 5개까지 선택할 수 있어요'),
   url: z
     .string()
     .trim()

@@ -1,19 +1,20 @@
+import type { QaRecruitmentStatus, QaTargetType } from '@/types/qa';
+
 type ProjectTag =
   | 'WEB'
   | 'APP'
-  | 'AI_ML'
+  | 'AI'
   | 'DATA'
   | 'CLOUD'
   | 'COMMERCE'
   | 'FINTECH'
-  | 'B2B_SAAS'
+  | 'B2B'
   | 'CONTENT_MEDIA'
   | 'GAME'
-  | 'UXUI'
+  | 'UX'
   | 'SECURITY'
   | 'PRODUCTIVITY'
   | 'HEALTHCARE'
-  | 'EDUCATION'
   | 'GLOBAL';
 
 type ProjectSort = 'LATEST' | 'VIEW_COUNT';
@@ -44,36 +45,60 @@ type ProjectListResponse = {
   projects: ProjectCard[];
 };
 
-type ProjectOwnerSummary = {
-  userId: string;
-  nickname: string;
-  profileImageUrl: string | null;
-};
-
-type ProjectOwnerResponse = {
-  user_id: string;
-  nickname: string;
-  profile_image_url: string | null;
+type ProjectActiveQaResponse = {
+  feedback_post_id: string;
+  title: string;
+  status: QaRecruitmentStatus;
+  target_type: QaTargetType;
+  slot_capacity: number;
+  remaining_slots: number;
+  reward_acorn: number;
+  end_at: string;
 };
 
 type ProjectDetailResponse = {
   project_id: string;
   title: string;
   description: string;
-  thumbnail_url: string | null;
   tags: ProjectTag[];
-  url: string | null;
-  owner: ProjectOwnerResponse;
+  service_link: string;
+  thumbnail_image: string;
+  owner_id: string;
+  owner_nickname: string;
+  view_count: number;
+  created_at: string;
+  updated_at: string;
+  is_owner: boolean;
+  has_active_qa: boolean;
+  active_qa: ProjectActiveQaResponse | null;
+};
+
+type ProjectActiveQa = {
+  feedbackPostId: string;
+  title: string;
+  status: QaRecruitmentStatus;
+  targetType: QaTargetType;
+  slotCapacity: number;
+  remainingSlots: number;
+  rewardAcorn: number;
+  endAt: string;
 };
 
 type ProjectDetail = {
   projectId: string;
   title: string;
   description: string;
-  thumbnailUrl: string | null;
+  thumbnailUrl: string;
   tags: ProjectTag[];
-  serviceUrl: string | null;
-  owner: ProjectOwnerSummary;
+  serviceUrl: string;
+  ownerId: string;
+  ownerNickname: string;
+  viewCount: number;
+  createdAt: string;
+  updatedAt: string;
+  isOwner: boolean;
+  hasActiveQa: boolean;
+  activeQa: ProjectActiveQa | null;
 };
 
 type ProjectImageValue = Pick<File, 'name' | 'type' | 'size'>;
@@ -83,44 +108,20 @@ type ProjectFormValues = {
   description: string;
   tags: ProjectTag[];
   image: ProjectImageValue | null;
+  imagePath: string | null;
   url: string;
 };
 
-type ProjectCreateRequest = {
-  title: string;
-  description: string;
-  tags: ProjectTag[];
-  image_url: string;
-  url: string;
-};
-
-type ProjectCreateResponse = {
-  project_id: number;
-};
-
-class ProjectError extends Error {
-  status: number;
-
-  constructor(message: string, status: number) {
-    super(message);
-    this.name = 'ProjectError';
-    this.status = status;
-  }
-}
-
-export { ProjectError };
 export type {
+  ProjectActiveQa,
+  ProjectActiveQaResponse,
   ProjectCard,
-  ProjectCreateRequest,
-  ProjectCreateResponse,
   ProjectDetail,
   ProjectDetailResponse,
   ProjectFormValues,
   ProjectImageValue,
   ProjectListParams,
   ProjectListResponse,
-  ProjectOwnerSummary,
-  ProjectOwnerResponse,
   ProjectSort,
   ProjectTag,
 };

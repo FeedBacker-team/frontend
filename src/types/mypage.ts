@@ -3,6 +3,7 @@ type MyProjectItem = {
   title: string;
   description: string;
   tags: string[];
+  thumbnailUrl: string | null;
   publishedAt: string;
   viewCount: number;
 };
@@ -120,10 +121,7 @@ type WithdrawReasonValue =
   | 'ETC';
 
 type ObjectionReasonValue =
-  | 'SINCERELY_WRITTEN'
-  | 'REASON_MISMATCH'
-  | 'PROJECT_ISSUE'
-  | 'ETC';
+  'SINCERELY_WRITTEN' | 'REASON_MISMATCH' | 'PROJECT_ISSUE' | 'ETC';
 
 type MyQaFeedbackReviewStatus = Extract<
   MyQaParticipationStatus,
@@ -217,10 +215,7 @@ type MyQaResultDetail = {
 };
 
 type FeedbackRejectReasonValue =
-  | 'IRRELEVANT_ANSWER'
-  | 'INSINCERE_ANSWER'
-  | 'NOT_ACTUALLY_TESTED'
-  | 'ETC';
+  'IRRELEVANT_ANSWER' | 'INSINCERE_ANSWER' | 'NOT_ACTUALLY_TESTED' | 'ETC';
 
 type MyPageTab = 'PROJECT' | 'QA_RECRUIT' | 'QA_PARTICIPATION';
 

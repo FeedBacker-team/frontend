@@ -7,7 +7,6 @@ import {
 import {
   isMyPageTab,
   MOCK_ACORN_TRANSACTIONS,
-  MOCK_MY_PROJECTS,
   MOCK_MY_QA_PARTICIPATIONS,
   MOCK_MY_QA_RECRUITS,
 } from '@/constants/mypage';
@@ -16,7 +15,7 @@ const MOCK_PROFILE: MyProfileCardProps = {
   nickname: '닉네임',
   role: 'DEVELOPER',
   introLink: 'https://aibiz.example.com',
-  tags: ['WEB', 'B2B_SAAS', 'AI_ML'],
+  tags: ['WEB', 'B2B', 'AI'],
 };
 
 const MOCK_GROWTH = {
@@ -37,7 +36,6 @@ export default async function MyPage(props: PageProps<'/mypage'>) {
       <MyProfileCard {...MOCK_PROFILE} />
       <MyGrowthSummary {...MOCK_GROWTH} />
       <MyPageTabs
-        projects={MOCK_MY_PROJECTS}
         qaRecruits={MOCK_MY_QA_RECRUITS}
         qaParticipations={MOCK_MY_QA_PARTICIPATIONS}
         initialTab={isMyPageTab(tabParam) ? tabParam : undefined}
