@@ -4,6 +4,7 @@ const KAKAO_LOGIN_PATH = '/api/auth/kakao';
 
 type KakaoLoginRequest = {
   authorization_code: string;
+  redirect_uri: string;
 };
 
 type KakaoLoginResponse = {

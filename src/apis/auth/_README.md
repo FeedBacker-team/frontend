@@ -104,7 +104,7 @@ const login = useLogin();
 카카오 로그인 버튼 클릭
 → 카카오 인증 페이지로 이동
 → /oauth/kakao/callback에서 code와 state 확인
-→ authorization_code를 POST /api/auth/kakao로 전달
+→ authorization_code와 redirect_uri를 POST /api/auth/kakao로 전달
 → Access Token 메모리 저장
 → 신규 사용자 및 프로필 완성 여부에 따라 이동
 ```
@@ -113,8 +113,8 @@ const login = useLogin();
   않습니다.
 - 카카오 인가 요청과 백엔드 토큰 요청의 Redirect URI가 정확히 일치해야 합니다.
 - 카카오 사용자의 `email`은 `null`일 수 있으므로 필수 문자열로 가정하지 않습니다.
-- 현재 API 요청 타입은 `authorization_code`만 전달합니다. 백엔드 명세에
-  `redirect_uri`가 추가되면 요청 타입과 콜백 호출부를 함께 수정합니다.
+- 로컬과 Vercel 모두 현재 origin을 기준으로 만든 동일한 `redirect_uri`를
+  인가 요청과 백엔드 요청에 전달합니다.
 
 ## `postAuth`와 `apiRequest`의 차이
 

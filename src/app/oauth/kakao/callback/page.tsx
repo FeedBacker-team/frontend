@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 
-import { AuthLayout } from '@/components/domain/auth/AuthLayout';
 import { KakaoCallback } from '@/components/domain/auth/KakaoCallback';
 
 export const metadata: Metadata = {
@@ -26,13 +25,11 @@ export default async function KakaoCallbackPage({
   const params = await searchParams;
 
   return (
-    <AuthLayout size="login">
-      <KakaoCallback
-        authorizationCode={getFirst(params.code)}
-        state={getFirst(params.state)}
-        oauthError={getFirst(params.error)}
-        oauthErrorDescription={getFirst(params.error_description)}
-      />
-    </AuthLayout>
+    <KakaoCallback
+      authorizationCode={getFirst(params.code)}
+      state={getFirst(params.state)}
+      oauthError={getFirst(params.error)}
+      oauthErrorDescription={getFirst(params.error_description)}
+    />
   );
 }

@@ -17,6 +17,7 @@ import {
   PROFILE_NICKNAME_MAX_LENGTH,
 } from '@/constants/profile';
 import { useImageUpload } from '@/hooks/useImageUpload';
+import { useUploadImages } from '@/hooks/useImages';
 import { useCheckNickname, useUpdateProfile } from '@/hooks/useProfile';
 import { useTags } from '@/hooks/useTags';
 import {
@@ -93,6 +94,8 @@ function ProfileForm({
   onSuccess,
 }: ProfileFormProps) {
   const { mutate: saveProfile, isPending: isSaving } = useUpdateProfile();
+  const { mutateAsync: uploadImageFiles, isPending: isImageUploading } =
+    useUploadImages();
   const { mutate: checkNickname, isPending: isCheckingNickname } =
     useCheckNickname();
   const {
@@ -105,18 +108,21 @@ function ProfileForm({
   const [nicknameVerified, setNicknameVerified] = useState(
     !!defaultValues?.nickname
   );
+  const [uploadedImage, setUploadedImage] = useState<{
+    file: File;
+    path: string;
+  } | null>(null);
   const {
     inputRef: imageInputRef,
     previewUrl,
-    uploaded,
-    isPending: isImagePending,
+    selectedFile,
     selectFile,
     remove: removeImage,
   } = useImageUpload({
     onError: (message) => toast.error(message),
   });
   const isSubmitPending =
-    isSaving || isImagePending || isTagsPending || isTagsError;
+    isSaving || isImageUploading || isTagsPending || isTagsError;
   const {
     register,
     handleSubmit,
@@ -182,10 +188,34 @@ function ProfileForm({
     });
   };
 
-  const onSubmit = (values: ProfileCompleteFormValues) => {
+  const onSubmit = async (values: ProfileCompleteFormValues) => {
     if (!nicknameVerified) {
       setError('nickname', { message: '닉네임 중복 확인을 해주세요' });
       return;
+    }
+
+    let profileImagePath: string | undefined;
+
+    if (selectedFile) {
+      if (uploadedImage?.file === selectedFile) {
+        profileImagePath = uploadedImage.path;
+      } else {
+        try {
+          const [uploadedPath] = await uploadImageFiles([selectedFile]);
+          profileImagePath = uploadedPath;
+          setUploadedImage({
+            file: selectedFile,
+            path: uploadedPath,
+          });
+        } catch (error) {
+          toast.error(
+            error instanceof Error
+              ? error.message
+              : '이미지 업로드에 실패했습니다'
+          );
+          return;
+        }
+      }
     }
 
     saveProfile(
@@ -196,7 +226,7 @@ function ProfileForm({
         interests: values.interests.filter((interest) =>
           interestTags.some((tag) => tag.code === interest)
         ),
-        profile_image_path: uploaded?.image_path,
+        profile_image_path: profileImagePath,
       },
       {
         onSuccess,
@@ -220,7 +250,7 @@ function ProfileForm({
           <button
             type="button"
             aria-label="프로필 사진 등록"
-            disabled={isImagePending}
+            disabled={isSubmitPending}
             onClick={() => imageInputRef.current?.click()}
             className="size-20 cursor-pointer overflow-hidden rounded-full disabled:cursor-not-allowed"
           >
@@ -249,7 +279,7 @@ function ProfileForm({
             <button
               type="button"
               aria-label="프로필 사진 삭제"
-              disabled={isImagePending}
+              disabled={isSubmitPending}
               onClick={handleRemoveAvatar}
               className="absolute top-0 right-0 size-6 cursor-pointer disabled:cursor-not-allowed"
             >
@@ -280,7 +310,7 @@ function ProfileForm({
           id="profile-image"
           type="file"
           accept={ALLOWED_IMAGE_TYPES.join(',')}
-          disabled={isImagePending}
+          disabled={isSubmitPending}
           className="sr-only"
           onChange={selectFile}
         />

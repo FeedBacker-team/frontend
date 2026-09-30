@@ -16,6 +16,10 @@ function storeKakaoOAuthState(state: string) {
   window.sessionStorage.setItem(KAKAO_OAUTH_STATE_KEY, state);
 }
 
+function getKakaoRedirectUri() {
+  return `${window.location.origin}/oauth/kakao/callback`;
+}
+
 function createKakaoAuthorizationUrl() {
   const clientId = process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY;
 
@@ -24,7 +28,7 @@ function createKakaoAuthorizationUrl() {
   }
 
   const state = createKakaoOAuthState();
-  const redirectUri = `${window.location.origin}/oauth/kakao/callback`;
+  const redirectUri = getKakaoRedirectUri();
   const authorizeUrl = new URL(KAKAO_AUTHORIZE_URL);
 
   authorizeUrl.searchParams.set('client_id', clientId);
@@ -56,6 +60,7 @@ function clearStoredKakaoOAuthState() {
 export {
   clearStoredKakaoOAuthState,
   createKakaoAuthorizationUrl,
+  getKakaoRedirectUri,
   getStoredKakaoOAuthState,
   KAKAO_OAUTH_STATE_KEY,
 };
