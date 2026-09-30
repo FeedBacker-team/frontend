@@ -18,6 +18,48 @@ const qaFeedbackDraftSchema = z.object({
 
 type QaFeedbackDraft = z.infer<typeof qaFeedbackDraftSchema>;
 
+function normalizeStoredDraft(value: unknown): unknown {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    return value;
+  }
+
+  const draft = value as Record<string, unknown>;
+  const values = draft.values;
+
+  if (
+    typeof values !== 'object' ||
+    values === null ||
+    Array.isArray(values)
+  ) {
+    return value;
+  }
+
+  const answers = (values as Record<string, unknown>).answers;
+
+  if (
+    typeof answers !== 'object' ||
+    answers === null ||
+    Array.isArray(answers)
+  ) {
+    return value;
+  }
+
+  return {
+    ...draft,
+    values: {
+      ...values,
+      answers: Object.fromEntries(
+        Object.entries(answers).map(([order, answer]) => [
+          order,
+          typeof answer === 'object' && answer !== null && !Array.isArray(answer)
+            ? { ...answer, image: null }
+            : answer,
+        ])
+      ),
+    },
+  };
+}
+
 function getQaFeedbackDraftKey(feedbackPostId: string, userId: string) {
   return `${QA_FEEDBACK_DRAFT_KEY_PREFIX}:v${QA_FEEDBACK_DRAFT_VERSION}:${userId}:${feedbackPostId}`;
 }
@@ -53,7 +95,9 @@ function loadQaFeedbackDraft(
       return null;
     }
 
-    const result = qaFeedbackDraftSchema.safeParse(JSON.parse(storedValue));
+    const result = qaFeedbackDraftSchema.safeParse(
+      normalizeStoredDraft(JSON.parse(storedValue))
+    );
 
     if (
       !result.success ||
@@ -95,7 +139,14 @@ function saveQaFeedbackDraft({
     userId,
     updatedAt: Date.now(),
     expiresAt,
-    values,
+    values: {
+      answers: Object.fromEntries(
+        Object.entries(values.answers).map(([order, answer]) => [
+          order,
+          { ...answer, image: null },
+        ])
+      ),
+    },
   };
 
   try {

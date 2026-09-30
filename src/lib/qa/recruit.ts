@@ -48,6 +48,7 @@ function buildQaRecruitmentRequest(
         questionText: question.questionText.trim(),
         isRequire: question.isRequire,
         minimumLength: question.minimumLength ?? undefined,
+        allowImageAttachment: question.allowImageAttachment,
       });
       return;
     }
