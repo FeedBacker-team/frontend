@@ -3,6 +3,7 @@
 import { useState, type CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
@@ -14,10 +15,11 @@ import {
   TooltipTrigger,
 } from '@/components/common/Tooltip';
 import { KakaoLoginButton } from '@/components/domain/auth/KakaoLoginButton';
+import { AuthError } from '@/apis/auth';
 import { useLogin } from '@/hooks/useAuth';
+import { establishAuthSession } from '@/lib/auth/session';
 import { loginSchema, type LoginFormValues } from '@/lib/schemas/auth';
 import { cn } from '@/lib/utils';
-import { AuthError } from '@/types/auth';
 
 function FieldError({ id, message }: { id: string; message: string }) {
   return (
@@ -41,6 +43,7 @@ function FieldError({ id, message }: { id: string; message: string }) {
 }
 
 function LoginForm() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const { mutate, isPending } = useLogin();
   const {
@@ -54,6 +57,13 @@ function LoginForm() {
 
   const onSubmit = (values: LoginFormValues) => {
     mutate(values, {
+      onSuccess: (data) => {
+        establishAuthSession({
+          accessToken: data.access_token,
+          isProfileCompleted: data.is_profile_completed,
+        });
+        router.replace(data.is_profile_completed ? '/' : '/profile');
+      },
       onError: (error) => {
         const message =
           error instanceof AuthError ? error.message : '로그인에 실패했습니다';

@@ -3,19 +3,21 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/common/Button';
 import { Input } from '@/components/common/Input';
+import { AuthError } from '@/apis/auth';
 import {
   useSendEmailVerification,
   useSignup,
   useVerifyEmailCode,
 } from '@/hooks/useAuth';
+import { establishAuthSession } from '@/lib/auth/session';
 import { signupSchema, type SignupFormValues } from '@/lib/schemas/auth';
 import { cn } from '@/lib/utils';
-import { AuthError } from '@/types/auth';
 
 function PasswordVisibilityButton({
   visible,
@@ -101,6 +103,7 @@ function VerificationTimer({ remainingSeconds }: { remainingSeconds: number }) {
 }
 
 function SignupForm() {
+  const router = useRouter();
   const [emailVerified, setEmailVerified] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -115,6 +118,7 @@ function SignupForm() {
     handleSubmit,
     trigger,
     getValues,
+    setValue,
     setError,
     clearErrors,
     formState: { errors },
@@ -136,6 +140,16 @@ function SignupForm() {
     return () => window.clearTimeout(timeoutId);
   }, [emailVerified, remainingSeconds]);
 
+  useEffect(() => {
+    if (emailVerified || remainingSeconds !== 0) {
+      return;
+    }
+
+    setError('verificationCode', {
+      message: '인증번호 유효시간이 만료되었습니다. 다시 요청해주세요',
+    });
+  }, [emailVerified, remainingSeconds, setError]);
+
   const onRequestCode = async () => {
     const emailOk = await trigger('email');
     if (!emailOk) {
@@ -146,7 +160,9 @@ function SignupForm() {
       { email: getValues('email') },
       {
         onSuccess: (data) => {
-          clearErrors('email');
+          setEmailVerified(false);
+          setValue('verificationCode', '');
+          clearErrors(['email', 'verificationCode']);
           setRemainingSeconds(data.expires_in);
         },
         onError: (error) => {
@@ -161,6 +177,20 @@ function SignupForm() {
   const onConfirmCode = async () => {
     const emailOk = await trigger('email');
     if (!emailOk) {
+      return;
+    }
+
+    if (remainingSeconds === null) {
+      setError('verificationCode', {
+        message: '인증번호를 먼저 요청해주세요',
+      });
+      return;
+    }
+
+    if (remainingSeconds <= 0) {
+      setError('verificationCode', {
+        message: '인증번호 유효시간이 만료되었습니다. 다시 요청해주세요',
+      });
       return;
     }
 
@@ -208,6 +238,13 @@ function SignupForm() {
     signupAccount(
       { email: values.email, password: values.password },
       {
+        onSuccess: (data) => {
+          establishAuthSession({
+            accessToken: data.access_token,
+            isProfileCompleted: data.is_profile_completed,
+          });
+          router.replace('/profile');
+        },
         onError: (error) => {
           setError('password', {
             message: getAuthErrorMessage(error, '회원가입에 실패했습니다'),
@@ -228,6 +265,8 @@ function SignupForm() {
       ? 'error'
       : 'default';
   const showVerificationTimer = remainingSeconds !== null && !emailVerified;
+  const canVerifyCode =
+    remainingSeconds !== null && remainingSeconds > 0 && !emailVerified;
 
   return (
     <form
@@ -264,7 +303,15 @@ function SignupForm() {
                     'h-12 px-4',
                     emailState === 'default' && 'border-border-default'
                   )}
-                  {...register('email')}
+                  {...register('email', {
+                    onChange: () => {
+                      if (remainingSeconds !== null) {
+                        setRemainingSeconds(null);
+                        setValue('verificationCode', '');
+                        clearErrors('verificationCode');
+                      }
+                    },
+                  })}
                 />
               </div>
               <Button
@@ -272,10 +319,12 @@ function SignupForm() {
                 variant="outline"
                 size="large"
                 className="h-12 w-21.5 shrink-0 px-5"
-                disabled={emailVerified || isSendingCode}
+                disabled={
+                  emailVerified || isSendingCode || isVerifyingCode
+                }
                 onClick={onRequestCode}
               >
-                인증 요청
+                {remainingSeconds === null ? '인증 요청' : '재요청'}
               </Button>
             </div>
             {errors.email?.message ? (
@@ -295,7 +344,7 @@ function SignupForm() {
                   inputMode="numeric"
                   autoComplete="one-time-code"
                   placeholder="인증번호를 입력해 주세요"
-                  readOnly={emailVerified}
+                  readOnly={emailVerified || remainingSeconds === 0}
                   aria-invalid={!!errors.verificationCode}
                   aria-describedby={
                     emailVerified
@@ -325,7 +374,9 @@ function SignupForm() {
                 variant="outline"
                 size="large"
                 className="h-12 w-21.5 shrink-0 px-5"
-                disabled={emailVerified || isVerifyingCode}
+                disabled={
+                  !canVerifyCode || isVerifyingCode || isSendingCode
+                }
                 onClick={onConfirmCode}
               >
                 확인
