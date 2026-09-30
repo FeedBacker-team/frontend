@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { uploadQaImages } from '@/apis/file';
+import { uploadImages } from '@/apis/images';
 import {
   createQaRecruitment,
   getQaFeedbackForm,
@@ -53,7 +53,7 @@ function useQaFeedbackForm(feedbackPostId: string) {
 async function submitQaRecruitment(values: QaRecruitFormValues) {
   const uploadedPaths =
     values.target === 'IMAGE'
-      ? await uploadQaImages(values.testImages)
+      ? await uploadImages(values.testImages)
       : [];
   const request = buildQaRecruitmentRequest(values, uploadedPaths);
 
@@ -103,7 +103,7 @@ function useSubmitQaFeedback(feedbackPostId: string) {
       });
       const uploadedPaths =
         imageAnswers.length > 0
-          ? await uploadQaImages(imageAnswers.map(({ image }) => image))
+          ? await uploadImages(imageAnswers.map(({ image }) => image))
           : [];
 
       if (uploadedPaths.length !== imageAnswers.length) {

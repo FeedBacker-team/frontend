@@ -2,6 +2,8 @@ import { useMutation } from '@tanstack/react-query';
 
 import {
   login,
+  loginWithKakao,
+  logout,
   sendEmailVerification,
   signup,
   verifyEmailCode,
@@ -15,6 +17,12 @@ const authKeys = {
 function useLogin() {
   return useMutation({
     mutationFn: login,
+  });
+}
+
+function useKakaoLogin() {
+  return useMutation({
+    mutationFn: loginWithKakao,
   });
 }
 
@@ -36,9 +44,17 @@ function useSignup() {
   });
 }
 
+function useLogout() {
+  return useMutation({
+    mutationFn: logout,
+  });
+}
+
 export {
   authKeys,
+  useKakaoLogin,
   useLogin,
+  useLogout,
   useSendEmailVerification,
   useSignup,
   useVerifyEmailCode,

@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 
-import { useDeleteImage, useUploadImage } from '@/hooks/useFiles';
+import { useUploadImages } from '@/hooks/useImages';
 import { validateImageFile } from '@/lib/validateImageFile';
-import { FileError } from '@/types/file';
 
 type UploadedImage = {
-  file_id: number;
-  image_url: string;
+  image_path: string;
 };
 
 type UseImageUploadOptions = {
@@ -14,7 +12,7 @@ type UseImageUploadOptions = {
 };
 
 function getFileErrorMessage(error: unknown, fallbackMessage: string) {
-  return error instanceof FileError ? error.message : fallbackMessage;
+  return error instanceof Error ? error.message : fallbackMessage;
 }
 
 function useImageUpload({ onError }: UseImageUploadOptions = {}) {
@@ -23,8 +21,8 @@ function useImageUpload({ onError }: UseImageUploadOptions = {}) {
   const uploadedRef = useRef<UploadedImage | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploaded, setUploaded] = useState<UploadedImage | null>(null);
-  const { mutate: uploadImageFile, isPending: isUploading } = useUploadImage();
-  const { mutate: deleteImageFile, isPending: isDeleting } = useDeleteImage();
+  const { mutate: uploadImageFiles, isPending: isUploading } =
+    useUploadImages();
 
   useEffect(() => {
     return () => {
@@ -65,11 +63,10 @@ function useImageUpload({ onError }: UseImageUploadOptions = {}) {
 
   const uploadSelectedImage = (file: File) => {
     applyLocalPreview(file);
-    uploadImageFile(file, {
-      onSuccess: (data) => {
+    uploadImageFiles([file], {
+      onSuccess: ([imagePath]) => {
         const nextUploaded = {
-          file_id: data.file_id,
-          image_url: data.image_url,
+          image_path: imagePath,
         };
         uploadedRef.current = nextUploaded;
         setUploaded(nextUploaded);
@@ -82,21 +79,7 @@ function useImageUpload({ onError }: UseImageUploadOptions = {}) {
   };
 
   const remove = () => {
-    const current = uploadedRef.current;
-
-    if (!current) {
-      clear();
-      return;
-    }
-
-    deleteImageFile(current.file_id, {
-      onSuccess: () => {
-        clear();
-      },
-      onError: (error) => {
-        reportError(error, '이미지 삭제에 실패했습니다');
-      },
-    });
+    clear();
   };
 
   const selectFile = (event: ChangeEvent<HTMLInputElement>) => {
@@ -114,31 +97,14 @@ function useImageUpload({ onError }: UseImageUploadOptions = {}) {
       return;
     }
 
-    const previousFileId = uploadedRef.current?.file_id;
-
-    if (!previousFileId) {
-      uploadSelectedImage(file);
-      return;
-    }
-
-    deleteImageFile(previousFileId, {
-      onSuccess: () => {
-        uploadedRef.current = null;
-        setUploaded(null);
-        uploadSelectedImage(file);
-      },
-      onError: (error) => {
-        reportError(error, '이미지 삭제에 실패했습니다');
-        event.target.value = '';
-      },
-    });
+    uploadSelectedImage(file);
   };
 
   return {
     inputRef,
     previewUrl,
     uploaded,
-    isPending: isUploading || isDeleting,
+    isPending: isUploading,
     selectFile,
     remove,
   };

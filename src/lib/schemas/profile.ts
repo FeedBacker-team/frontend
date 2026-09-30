@@ -1,21 +1,17 @@
 import { z } from 'zod';
 
 import {
-  PROFILE_INTEREST_TAGS,
   PROFILE_JOBS,
   PROFILE_NICKNAME_MAX_LENGTH,
 } from '@/constants/profile';
 
 const [firstRole, ...restRoles] = PROFILE_JOBS.map((job) => job.value);
-const [firstInterest, ...restInterests] = PROFILE_INTEREST_TAGS.map(
-  (tag) => tag.value
-);
 
 const profileRoleSchema = z.enum([firstRole, ...restRoles], {
   error: '직군을 선택해 주세요',
 });
 
-const profileInterestSchema = z.enum([firstInterest, ...restInterests]);
+const profileInterestSchema = z.string().trim().min(1);
 
 const introLinkSchema = z.string().trim().refine(
   (value) => value === '' || z.url().safeParse(value).success,

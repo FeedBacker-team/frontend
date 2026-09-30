@@ -3,9 +3,18 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { Button } from '@/components/common/Button';
+import { toast } from '@/components/common/Sonner';
+import { AuthError } from '@/apis/auth';
+import { getTreeStageByHumidity } from '@/constants/mypage';
+import { useLogout } from '@/hooks/useAuth';
+import { useProfile } from '@/hooks/useProfile';
+import { clearAuthSession } from '@/lib/auth/session';
 import { cn } from '@/lib/utils';
+import { useAuthStore } from '@/stores/authStore';
 
 import { SidebarNavItem } from './SidebarNavItem';
 
@@ -28,8 +37,38 @@ const NAV_ITEMS = [
 ] as const;
 
 function Sidebar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const authStatus = useAuthStore((state) => state.status);
+  const isProfileCompleted = useAuthStore(
+    (state) => state.isProfileCompleted
+  );
+  const { mutate: logoutAccount, isPending: isLoggingOut } = useLogout();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const isLoggedIn = authStatus === 'authenticated';
+  const { data: profile, isError: isProfileError } = useProfile({
+    enabled: isLoggedIn && isProfileCompleted,
+  });
+  const treeStage = profile
+    ? getTreeStageByHumidity(profile.humidity)
+    : null;
+  const profileImageSrc =
+    profile?.profile_image_url || '/icons/basic-avatars.svg';
+
+  const handleLogout = () => {
+    logoutAccount(undefined, {
+      onSuccess: () => {
+        clearAuthSession();
+        queryClient.clear();
+        router.replace('/');
+      },
+      onError: (error) => {
+        toast.error(
+          error instanceof AuthError ? error.message : '로그아웃에 실패했습니다'
+        );
+      },
+    });
+  };
 
   return (
     <aside
@@ -91,11 +130,11 @@ function Sidebar() {
           ))}
         </nav>
 
-        {isLoggedIn && !isCollapsed && (
+        {profile && treeStage && !isCollapsed && (
           <div className="relative flex w-full flex-col items-center gap-2 rounded-xl border border-gray-400 bg-white p-3 shadow-[2px_2px_8px_0_rgba(0,0,0,0.1)]">
             <div className="relative flex h-37.5 w-full items-center justify-center bg-yellow-50">
               <Image
-                src="/images/4th_tree.svg"
+                src={treeStage.treeImageSrc}
                 alt=""
                 aria-hidden
                 width={96}
@@ -108,15 +147,15 @@ function Sidebar() {
                   aria-hidden
                   className="size-4 shrink-0 bg-current mask-[url(/icons/droplet.svg)] mask-center mask-contain mask-no-repeat"
                 />
-                <span className="text-c1">100%</span>
+                <span className="text-c1">{profile.humidity}%</span>
               </div>
             </div>
             <div className="flex items-center gap-1">
               <span className="rounded-full bg-yellow-100 px-2 py-1 text-c2 text-yellow-600">
-                4단계
+                {treeStage.stage}단계
               </span>
               <span className="text-c1 whitespace-nowrap text-yellow-800">
-                풍성한 도토리 나무
+                {treeStage.stageLabel}
               </span>
             </div>
           </div>
@@ -126,12 +165,20 @@ function Sidebar() {
       {isCollapsed ? (
         isLoggedIn ? (
           <div className="flex flex-col items-center gap-3 border-t border-gray-400 px-4 pt-4">
-            <div className="size-8 shrink-0 rounded-full bg-gray-200" />
+            <Image
+              src={profileImageSrc}
+              alt={profile ? `${profile.nickname} 프로필` : ''}
+              width={32}
+              height={32}
+              unoptimized
+              className="size-8 shrink-0 rounded-full bg-gray-200 object-cover"
+            />
             <Button
               variant="outline"
               size="medium"
               aria-label="로그아웃"
-              onClick={() => setIsLoggedIn(false)}
+              disabled={isLoggingOut}
+              onClick={handleLogout}
             >
               <Image
                 src="/icons/log-out.svg"
@@ -150,9 +197,23 @@ function Sidebar() {
           {isLoggedIn ? (
             <div className="flex flex-col gap-3 p-4">
               <div className="flex items-center gap-3">
-                <div className="size-8 shrink-0 rounded-full bg-gray-200" />
+                <Image
+                  src={profileImageSrc}
+                  alt={profile ? `${profile.nickname} 프로필` : ''}
+                  width={32}
+                  height={32}
+                  unoptimized
+                  className="size-8 shrink-0 rounded-full bg-gray-200 object-cover"
+                />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
-                  <span className="text-c1 text-gray-900">닉네임</span>
+                  <span className="truncate text-c1 text-gray-900">
+                    {profile?.nickname ??
+                      (isProfileCompleted
+                        ? isProfileError
+                          ? '프로필 조회 실패'
+                          : '프로필 불러오는 중'
+                        : '프로필 미완성')}
+                  </span>
                   <span className="flex items-center gap-2">
                     <Image
                       src="/images/acorn.svg"
@@ -163,7 +224,9 @@ function Sidebar() {
                       unoptimized
                       className="h-4 w-3 object-contain"
                     />
-                    <span className="text-c1 text-yellow-800">60</span>
+                    <span className="text-c1 text-yellow-800">
+                      {profile?.acorn ?? '-'}
+                    </span>
                   </span>
                 </div>
               </div>
@@ -181,26 +244,32 @@ function Sidebar() {
                     unoptimized
                   />
                 }
-                onClick={() => setIsLoggedIn(false)}
+                disabled={isLoggingOut}
+                onClick={handleLogout}
               >
                 로그아웃
               </Button>
             </div>
-          ) : (
+          ) : authStatus === 'unauthenticated' ? (
             <div className="flex h-30 flex-col justify-end gap-2 p-4">
               <Button
                 variant="primary"
                 size="medium"
                 className="w-full"
-                onClick={() => setIsLoggedIn(true)}
+                onClick={() => router.push('/login')}
               >
                 로그인
               </Button>
-              <Button variant="outline" size="medium" className="w-full">
+              <Button
+                variant="outline"
+                size="medium"
+                className="w-full"
+                onClick={() => router.push('/signup')}
+              >
                 회원가입
               </Button>
             </div>
-          )}
+          ) : null}
         </>
       )}
     </aside>

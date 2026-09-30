@@ -1,15 +1,27 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { checkNickname, updateProfile } from '@/apis/profile';
+import { checkNickname, getProfile, updateProfile } from '@/apis/users';
 
 const profileKeys = {
   all: ['profile'] as const,
   me: () => [...profileKeys.all, 'me'] as const,
 };
 
+type UseProfileOptions = {
+  enabled?: boolean;
+};
+
 function useUpdateProfile() {
   return useMutation({
     mutationFn: updateProfile,
+  });
+}
+
+function useProfile({ enabled = true }: UseProfileOptions = {}) {
+  return useQuery({
+    queryKey: profileKeys.me(),
+    queryFn: getProfile,
+    enabled,
   });
 }
 
@@ -19,4 +31,4 @@ function useCheckNickname() {
   });
 }
 
-export { profileKeys, useCheckNickname, useUpdateProfile };
+export { profileKeys, useCheckNickname, useProfile, useUpdateProfile };

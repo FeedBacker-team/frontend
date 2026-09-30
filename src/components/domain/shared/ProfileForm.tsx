@@ -10,20 +10,20 @@ import { Chip } from '@/components/common/Chip';
 import { Input } from '@/components/common/Input';
 import { toast } from '@/components/common/Sonner';
 import { Tag } from '@/components/common/Tag';
+import { UserError, type UpdateProfileResponse } from '@/apis/users';
 import { ALLOWED_IMAGE_TYPES } from '@/constants/file';
 import {
-  PROFILE_INTEREST_TAGS,
   PROFILE_JOBS,
   PROFILE_NICKNAME_MAX_LENGTH,
 } from '@/constants/profile';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useCheckNickname, useUpdateProfile } from '@/hooks/useProfile';
+import { useTags } from '@/hooks/useTags';
 import {
   profileCompleteSchema,
   type ProfileCompleteFormValues,
 } from '@/lib/schemas/profile';
 import { cn } from '@/lib/utils';
-import { ProfileError, type UpdateProfileResponse } from '@/types/profile';
 
 function RequiredMark() {
   return (
@@ -72,7 +72,7 @@ function FieldError({ id, message }: { id: string; message: string }) {
 }
 
 function getProfileErrorMessage(error: unknown, fallbackMessage: string) {
-  return error instanceof ProfileError ? error.message : fallbackMessage;
+  return error instanceof UserError ? error.message : fallbackMessage;
 }
 
 type ProfileFormProps = {
@@ -95,10 +95,16 @@ function ProfileForm({
   const { mutate: saveProfile, isPending: isSaving } = useUpdateProfile();
   const { mutate: checkNickname, isPending: isCheckingNickname } =
     useCheckNickname();
+  const {
+    data: interestTags = [],
+    isPending: isTagsPending,
+    isError: isTagsError,
+    isFetching: isTagsFetching,
+    refetch: refetchTags,
+  } = useTags();
   const [nicknameVerified, setNicknameVerified] = useState(
     !!defaultValues?.nickname
   );
-  const [imageRemoved, setImageRemoved] = useState(false);
   const {
     inputRef: imageInputRef,
     previewUrl,
@@ -109,7 +115,8 @@ function ProfileForm({
   } = useImageUpload({
     onError: (message) => toast.error(message),
   });
-  const isSubmitPending = isSaving || isImagePending;
+  const isSubmitPending =
+    isSaving || isImagePending || isTagsPending || isTagsError;
   const {
     register,
     handleSubmit,
@@ -133,25 +140,23 @@ function ProfileForm({
   const role = useWatch({ control, name: 'role' });
   const interests = useWatch({ control, name: 'interests' });
 
-  const avatarSrc = previewUrl ?? (imageRemoved ? null : defaultImageUrl);
+  const avatarSrc = previewUrl ?? defaultImageUrl;
 
   const handleSelectRole = (value: ProfileCompleteFormValues['role']) => {
     setValue('role', value, { shouldValidate: true, shouldDirty: true });
   };
 
   const handleToggleInterest = (value: string) => {
-    const selected = value as ProfileCompleteFormValues['interests'][number];
     const current = getValues('interests');
-    const next = current.includes(selected)
-      ? current.filter((item) => item !== selected)
-      : [...current, selected];
+    const next = current.includes(value)
+      ? current.filter((item) => item !== value)
+      : [...current, value];
 
     setValue('interests', next, { shouldDirty: true });
   };
 
   const handleRemoveAvatar = () => {
     removeImage();
-    setImageRemoved(true);
   };
 
   const handleCheckNickname = async () => {
@@ -188,10 +193,10 @@ function ProfileForm({
         nickname: values.nickname,
         role: values.role,
         intro_link: values.intro_link || undefined,
-        interests: values.interests,
-        profile_image_url:
-          uploaded?.image_url ??
-          (imageRemoved ? undefined : (defaultImageUrl ?? undefined)),
+        interests: values.interests.filter((interest) =>
+          interestTags.some((tag) => tag.code === interest)
+        ),
+        profile_image_path: uploaded?.image_path,
       },
       {
         onSuccess,
@@ -230,7 +235,7 @@ function ProfileForm({
               />
             ) : (
               <Image
-                src="/icons/Avatars.svg"
+                src="/icons/basic-avatars.svg"
                 alt=""
                 aria-hidden
                 width={80}
@@ -240,7 +245,7 @@ function ProfileForm({
               />
             )}
           </button>
-          {avatarSrc ? (
+          {previewUrl ? (
             <button
               type="button"
               aria-label="프로필 사진 삭제"
@@ -408,21 +413,42 @@ function ProfileForm({
           <p className="text-h4 text-text-default">
             나의 관심 분야 <span className="text-text-info">(선택)</span>
           </p>
-          <div
-            role="group"
-            aria-label="나의 관심 분야"
-            className="flex flex-wrap gap-2"
-          >
-            {PROFILE_INTEREST_TAGS.map((tag) => (
-              <Tag
-                key={tag.value}
-                value={tag.value}
-                label={tag.label}
-                selected={interests?.includes(tag.value) ?? false}
-                onClick={handleToggleInterest}
-              />
-            ))}
-          </div>
+          {isTagsPending ? (
+            <p role="status" className="text-c1 text-text-sub">
+              관심 분야를 불러오는 중이에요.
+            </p>
+          ) : isTagsError ? (
+            <div className="flex items-center gap-2">
+              <p role="alert" className="text-c1 text-system-alert">
+                관심 분야를 불러오지 못했습니다.
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                size="small"
+                disabled={isTagsFetching}
+                onClick={() => void refetchTags()}
+              >
+                다시 시도
+              </Button>
+            </div>
+          ) : (
+            <div
+              role="group"
+              aria-label="나의 관심 분야"
+              className="flex flex-wrap gap-2"
+            >
+              {interestTags.map((tag) => (
+                <Tag
+                  key={tag.code}
+                  value={tag.code}
+                  label={tag.displayName}
+                  selected={interests?.includes(tag.code) ?? false}
+                  onClick={handleToggleInterest}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
