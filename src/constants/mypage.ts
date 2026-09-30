@@ -3,7 +3,6 @@ import type {
   AcornTransactionItem,
   FeedbackRejectReasonValue,
   MyPageTab,
-  MyProjectItem,
   MyQaFeedbackReviewDetail,
   MyQaFeedbackReviewFilter,
   MyQaFeedbackReviewItem,
@@ -99,18 +98,6 @@ const MY_QA_PARTICIPATION_STATUS_BADGE_VARIANT: Record<
 };
 
 const MOCK_MY_PROJECT_TAGS = ['웹', 'B2B', 'AI · ML'];
-
-const MOCK_MY_PROJECTS: MyProjectItem[] = Array.from(
-  { length: 4 },
-  (_, index) => ({
-    id: String(index + 1),
-    title: '프로젝트 제목',
-    description: '프로젝트 설명',
-    tags: MOCK_MY_PROJECT_TAGS,
-    publishedAt: '2026-09-09',
-    viewCount: 128,
-  })
-);
 
 const MOCK_MY_QA_RECRUITS: MyQaRecruitItem[] = [
   {
@@ -277,7 +264,11 @@ const MOCK_QA_FEEDBACK_QUESTIONS: QaFeedbackQuestion[] = [
     required: true,
     type: 'SINGLE_CHOICE',
     question: '어떤 시안이 메인 CTA 버튼의 위치가 가장 직관적인가요?',
-    options: ['1번: 우측 상단 헤더', '2번: 화면 하단 플로팅 바', '3번: 콘텐츠 중앙'],
+    options: [
+      '1번: 우측 상단 헤더',
+      '2번: 화면 하단 플로팅 바',
+      '3번: 콘텐츠 중앙',
+    ],
     selectedOption: '3번: 콘텐츠 중앙',
   },
   {
@@ -332,7 +323,13 @@ const MOCK_QA_FEEDBACK_QUESTIONS_PAYMENT: QaFeedbackQuestion[] = [
     type: 'SINGLE_CHOICE',
     question:
       '사용하신 디바이스 및 브라우저 환경에서 요소 겹침, 텍스트 잘림 등 레이아웃이 깨지는 현상이 있었나요?',
-    options: ['전혀 없었다', '거의 없었다', '보통이다', '자주 있었다', '매우 많았다'],
+    options: [
+      '전혀 없었다',
+      '거의 없었다',
+      '보통이다',
+      '자주 있었다',
+      '매우 많았다',
+    ],
     selectedOption: '거의 없었다',
   },
   {
@@ -340,7 +337,8 @@ const MOCK_QA_FEEDBACK_QUESTIONS_PAYMENT: QaFeedbackQuestion[] = [
     order: 3,
     required: false,
     type: 'TEXT',
-    question: '테스트 중 발견된 결제 플로우 오류나 개선 피드백을 작성해 주세요.',
+    question:
+      '테스트 중 발견된 결제 플로우 오류나 개선 피드백을 작성해 주세요.',
     answer:
       '모바일 웹(iOS Safari) 환경에서 결제 비밀번호 입력 키패드가 하단 결제하기 버튼을 가립니다. 스크롤이 제대로 동작하지 않아 키보드를 수동으로 내린 뒤 결제해야 하는 불편함이 있습니다.',
   },
@@ -389,9 +387,21 @@ const MOCK_QA_RESULT_QUESTION_STATS: QaResultQuestion[] = [
     type: 'MULTIPLE_CHOICE',
     responseCount: 8,
     optionStats: [
-      { option: '한눈에 어떤 동작이 일어날지 명확하게 표현되어 있다.', count: 4, percent: 50 },
-      { option: '다음 단계의 행동과 결과가 예측 가능한 단어이다.', count: 4, percent: 50 },
-      { option: '사용자의 목적과 일치하는 직관적인 용어이다.', count: 2, percent: 25 },
+      {
+        option: '한눈에 어떤 동작이 일어날지 명확하게 표현되어 있다.',
+        count: 4,
+        percent: 50,
+      },
+      {
+        option: '다음 단계의 행동과 결과가 예측 가능한 단어이다.',
+        count: 4,
+        percent: 50,
+      },
+      {
+        option: '사용자의 목적과 일치하는 직관적인 용어이다.',
+        count: 2,
+        percent: 25,
+      },
     ],
   },
 ];
@@ -446,25 +456,27 @@ function getMyQaResultDetailById(id: string): MyQaResultDetail | undefined {
 }
 
 /** 상세 디자인이 확정된 모집글(id: '1')에 제출된 피드백만 우선 목데이터를 제공. 링크형/이미지형 화면을 모두 보여주기 위해 홀짝으로 컨텐츠 타입을 나눈다. */
-const MOCK_MY_QA_FEEDBACK_REVIEW_DETAILS: Record<string, MyQaFeedbackReviewDetail> =
-  Object.fromEntries(
-    MOCK_MY_QA_FEEDBACK_REVIEWS.map((review, index) => {
-      const isImageType = index % 2 === 1;
+const MOCK_MY_QA_FEEDBACK_REVIEW_DETAILS: Record<
+  string,
+  MyQaFeedbackReviewDetail
+> = Object.fromEntries(
+  MOCK_MY_QA_FEEDBACK_REVIEWS.map((review, index) => {
+    const isImageType = index % 2 === 1;
 
-      return [
-        review.id,
-        {
-          ...review,
-          feedbackPostId: '1',
-          contentType: isImageType ? '이미지형' : '링크형',
-          ...(isImageType ? { reviewImages: ['1', '2', '3'] } : {}),
-          feedbackQuestions: isImageType
-            ? MOCK_QA_FEEDBACK_QUESTIONS
-            : MOCK_QA_FEEDBACK_QUESTIONS_PAYMENT,
-        },
-      ];
-    })
-  );
+    return [
+      review.id,
+      {
+        ...review,
+        feedbackPostId: '1',
+        contentType: isImageType ? '이미지형' : '링크형',
+        ...(isImageType ? { reviewImages: ['1', '2', '3'] } : {}),
+        feedbackQuestions: isImageType
+          ? MOCK_QA_FEEDBACK_QUESTIONS
+          : MOCK_QA_FEEDBACK_QUESTIONS_PAYMENT,
+      },
+    ];
+  })
+);
 
 function getMyQaFeedbackReviewDetailById(
   feedbackPostId: string,
@@ -476,10 +488,16 @@ function getMyQaFeedbackReviewDetailById(
 
 const FEEDBACK_REJECT_DETAIL_MIN_LENGTH = 20;
 
-const FEEDBACK_REJECT_REASONS: { value: FeedbackRejectReasonValue; label: string }[] = [
+const FEEDBACK_REJECT_REASONS: {
+  value: FeedbackRejectReasonValue;
+  label: string;
+}[] = [
   { value: 'IRRELEVANT_ANSWER', label: '질문과 무관한 답변이에요.' },
   { value: 'INSINCERE_ANSWER', label: '성의 없이 작성된 답변이에요.' },
-  { value: 'NOT_ACTUALLY_TESTED', label: '테스트를 실제로 진행하지 않은 것 같아요.' },
+  {
+    value: 'NOT_ACTUALLY_TESTED',
+    label: '테스트를 실제로 진행하지 않은 것 같아요.',
+  },
   { value: 'ETC', label: '기타' },
 ];
 
@@ -506,37 +524,36 @@ const MOCK_QA_OBJECTION_RESOLVED = {
 };
 
 /** 상세 모달 디자인이 확정된 상태(수락, 검토 대기 중, 거절, 이의제기 검토 중/완료)만 우선 목데이터를 제공 */
-const MOCK_MY_QA_PARTICIPATION_DETAILS: MyQaParticipationDetail[] = MOCK_MY_QA_PARTICIPATIONS.filter(
-  (participation) =>
-    participation.status === 'ACCEPTED' ||
-    participation.status === 'PENDING_REVIEW' ||
-    participation.status === 'REJECTED' ||
+const MOCK_MY_QA_PARTICIPATION_DETAILS: MyQaParticipationDetail[] =
+  MOCK_MY_QA_PARTICIPATIONS.filter(
+    (participation) =>
+      participation.status === 'ACCEPTED' ||
+      participation.status === 'PENDING_REVIEW' ||
+      participation.status === 'REJECTED' ||
+      participation.status === 'DISPUTE_REVIEWING' ||
+      participation.status === 'DISPUTE_RESOLVED'
+  ).map((participation) => ({
+    ...participation,
+    participatedAt: '2026-09-10 18:00',
+    submittedAt: '2026-09-11 12:00',
+    feedbackQuestions: MOCK_QA_FEEDBACK_QUESTIONS,
+    ...(participation.status === 'REJECTED' ||
     participation.status === 'DISPUTE_REVIEWING' ||
     participation.status === 'DISPUTE_RESOLVED'
-).map((participation) => ({
-  ...participation,
-  participatedAt: '2026-09-10 18:00',
-  submittedAt: '2026-09-11 12:00',
-  feedbackQuestions: MOCK_QA_FEEDBACK_QUESTIONS,
-  ...(participation.status === 'REJECTED' ||
-  participation.status === 'DISPUTE_REVIEWING' ||
-  participation.status === 'DISPUTE_RESOLVED'
-    ? { rejectReason: MOCK_QA_REJECT_REASON }
-    : {}),
-  ...(participation.status === 'DISPUTE_REVIEWING'
-    ? { objection: MOCK_QA_OBJECTION_BASE }
-    : {}),
-  ...(participation.status === 'DISPUTE_RESOLVED'
-    ? { objection: MOCK_QA_OBJECTION_RESOLVED }
-    : {}),
-}));
+      ? { rejectReason: MOCK_QA_REJECT_REASON }
+      : {}),
+    ...(participation.status === 'DISPUTE_REVIEWING'
+      ? { objection: MOCK_QA_OBJECTION_BASE }
+      : {}),
+    ...(participation.status === 'DISPUTE_RESOLVED'
+      ? { objection: MOCK_QA_OBJECTION_RESOLVED }
+      : {}),
+  }));
 
 function getMyQaParticipationDetailById(
   id: string
 ): MyQaParticipationDetail | undefined {
-  return MOCK_MY_QA_PARTICIPATION_DETAILS.find(
-    (detail) => detail.id === id
-  );
+  return MOCK_MY_QA_PARTICIPATION_DETAILS.find((detail) => detail.id === id);
 }
 
 const MOCK_ACORN_TRANSACTION_TEMPLATES: Omit<AcornTransactionItem, 'id'>[] = [
@@ -644,7 +661,6 @@ export {
   isMyPageTab,
   isMyQaFeedbackReviewFilter,
   MOCK_ACORN_TRANSACTIONS,
-  MOCK_MY_PROJECTS,
   MOCK_MY_QA_PARTICIPATIONS,
   MOCK_MY_QA_RECRUITS,
   MY_PAGE_TAB_LABEL,

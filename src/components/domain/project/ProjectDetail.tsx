@@ -2,6 +2,8 @@
 
 import type { ReactNode } from 'react';
 
+import Image from 'next/image';
+
 import { Button } from '@/components/common/Button';
 import { chipVariants } from '@/components/common/Chip';
 import { Input } from '@/components/common/Input';
@@ -13,8 +15,10 @@ import {
 import Link from 'next/link';
 
 type ProjectDetailProps = {
+  projectId: string;
   title: string;
   tags: string[];
+  thumbnailUrl?: string | null;
   authorNickname: string;
   publishedAt: string;
   viewCount: number;
@@ -25,8 +29,10 @@ type ProjectDetailProps = {
 };
 
 function ProjectDetail({
+  projectId,
   title,
   tags,
+  thumbnailUrl,
   authorNickname,
   publishedAt,
   viewCount,
@@ -38,7 +44,18 @@ function ProjectDetail({
   return (
     <article className="flex w-full flex-col gap-12 rounded-2xl bg-white p-9">
       <div className="flex gap-6">
-        <div className="size-50 shrink-0 rounded-xl bg-[#D9D9D9]" />
+        <div className="relative size-50 shrink-0 overflow-hidden rounded-xl bg-[#D9D9D9]">
+          {thumbnailUrl ? (
+            <Image
+              src={thumbnailUrl}
+              alt=""
+              fill
+              unoptimized
+              className="object-cover"
+              sizes="200px"
+            />
+          ) : null}
+        </div>
         <div className="flex min-w-0 flex-1 flex-col gap-3.5">
           <ul className="flex flex-wrap gap-2">
             {tags.map((tag) => (
@@ -54,7 +71,15 @@ function ProjectDetail({
           <h1 className="text-t3 font-normal text-text-default">{title}</h1>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <div className="size-8 shrink-0 rounded-full bg-gray-200" />
+              <Image
+                src="/icons/basic-avatars.svg"
+                alt=""
+                aria-hidden
+                width={32}
+                height={32}
+                unoptimized
+                className="size-8 shrink-0 rounded-full"
+              />
               <span className="text-c1 text-gray-900">{authorNickname}</span>
             </div>
             <p className="flex items-center gap-2 text-b3 text-text-info">
@@ -100,10 +125,12 @@ function ProjectDetail({
 
       <section className="flex flex-col gap-3">
         <h2 className="text-b2 text-text-info">프로젝트 설명</h2>
-        <div className="text-h4 text-text-default">{description}</div>
+        <div className="text-h4 whitespace-pre-wrap text-text-default">
+          {description}
+        </div>
       </section>
 
-      {isOwner ? <ProjectActionBar /> : null}
+      {isOwner ? <ProjectActionBar projectId={projectId} /> : null}
     </article>
   );
 }

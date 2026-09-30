@@ -32,8 +32,6 @@ import type {
 } from '@/types/qa';
 import type { ProjectDetail } from '@/types/project';
 
-const MOCK_CURRENT_USER_ID = '00000000-0000-4000-8000-000000000001';
-
 const TARGET_TYPE_LABEL = {
   SERVICE_LINK: '링크형',
   IMAGE: '이미지형',
@@ -307,20 +305,9 @@ function QaDetailCard({ qa, project }: QaDetailCardProps) {
             <h1 className="text-t3 text-text-default">{qa.title}</h1>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
-                <div className="relative size-8 shrink-0 overflow-hidden rounded-full bg-gray-200 border border-border-default">
-                  {project.owner.profileImageUrl ? (
-                    <Image
-                      src={project.owner.profileImageUrl}
-                      alt=""
-                      fill
-                      unoptimized
-                      sizes="32px"
-                      className="object-cover"
-                    />
-                  ) : null}
-                </div>
+                <div className="relative size-8 shrink-0 overflow-hidden rounded-full bg-gray-200 border border-border-default" />
                 <span className="text-c1 text-text-default">
-                  {project.owner.nickname}
+                  {project.ownerNickname}
                 </span>
               </div>
               <p className="text-c1 text-text-info">
@@ -595,8 +582,7 @@ function QaDetail({ feedbackPostId, showCreatedToast = false }: QaDetailProps) {
     return null;
   }
 
-  // TODO: 실제 인증 연동 시 메모리 auth store의 currentUserId로 교체한다.
-  const isOwner = projectQuery.data.owner.userId === MOCK_CURRENT_USER_ID;
+  const isOwner = projectQuery.data.isOwner;
 
   return (
     <>

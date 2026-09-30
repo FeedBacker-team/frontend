@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 import { chipVariants } from '@/components/common/Chip';
 import { cn } from '@/lib/utils';
 
@@ -7,6 +9,7 @@ type ProjectBrowseCardProps = {
   title: string;
   description: string;
   tags: string[];
+  thumbnailUrl?: string | null;
   publishedAt: string;
   viewCount: number;
   className?: string;
@@ -16,6 +19,7 @@ function ProjectBrowseCard({
   title,
   description,
   tags,
+  thumbnailUrl,
   publishedAt,
   viewCount,
   className,
@@ -27,7 +31,18 @@ function ProjectBrowseCard({
         className
       )}
     >
-      <div className="size-27 shrink-0 rounded-lg bg-[#D9D9D9]" />
+      <div className="relative size-27 shrink-0 overflow-hidden rounded-lg bg-[#D9D9D9]">
+        {thumbnailUrl ? (
+          <Image
+            src={thumbnailUrl}
+            alt=""
+            fill
+            unoptimized
+            className="object-cover"
+            sizes="108px"
+          />
+        ) : null}
+      </div>
       <div className="flex min-w-0 flex-1 flex-col gap-3">
         <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 flex-col gap-1">

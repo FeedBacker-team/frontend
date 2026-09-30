@@ -1,8 +1,9 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import { toast } from '@/components/common/Sonner';
 import { MyProjectListItem } from '@/components/domain/mypage/MyProjectListItem';
 import { MyQaParticipationDetailDialog } from '@/components/domain/mypage/MyQaParticipationDetailDialog';
 import { MyQaParticipationListItem } from '@/components/domain/mypage/MyQaParticipationListItem';
@@ -12,10 +13,10 @@ import {
   MY_PAGE_TAB_LABEL,
   MY_PAGE_TAB_ORDER,
 } from '@/constants/mypage';
+import { useMyProjects } from '@/hooks/useProjects';
 import { cn } from '@/lib/utils';
 import type {
   MyPageTab,
-  MyProjectItem,
   MyQaParticipationItem,
   MyQaRecruitItem,
 } from '@/types/mypage';
@@ -23,14 +24,12 @@ import type {
 const TAB_QUERY_KEY = 'tab';
 
 type MyPageTabsProps = {
-  projects: MyProjectItem[];
   qaRecruits: MyQaRecruitItem[];
   qaParticipations: MyQaParticipationItem[];
   initialTab?: MyPageTab;
 };
 
 function MyPageTabs({
-  projects,
   qaRecruits,
   qaParticipations,
   initialTab,
@@ -47,13 +46,25 @@ function MyPageTabs({
     ? (getMyQaParticipationDetailById(selectedParticipationId) ?? null)
     : null;
 
+  const {
+    data: projects,
+    isPending: isProjectsPending,
+    isError: isProjectsError,
+  } = useMyProjects();
+
+  useEffect(() => {
+    if (isProjectsError) {
+      toast.error('내 프로젝트 목록을 불러오지 못했습니다');
+    }
+  }, [isProjectsError]);
+
   const handleTabChange = (tab: MyPageTab) => {
     setActiveTab(tab);
     router.replace(`${pathname}?${TAB_QUERY_KEY}=${tab}`, { scroll: false });
   };
 
   const countByTab: Record<MyPageTab, number> = {
-    PROJECT: projects.length,
+    PROJECT: projects?.length ?? 0,
     QA_RECRUIT: qaRecruits.length,
     QA_PARTICIPATION: qaParticipations.length,
   };
@@ -93,13 +104,27 @@ function MyPageTabs({
       </div>
 
       {activeTab === 'PROJECT' ? (
-        <ul className="flex flex-col divide-y divide-gray-300">
-          {projects.map((project) => (
-            <li key={project.id}>
-              <MyProjectListItem project={project} />
-            </li>
-          ))}
-        </ul>
+        isProjectsPending ? (
+          <p className="text-b2 py-16 text-center text-text-sub">
+            불러오는 중이에요
+          </p>
+        ) : isProjectsError ? (
+          <p className="text-b2 py-16 text-center text-text-sub">
+            내 프로젝트 목록을 불러오지 못했습니다
+          </p>
+        ) : projects.length === 0 ? (
+          <p className="text-b2 py-16 text-center text-text-sub">
+            등록한 프로젝트가 없어요
+          </p>
+        ) : (
+          <ul className="flex flex-col divide-y divide-gray-300">
+            {projects.map((project) => (
+              <li key={project.id}>
+                <MyProjectListItem project={project} />
+              </li>
+            ))}
+          </ul>
+        )
       ) : null}
 
       {activeTab === 'QA_RECRUIT' ? (

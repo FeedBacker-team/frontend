@@ -11,6 +11,8 @@ import { Input } from '@/components/common/Input';
 import { toast } from '@/components/common/Sonner';
 import { Tag } from '@/components/common/Tag';
 import { Textarea } from '@/components/common/Textarea';
+import { ApiError } from '@/apis/baseClient';
+import { ProjectError } from '@/apis/projects';
 import { ALLOWED_IMAGE_TYPES } from '@/constants/file';
 import {
   PROJECT_DESCRIPTION_MAX_LENGTH,
@@ -18,20 +20,18 @@ import {
   PROJECT_TITLE_MAX_LENGTH,
   PROJECT_URL_MAX_LENGTH,
 } from '@/constants/project';
-import { useDeleteImage, useUploadImage } from '@/hooks/useFiles';
-import { useCreateProject } from '@/hooks/useProjects';
+import { useUploadImages } from '@/hooks/useImages';
+import { useCreateProject, useUpdateProject } from '@/hooks/useProjects';
 import {
   projectFormSchema,
   type ProjectRegisterFormValues,
 } from '@/lib/schemas/project';
 import { cn } from '@/lib/utils';
 import { validateImageFile } from '@/lib/validateImageFile';
-import { FileError } from '@/types/file';
-import {
-  ProjectError,
-  type ProjectFormValues,
-  type ProjectImageValue,
-  type ProjectTag,
+import type {
+  ProjectFormValues,
+  ProjectImageValue,
+  ProjectTag,
 } from '@/types/project';
 
 const INITIAL_VALUES: ProjectFormValues = {
@@ -39,6 +39,7 @@ const INITIAL_VALUES: ProjectFormValues = {
   description: '',
   tags: [],
   image: null,
+  imagePath: null,
   url: '',
 };
 
@@ -50,8 +51,8 @@ function getProjectErrorMessage(error: unknown, fallbackMessage: string) {
   return error instanceof ProjectError ? error.message : fallbackMessage;
 }
 
-function getFileErrorMessage(error: unknown, fallbackMessage: string) {
-  return error instanceof FileError ? error.message : fallbackMessage;
+function getImageErrorMessage(error: unknown, fallbackMessage: string) {
+  return error instanceof ApiError ? error.message : fallbackMessage;
 }
 
 function formatFileSize(bytes: number) {
@@ -124,20 +125,21 @@ function FormField({
 
 type ProjectRegisterFormProps = {
   mode?: 'register' | 'edit';
+  projectId?: string;
   initialValues?: ProjectFormValues;
 };
 
 function ProjectRegisterForm({
   mode = 'register',
+  projectId,
   initialValues = INITIAL_VALUES,
 }: ProjectRegisterFormProps) {
   const isEdit = mode === 'edit';
   const router = useRouter();
   const { mutate: createProject, isPending: isCreating } = useCreateProject();
-  const { mutate: uploadImageFile, isPending: isUploadingImage } =
-    useUploadImage();
-  const { mutate: deleteImageFile, isPending: isDeletingImage } =
-    useDeleteImage();
+  const { mutate: updateProject, isPending: isUpdating } = useUpdateProject();
+  const { mutate: uploadImages, isPending: isUploadingImage } =
+    useUploadImages();
 
   const [imageFile, setImageFile] = useState<ProjectImageValue | null>(
     initialValues.image
@@ -147,10 +149,9 @@ function ProjectRegisterForm({
     message: ReactNode;
   } | null>(null);
   const [imageRequiredError, setImageRequiredError] = useState(false);
-  const [uploaded, setUploaded] = useState<{
-    file_id: number;
-    image_url: string;
-  } | null>(null);
+  const [uploadedImagePath, setUploadedImagePath] = useState<string | null>(
+    initialValues.imagePath
+  );
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -171,7 +172,6 @@ function ProjectRegisterForm({
   });
 
   const tags = useWatch({ control, name: 'tags' });
-  const isImagePending = isUploadingImage || isDeletingImage;
   const showImageError = imageRequiredError || !!imageError;
 
   const handleToggleTag = (value: string) => {
@@ -206,14 +206,14 @@ function ProjectRegisterForm({
     setImageRequiredError(false);
     setImageFile(file);
 
-    uploadImageFile(file, {
-      onSuccess: (data) => {
-        setUploaded({ file_id: data.file_id, image_url: data.image_url });
+    uploadImages([file], {
+      onSuccess: ([path]) => {
+        setUploadedImagePath(path);
       },
       onError: (error) => {
         setImageError({
           file,
-          message: getFileErrorMessage(error, '이미지 업로드에 실패했습니다'),
+          message: getImageErrorMessage(error, '이미지 업로드에 실패했습니다'),
         });
         setImageFile(null);
       },
@@ -225,31 +225,44 @@ function ProjectRegisterForm({
       imageInputRef.current.value = '';
     }
     setImageError(null);
-
-    if (uploaded) {
-      deleteImageFile(uploaded.file_id, {
-        onSuccess: () => {
-          setUploaded(null);
-          setImageFile(null);
-        },
-        onError: (error) => {
-          toast.error(getFileErrorMessage(error, '이미지 삭제에 실패했습니다'));
-        },
-      });
-      return;
-    }
-
     setImageFile(null);
+    setUploadedImagePath(null);
   };
 
   const onSubmit = (values: ProjectRegisterFormValues) => {
-    if (!uploaded) {
+    if (!uploadedImagePath) {
       setImageRequiredError(true);
       return;
     }
 
     if (isEdit) {
-      // 프로젝트 수정 API 연동
+      if (!projectId) {
+        return;
+      }
+
+      updateProject(
+        {
+          projectId,
+          body: {
+            title: values.title,
+            description: values.description,
+            tags: values.tags,
+            serviceLink: values.url,
+            thumbnailImage: uploadedImagePath,
+          },
+        },
+        {
+          onSuccess: () => {
+            toast.success('프로젝트를 수정했습니다');
+            router.push(`/projects/${projectId}`);
+          },
+          onError: (error) => {
+            toast.error(
+              getProjectErrorMessage(error, '프로젝트 수정에 실패했습니다')
+            );
+          },
+        }
+      );
       return;
     }
 
@@ -258,11 +271,12 @@ function ProjectRegisterForm({
         title: values.title,
         description: values.description,
         tags: values.tags,
-        image_url: uploaded.image_url,
-        url: values.url,
+        serviceLink: values.url,
+        thumbnailImage: uploadedImagePath,
       },
       {
         onSuccess: (data) => {
+          toast.success('프로젝트를 등록했습니다');
           router.push(`/projects/${data.project_id}`);
         },
         onError: (error) => {
@@ -348,6 +362,9 @@ function ProjectRegisterForm({
             />
           ))}
         </div>
+        {errors.tags?.message ? (
+          <FieldError id="project-tags-error" message={errors.tags.message} />
+        ) : null}
       </FormField>
 
       <FormField label="프로젝트 대표 이미지" required htmlFor="project-image">
@@ -356,7 +373,7 @@ function ProjectRegisterForm({
           id="project-image"
           name="image"
           accept={ALLOWED_IMAGE_TYPES.join(',')}
-          disabled={isImagePending}
+          disabled={isUploadingImage}
           onChange={handleImageChange}
           state={showImageError ? 'error' : 'default'}
           title="파일을 이곳으로 드래그하거나 클릭하여 업로드하세요"
@@ -429,7 +446,7 @@ function ProjectRegisterForm({
             type="submit"
             size="medium"
             className="h-12 rounded-xl px-12"
-            disabled={isCreating || isImagePending}
+            disabled={isCreating || isUpdating || isUploadingImage}
           >
             {isEdit ? '수정 완료' : '등록하기'}
           </Button>

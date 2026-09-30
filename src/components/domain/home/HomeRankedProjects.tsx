@@ -28,7 +28,7 @@ function HomeRankedProjects() {
   });
   const aiTrend = useProjects({
     sort: 'VIEW_COUNT',
-    tags: ['AI_ML'],
+    tags: ['AI'],
     page: 0,
     size: RANKING_PROJECT_PAGE_SIZE,
   });

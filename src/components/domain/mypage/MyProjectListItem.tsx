@@ -1,5 +1,8 @@
 'use client';
 
+import Image from 'next/image';
+import Link from 'next/link';
+
 import { chipVariants } from '@/components/common/Chip';
 import type { MyProjectItem } from '@/types/mypage';
 
@@ -8,11 +11,23 @@ type MyProjectListItemProps = {
 };
 
 function MyProjectListItem({ project }: MyProjectListItemProps) {
-  const { title, description, tags, publishedAt, viewCount } = project;
+  const { id, title, description, tags, thumbnailUrl, publishedAt, viewCount } =
+    project;
 
   return (
-    <article className="flex items-center gap-4 py-5">
-      <div className="size-27 shrink-0 rounded-lg bg-gray-200" />
+    <Link href={`/projects/${id}`} className="flex items-center gap-4 py-5">
+      <div className="relative size-27 shrink-0 overflow-hidden rounded-lg bg-gray-200">
+        {thumbnailUrl ? (
+          <Image
+            src={thumbnailUrl}
+            alt=""
+            fill
+            unoptimized
+            className="object-cover"
+            sizes="108px"
+          />
+        ) : null}
+      </div>
       <div className="flex min-w-0 flex-1 flex-col gap-3">
         <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 flex-col gap-1">
@@ -35,7 +50,7 @@ function MyProjectListItem({ project }: MyProjectListItemProps) {
           ))}
         </ul>
       </div>
-    </article>
+    </Link>
   );
 }
 

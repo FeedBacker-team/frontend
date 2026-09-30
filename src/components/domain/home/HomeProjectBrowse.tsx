@@ -15,6 +15,7 @@ import {
 } from '@/constants/project';
 import { useProjects } from '@/hooks/useProjects';
 import type { ProjectSort, ProjectTag } from '@/types/project';
+import { Link } from 'lucide-react';
 
 function HomeProjectBrowse() {
   const [keywordInput, setKeywordInput] = useState('');
@@ -92,7 +93,7 @@ function HomeProjectBrowse() {
             />
           }
         >
-          내 프로젝트 등록하기
+          <a href="/projects/new">내 프로젝트 등록하기 </a>
         </Button>
       }
       searchPlaceholder="관심 있는 키워드나 프로젝트를 검색해 보세요"
@@ -119,29 +120,30 @@ function HomeProjectBrowse() {
         aria-busy={isPending}
         aria-live="polite"
       >
-        {isPending
-          ? Array.from({ length: BROWSE_PROJECT_PAGE_SIZE }, (_, index) => (
-              <li key={index}>
-                <BrowseCardSkeleton />
-              </li>
-            ))
-          : isError
-            ? (
-                <li className="text-b2 rounded-2xl bg-bg-deep px-5 py-16 text-center text-text-sub">
-                  프로젝트 목록을 불러오지 못했습니다
-                </li>
-              )
-            : projects.map((project) => (
-                <li key={project.project_id}>
-                  <ProjectBrowseCard
-                    title={project.title}
-                    description={project.description}
-                    tags={project.tags.map((tag) => PROJECT_TAG_LABEL[tag])}
-                    publishedAt={project.created_at}
-                    viewCount={project.view_count}
-                  />
-                </li>
-              ))}
+        {isPending ? (
+          Array.from({ length: BROWSE_PROJECT_PAGE_SIZE }, (_, index) => (
+            <li key={index}>
+              <BrowseCardSkeleton />
+            </li>
+          ))
+        ) : isError ? (
+          <li className="text-b2 rounded-2xl bg-bg-deep px-5 py-16 text-center text-text-sub">
+            프로젝트 목록을 불러오지 못했습니다
+          </li>
+        ) : (
+          projects.map((project) => (
+            <li key={project.project_id}>
+              <ProjectBrowseCard
+                title={project.title}
+                description={project.description}
+                tags={project.tags.map((tag) => PROJECT_TAG_LABEL[tag])}
+                thumbnailUrl={project.thumbnail_url}
+                publishedAt={project.created_at}
+                viewCount={project.view_count}
+              />
+            </li>
+          ))
+        )}
       </ul>
     </BrowseSection>
   );
