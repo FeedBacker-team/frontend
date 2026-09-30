@@ -6,9 +6,11 @@ import { useRouter } from 'next/navigation';
 
 import { AuthError } from '@/apis/auth';
 import { Button } from '@/components/common/Button';
+import { AuthLayout } from '@/components/domain/auth/AuthLayout';
 import { useKakaoLogin } from '@/hooks/useAuth';
 import {
   clearStoredKakaoOAuthState,
+  getKakaoRedirectUri,
   getStoredKakaoOAuthState,
 } from '@/lib/auth/kakaoOAuth';
 import { establishAuthSession } from '@/lib/auth/session';
@@ -46,7 +48,7 @@ function KakaoCallback(props: KakaoCallbackProps) {
   const hasStartedRef = useRef(false);
   const initialError = getInitialError(props);
   const [validationError, setValidationError] = useState<string | null>(null);
-  const { mutate, error, isPending } = useKakaoLogin();
+  const { mutate, error } = useKakaoLogin();
 
   useEffect(() => {
     if (hasStartedRef.current || validationError) {
@@ -84,7 +86,10 @@ function KakaoCallback(props: KakaoCallbackProps) {
     clearStoredKakaoOAuthState();
 
     mutate(
-      { authorization_code: props.authorizationCode! },
+      {
+        authorization_code: props.authorizationCode!,
+        redirect_uri: getKakaoRedirectUri(),
+      },
       {
         onSuccess: (data) => {
           establishAuthSession({
@@ -111,24 +116,29 @@ function KakaoCallback(props: KakaoCallbackProps) {
     : null;
   const errorMessage = initialError ?? validationError ?? requestError;
 
-  return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-h2 text-text-default">카카오 로그인</h1>
-        <p
-          role={errorMessage ? 'alert' : 'status'}
-          className={
-            errorMessage ? 'text-b2 text-system-alert' : 'text-b2 text-text-sub'
-          }
-        >
-          {errorMessage ??
-            (isPending
-              ? '카카오 계정 정보를 확인하고 있어요.'
-              : '카카오 로그인을 준비하고 있어요.')}
-        </p>
+  if (!errorMessage) {
+    return (
+      <div
+        role="status"
+        aria-busy="true"
+        aria-label="카카오 로그인 처리 중"
+        className="min-h-dvh bg-bg-deep"
+      >
+        <span className="sr-only">카카오 로그인을 처리하고 있어요.</span>
       </div>
+    );
+  }
 
-      {errorMessage ? (
+  return (
+    <AuthLayout size="login">
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-h2 text-text-default">카카오 로그인</h1>
+          <p role="alert" className="text-b2 text-system-alert">
+            {errorMessage}
+          </p>
+        </div>
+
         <Button
           type="button"
           variant="secondary"
@@ -138,17 +148,12 @@ function KakaoCallback(props: KakaoCallbackProps) {
         >
           로그인으로 돌아가기
         </Button>
-      ) : (
-        <div
-          aria-hidden
-          className="mx-auto size-8 animate-spin rounded-full border-3 border-gray-200 border-t-rust-600"
-        />
-      )}
 
-      <Link href="/" className="text-center text-c1 text-text-sub">
-        홈으로 이동
-      </Link>
-    </div>
+        <Link href="/" className="text-center text-c1 text-text-sub">
+          홈으로 이동
+        </Link>
+      </div>
+    </AuthLayout>
   );
 }
 
