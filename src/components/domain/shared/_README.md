@@ -58,7 +58,11 @@
 | `title` | `string` | — | 카드 밖 제목 |
 | `items` | `RankedListItem[]` | — | 표시할 행 데이터 |
 | `isLoading` | `boolean` | `false` | 행 대신 스켈레톤 표시 |
+| `isError` | `boolean` | `false` | 목록 대신 오류 상태 표시 |
 | `skeletonCount` | `number` | `5` | 로딩 중 표시할 행 수 |
+| `emptyTitle` | `string` | — | 데이터가 없을 때 표시할 제목 |
+| `emptyDescription` | `string` | — | 데이터가 없을 때 표시할 설명 |
+| `errorMessage` | `string` | `프로젝트를 불러오지 못했어요` | 오류 상태 문구 |
 | `className` | `string` | — | 섹션 추가 클래스 |
 
 **RankedListItem**
@@ -86,6 +90,13 @@
 />
 
 <RankedList title="지금 인기 있는 프로젝트" items={[]} isLoading />
+
+<RankedList
+  title="요즘 뜨는 # AI · ML 분야 프로젝트"
+  items={[]}
+  emptyTitle="아직 관련 프로젝트가 없어요"
+  emptyDescription="곧 멋진 프로젝트들로 채워질 예정이에요!"
+/>
 ```
 
 `description`에 도토리 아이콘과 수량처럼 조합된 JSX를 전달할 수도 있습니다.

@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 
 import { Footer } from '@/components/layout/Footer';
+import { MobileFallback } from '@/components/layout/MobileFallback';
 import { Sidebar } from '@/components/layout/Sidebar';
 
 const HIDE_SHELL = [
@@ -49,8 +50,11 @@ type AppShellProps = {
   children: ReactNode;
 };
 
-function AppShell({ children }: AppShellProps) {
-  const pathname = usePathname();
+type DesktopAppShellProps = AppShellProps & {
+  pathname: string;
+};
+
+function DesktopAppShell({ children, pathname }: DesktopAppShellProps) {
   const hideShell = matchesPrefix(pathname, HIDE_SHELL);
   const hideFooter = shouldHideFooter(pathname);
 
@@ -68,6 +72,19 @@ function AppShell({ children }: AppShellProps) {
       </div>
       {hideFooter ? null : <Footer />}
     </div>
+  );
+}
+
+function AppShell({ children }: AppShellProps) {
+  const pathname = usePathname();
+
+  return (
+    <>
+      <div className="hidden sm:contents">
+        <DesktopAppShell pathname={pathname}>{children}</DesktopAppShell>
+      </div>
+      <MobileFallback />
+    </>
   );
 }
 
