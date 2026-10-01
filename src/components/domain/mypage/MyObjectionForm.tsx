@@ -2,7 +2,9 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, useWatch } from 'react-hook-form';
 
 import { Badge } from '@/components/common/Badge';
 import { Button } from '@/components/common/Button';
@@ -16,10 +18,11 @@ import {
   OBJECTION_REASONS,
   QA_URGENT_DAYS_LEFT_THRESHOLD,
 } from '@/constants/mypage';
-import type {
-  MyQaParticipationDetail,
-  ObjectionReasonValue,
-} from '@/types/mypage';
+import {
+  objectionSchema,
+  type ObjectionFormValues,
+} from '@/lib/schemas/mypage';
+import type { MyQaParticipationDetail } from '@/types/mypage';
 
 type MyObjectionFormProps = {
   detail: MyQaParticipationDetail;
@@ -27,8 +30,6 @@ type MyObjectionFormProps = {
 
 function MyObjectionForm({ detail }: MyObjectionFormProps) {
   const router = useRouter();
-  const [reason, setReason] = useState<ObjectionReasonValue | ''>('');
-  const [detailReason, setDetailReason] = useState('');
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
 
   const {
@@ -44,13 +45,22 @@ function MyObjectionForm({ detail }: MyObjectionFormProps) {
     rejectReason,
   } = detail;
 
-  const canSubmit =
-    reason !== '' && detailReason.trim().length >= OBJECTION_DETAIL_MIN_LENGTH;
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    control,
+    formState: { errors, isValid },
+  } = useForm<ObjectionFormValues>({
+    resolver: zodResolver(objectionSchema),
+    mode: 'onChange',
+    defaultValues: { detailReason: '' },
+  });
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!canSubmit) return;
+  const reason = useWatch({ control, name: 'reason' });
+  const detailReason = useWatch({ control, name: 'detailReason' });
 
+  const onSubmit = () => {
     // TODO: PATCH /api/feedbacks/{feedbackId}/objection 연동. 아직 API가 없어 목업으로 접수 완료 처리만 한다.
     setIsCompleteOpen(true);
   };
@@ -58,7 +68,8 @@ function MyObjectionForm({ detail }: MyObjectionFormProps) {
   return (
     <>
       <form
-        onSubmit={handleSubmit}
+        noValidate
+        onSubmit={handleSubmit(onSubmit)}
         className="mx-auto flex max-w-220 flex-col gap-8"
       >
         <div className="flex flex-col gap-2">
@@ -154,8 +165,12 @@ function MyObjectionForm({ detail }: MyObjectionFormProps) {
             이의제기 사유 <span className="text-rust-600">*</span>
           </h2>
           <RadioGroup
-            value={reason}
-            onValueChange={(value) => setReason(value as ObjectionReasonValue)}
+            value={reason ?? ''}
+            onValueChange={(value) =>
+              setValue('reason', value as ObjectionFormValues['reason'], {
+                shouldValidate: true,
+              })
+            }
             size="medium"
             className="gap-4"
           >
@@ -163,6 +178,11 @@ function MyObjectionForm({ detail }: MyObjectionFormProps) {
               <Radio key={item.value} value={item.value} label={item.label} />
             ))}
           </RadioGroup>
+          {errors.reason?.message ? (
+            <p role="alert" className="text-c1 text-rust-600">
+              {errors.reason.message}
+            </p>
+          ) : null}
         </section>
 
         <section className="flex flex-col gap-3 rounded-2xl border border-gray-300 bg-white p-7">
@@ -172,13 +192,13 @@ function MyObjectionForm({ detail }: MyObjectionFormProps) {
           <Input
             size="large"
             placeholder="어떤 점이 부당하게 거절되었는지 구체적으로 작성해 주세요."
-            value={detailReason}
-            onChange={(event) => setDetailReason(event.target.value)}
+            aria-invalid={!!errors.detailReason}
+            {...register('detailReason')}
           />
           <div className="flex items-center justify-between text-c1 text-text-sub">
             <p>최소 {OBJECTION_DETAIL_MIN_LENGTH}자 이상 작성해 주세요.</p>
             <p>
-              {detailReason.length} / {OBJECTION_DETAIL_MIN_LENGTH}자
+              {detailReason?.length ?? 0} / {OBJECTION_DETAIL_MIN_LENGTH}자
             </p>
           </div>
         </section>
@@ -196,7 +216,7 @@ function MyObjectionForm({ detail }: MyObjectionFormProps) {
             type="submit"
             variant="secondary"
             size="medium"
-            disabled={!canSubmit}
+            disabled={!isValid}
           >
             이의제기 접수하기
           </Button>

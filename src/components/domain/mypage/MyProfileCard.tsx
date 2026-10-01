@@ -9,22 +9,18 @@ import { chipVariants } from '@/components/common/Chip';
 import { Input } from '@/components/common/Input';
 import { ProfileEditDialog } from '@/components/domain/mypage/ProfileEditDialog';
 import { PROFILE_ROLE_LABEL } from '@/constants/profile';
-import type { ProfileInterest, ProfileRole } from '@/apis/users';
+import { useProfile } from '@/hooks/useProfile';
 import { useTags } from '@/hooks/useTags';
 
-type MyProfileCardProps = {
-  nickname: string;
-  role: ProfileRole;
-  introLink: string;
-  tags: ProfileInterest[];
-};
-
-function MyProfileCard({ nickname, role, introLink, tags }: MyProfileCardProps) {
+function MyProfileCard() {
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const { data: profile, isError: isProfileError } = useProfile();
   const { data: tagOptions = [] } = useTags();
   const tagLabelByCode = Object.fromEntries(
     tagOptions.map(({ code, displayName }) => [code, displayName])
   );
+  const tags = profile?.interests ?? [];
+  const introLink = profile?.intro_link ?? '';
 
   return (
     <section className="flex flex-col gap-6 rounded-2xl bg-gray-50 p-8">
@@ -40,8 +36,12 @@ function MyProfileCard({ nickname, role, introLink, tags }: MyProfileCardProps) 
             className="size-15 shrink-0 rounded-full"
           />
           <div className="flex flex-col gap-1">
-            <h2 className="text-h2 text-text-default">{nickname}</h2>
-            <p className="text-b3 text-text-sub">{PROFILE_ROLE_LABEL[role]}</p>
+            <h2 className="text-h2 text-text-default">
+              {profile?.nickname ?? (isProfileError ? '프로필 조회 실패' : '불러오는 중')}
+            </h2>
+            <p className="text-b3 text-text-sub">
+              {profile ? PROFILE_ROLE_LABEL[profile.role] : ''}
+            </p>
           </div>
         </div>
         <Button
@@ -84,14 +84,20 @@ function MyProfileCard({ nickname, role, introLink, tags }: MyProfileCardProps) 
         </ul>
       </div>
 
-      <ProfileEditDialog
-        open={isEditOpen}
-        onOpenChange={setIsEditOpen}
-        defaultValues={{ nickname, role, intro_link: introLink, interests: tags }}
-      />
+      {profile && (
+        <ProfileEditDialog
+          open={isEditOpen}
+          onOpenChange={setIsEditOpen}
+          defaultValues={{
+            nickname: profile.nickname,
+            role: profile.role,
+            intro_link: introLink,
+            interests: tags,
+          }}
+        />
+      )}
     </section>
   );
 }
 
 export { MyProfileCard };
-export type { MyProfileCardProps };
