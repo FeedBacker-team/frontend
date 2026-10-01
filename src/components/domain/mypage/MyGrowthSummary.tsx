@@ -10,17 +10,16 @@ import {
   ACORN_TRANSACTIONS_PAGE_SIZE,
   getTreeStageByHumidity,
 } from '@/constants/mypage';
+import { useAcornHistories } from '@/hooks/useAcornHistory';
 import { useProfile } from '@/hooks/useProfile';
-import type { AcornTransactionItem } from '@/types/mypage';
 
-type MyGrowthSummaryProps = {
-  acornTransactions: AcornTransactionItem[];
-};
-
-function MyGrowthSummary({ acornTransactions }: MyGrowthSummaryProps) {
+function MyGrowthSummary() {
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [isAcornHistoryOpen, setIsAcornHistoryOpen] = useState(false);
   const { data: profile } = useProfile();
+  const { data: acornTransactions = [] } = useAcornHistories({
+    enabled: isAcornHistoryOpen,
+  });
   const acornCount = profile?.acorn ?? 0;
   const humidity = profile?.humidity ?? 0;
   const { stage: treeStage, stageLabel: treeStageLabel, treeImageSrc } =
@@ -122,4 +121,3 @@ function MyGrowthSummary({ acornTransactions }: MyGrowthSummaryProps) {
 }
 
 export { MyGrowthSummary };
-export type { MyGrowthSummaryProps };

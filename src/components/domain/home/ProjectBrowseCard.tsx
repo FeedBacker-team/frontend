@@ -1,11 +1,13 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { chipVariants } from '@/components/common/Chip';
 import { cn } from '@/lib/utils';
 
 type ProjectBrowseCardProps = {
+  projectId: number;
   title: string;
   description: string;
   tags: string[];
@@ -16,6 +18,7 @@ type ProjectBrowseCardProps = {
 };
 
 function ProjectBrowseCard({
+  projectId,
   title,
   description,
   tags,
@@ -25,7 +28,8 @@ function ProjectBrowseCard({
   className,
 }: ProjectBrowseCardProps) {
   return (
-    <article
+    <Link
+      href={`/projects/${projectId}`}
       className={cn(
         'flex items-center gap-4 rounded-2xl bg-gray-50 p-5',
         className
@@ -65,7 +69,7 @@ function ProjectBrowseCard({
           ))}
         </ul>
       </div>
-    </article>
+    </Link>
   );
 }
 

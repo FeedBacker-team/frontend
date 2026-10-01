@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { Button } from '@/components/common/Button';
 import { Dialog, DialogContent } from '@/components/common/Dialog';
@@ -70,65 +71,90 @@ function MyAcornHistoryDialog({
           </p>
         </div>
 
-        <ul className="flex flex-col gap-3">
-          {pageItems.map((transaction) => (
-            <li
-              key={transaction.id}
-              className="flex items-center justify-between gap-4 rounded-lg bg-yellow-50 px-5 py-4"
+        {transactions.length === 0 ? (
+          <div className="flex flex-col items-center gap-4 py-16">
+            <p className="text-b2 text-center text-text-sub">
+              아직 도토리 사용 내역이 없어요
+              <br />
+              QA 모집을 해보고 도토리를 사용해 보세요
+            </p>
+            <Button
+              variant="outline"
+              size="medium"
+              nativeButton={false}
+              render={<Link href="/qa/new" />}
             >
-              <div className="flex flex-col gap-1">
-                <p className="text-h4 text-text-default">
-                  {transaction.title}
-                </p>
-                <p className="text-c1 text-text-info">{transaction.date}</p>
-              </div>
-              <p
-                className={cn(
-                  'text-h4',
-                  transaction.amount > 0 ? 'text-yellow-600' : 'text-text-default'
-                )}
-              >
-                {transaction.amount > 0 ? '+' : '-'} {Math.abs(transaction.amount)}
-              </p>
-            </li>
-          ))}
-        </ul>
+              QA 모집하기
+            </Button>
+          </div>
+        ) : (
+          <>
+            <ul className="flex flex-col gap-3">
+              {pageItems.map((transaction) => (
+                <li
+                  key={transaction.id}
+                  className="flex items-center justify-between gap-4 rounded-lg bg-yellow-50 px-5 py-4"
+                >
+                  <div className="flex flex-col gap-1">
+                    <p className="text-h4 text-text-default">
+                      {transaction.title}
+                    </p>
+                    <p className="text-c1 text-text-info">{transaction.date}</p>
+                  </div>
+                  <p
+                    className={cn(
+                      'text-h4',
+                      transaction.amount > 0
+                        ? 'text-yellow-600'
+                        : 'text-text-default'
+                    )}
+                  >
+                    {transaction.amount > 0 ? '+' : '-'}{' '}
+                    {Math.abs(transaction.amount)}
+                  </p>
+                </li>
+              ))}
+            </ul>
 
-        <div className="flex items-center justify-center gap-6 pt-2">
-          <Button
-            variant="outline"
-            size="small"
-            aria-label="이전 페이지"
-            disabled={page <= 1}
-            onClick={() => setPage((current) => Math.max(1, current - 1))}
-            leftIcon={
-              <span
-                aria-hidden
-                className="size-4 bg-current mask-[url(/icons/chevron-left.svg)] mask-center mask-contain mask-no-repeat"
+            <div className="flex items-center justify-center gap-6 pt-2">
+              <Button
+                variant="outline"
+                size="small"
+                aria-label="이전 페이지"
+                disabled={page <= 1}
+                onClick={() => setPage((current) => Math.max(1, current - 1))}
+                leftIcon={
+                  <span
+                    aria-hidden
+                    className="size-4 bg-current mask-[url(/icons/chevron-left.svg)] mask-center mask-contain mask-no-repeat"
+                  />
+                }
               />
-            }
-          />
-          <p className="text-h4 text-text-default">
-            {String(page).padStart(2, '0')}
-            <span className="text-text-disabled">
-              {' / '}
-              {String(totalPages).padStart(2, '0')}
-            </span>
-          </p>
-          <Button
-            variant="outline"
-            size="small"
-            aria-label="다음 페이지"
-            disabled={page >= totalPages}
-            onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
-            leftIcon={
-              <span
-                aria-hidden
-                className="size-4 bg-current mask-[url(/icons/chevron-right.svg)] mask-center mask-contain mask-no-repeat"
+              <p className="text-h4 text-text-default">
+                {String(page).padStart(2, '0')}
+                <span className="text-text-disabled">
+                  {' / '}
+                  {String(totalPages).padStart(2, '0')}
+                </span>
+              </p>
+              <Button
+                variant="outline"
+                size="small"
+                aria-label="다음 페이지"
+                disabled={page >= totalPages}
+                onClick={() =>
+                  setPage((current) => Math.min(totalPages, current + 1))
+                }
+                leftIcon={
+                  <span
+                    aria-hidden
+                    className="size-4 bg-current mask-[url(/icons/chevron-right.svg)] mask-center mask-contain mask-no-repeat"
+                  />
+                }
               />
-            }
-          />
-        </div>
+            </div>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );

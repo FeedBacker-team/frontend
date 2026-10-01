@@ -5,11 +5,6 @@ function buildProjectPath(projectId: string) {
 }
 
 async function deleteProject(projectId: string): Promise<void> {
-  if (!process.env.NEXT_PUBLIC_API_URL) {
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    return;
-  }
-
   return projectRequest<void>(buildProjectPath(projectId), {
     method: 'DELETE',
     responseType: 'void',

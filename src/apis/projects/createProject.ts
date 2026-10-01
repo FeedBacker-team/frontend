@@ -16,18 +16,9 @@ type ProjectCreateResponse = {
   project_id: string;
 };
 
-function getMockCreateProjectResponse(): ProjectCreateResponse {
-  return { project_id: crypto.randomUUID() };
-}
-
 async function createProject(
   body: ProjectCreateRequest
 ): Promise<ProjectCreateResponse> {
-  if (!process.env.NEXT_PUBLIC_API_URL) {
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    return getMockCreateProjectResponse();
-  }
-
   return projectRequest<ProjectCreateResponse>(PROJECTS_PATH, {
     method: 'POST',
     json: body,

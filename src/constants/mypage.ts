@@ -1,6 +1,6 @@
+import type { AcornHistoryType } from '@/apis/users';
 import type { badgeVariants } from '@/components/common/Badge';
 import type {
-  AcornTransactionItem,
   FeedbackRejectReasonValue,
   MyPageTab,
   MyQaFeedbackReviewDetail,
@@ -27,6 +27,13 @@ type BadgeVariant = NonNullable<Parameters<typeof badgeVariants>[0]>['variant'];
 const QA_URGENT_DAYS_LEFT_THRESHOLD = 3;
 
 const ACORN_TRANSACTIONS_PAGE_SIZE = 5;
+
+const ACORN_HISTORY_TYPE_LABEL: Record<AcornHistoryType, string> = {
+  FEEDBACK_ACCEPT: '피드백 수락 보상',
+  FEEDBACK_RECRUIT: 'QA 모집',
+  SIGNUP_REWARD: '가입 보상',
+  EVENT_REWARD: '이벤트 보상',
+};
 
 const MY_PAGE_TAB_LABEL: Record<MyPageTab, string> = {
   PROJECT: '내 프로젝트',
@@ -556,24 +563,6 @@ function getMyQaParticipationDetailById(
   return MOCK_MY_QA_PARTICIPATION_DETAILS.find((detail) => detail.id === id);
 }
 
-const MOCK_ACORN_TRANSACTION_TEMPLATES: Omit<AcornTransactionItem, 'id'>[] = [
-  { title: '피드백 수락 보상', date: '2026-09-12', amount: 70 },
-  { title: 'QA 모집', date: '2026-09-12', amount: -70 },
-  { title: '피드백 수락 보상', date: '2026-09-12', amount: 70 },
-  { title: '피드백 수락 보상', date: '2026-09-12', amount: 70 },
-  { title: '가입 보상', date: '2026-09-12', amount: 70 },
-];
-
-const MOCK_ACORN_TRANSACTIONS: AcornTransactionItem[] = Array.from(
-  { length: 24 },
-  (_, index) => ({
-    id: String(index + 1),
-    ...MOCK_ACORN_TRANSACTION_TEMPLATES[
-      index % MOCK_ACORN_TRANSACTION_TEMPLATES.length
-    ],
-  })
-);
-
 const TREE_STAGES: TreeStageInfo[] = [
   {
     stage: 1,
@@ -650,6 +639,7 @@ const WITHDRAW_REASONS: { value: WithdrawReasonValue; label: string }[] = [
 ];
 
 export {
+  ACORN_HISTORY_TYPE_LABEL,
   ACORN_TRANSACTIONS_PAGE_SIZE,
   FEEDBACK_REJECT_DETAIL_MIN_LENGTH,
   FEEDBACK_REJECT_REASONS,
@@ -660,7 +650,6 @@ export {
   getTreeStageByHumidity,
   isMyPageTab,
   isMyQaFeedbackReviewFilter,
-  MOCK_ACORN_TRANSACTIONS,
   MOCK_MY_QA_PARTICIPATIONS,
   MOCK_MY_QA_RECRUITS,
   MY_PAGE_TAB_LABEL,

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/common/Button';
@@ -15,7 +16,6 @@ import {
 } from '@/constants/project';
 import { useProjects } from '@/hooks/useProjects';
 import type { ProjectSort, ProjectTag } from '@/types/project';
-import { Link } from 'lucide-react';
 
 function HomeProjectBrowse() {
   const [keywordInput, setKeywordInput] = useState('');
@@ -93,7 +93,7 @@ function HomeProjectBrowse() {
             />
           }
         >
-          <a href="/projects/new">내 프로젝트 등록하기 </a>
+          <Link href="/projects/new">내 프로젝트 등록하기 </Link>
         </Button>
       }
       searchPlaceholder="관심 있는 키워드나 프로젝트를 검색해 보세요"
@@ -134,6 +134,7 @@ function HomeProjectBrowse() {
           projects.map((project) => (
             <li key={project.project_id}>
               <ProjectBrowseCard
+                projectId={project.project_id}
                 title={project.title}
                 description={project.description}
                 tags={project.tags.map((tag) => PROJECT_TAG_LABEL[tag])}
