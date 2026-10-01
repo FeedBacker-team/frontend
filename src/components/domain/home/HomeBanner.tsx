@@ -9,14 +9,24 @@ import { cn } from '@/lib/utils';
 
 const BANNERS = [
   {
-    id: 'squirrel',
-    src: '/banner/squirrel_O.png',
+    id: 'mutual-feedback',
+    src: '/banner/배너 1.png',
     alt: '혼자 하기 힘든 유저 테스트, 동료들과 서로 품앗이하세요!',
   },
   {
-    id: 'plain',
-    src: '/banner/squirrel_X.png',
-    alt: '혼자 하기 힘든 유저 테스트, 동료들과 서로 품앗이하세요!',
+    id: 'project-showcase',
+    src: '/banner/배너 2.png',
+    alt: '내가 만든 프로젝트를 모두에게 소개해 보세요!',
+  },
+  {
+    id: 'qa-recruitment',
+    src: '/banner/배너 3.png',
+    alt: '내가 원하는 방식과 문항들로 QA를 모집해 보세요!',
+  },
+  {
+    id: 'qa-insight',
+    src: '/banner/배너 4.png',
+    alt: '다양한 QA에 참여하며 나만의 인사이트를 얻어보세요!',
   },
 ] as const;
 
@@ -55,7 +65,7 @@ function HomeBanner() {
     <section
       aria-roledescription="carousel"
       aria-label="홈 배너"
-      className="relative h-81 w-full overflow-hidden rounded-2xl"
+      className="relative h-69 w-full overflow-hidden rounded-2xl"
     >
       <div ref={emblaRef} className="h-full overflow-hidden">
         <div className="flex h-full">
@@ -64,14 +74,14 @@ function HomeBanner() {
               key={banner.id}
               role="group"
               aria-roledescription="slide"
-              className="flex h-81 min-w-0 shrink-0 grow-0 basis-[calc(100%+24px)]"
+              className="flex h-69 min-w-0 shrink-0 grow-0 basis-[calc(100%+24px)]"
             >
               <div className="relative min-h-full min-w-0 flex-1 overflow-hidden rounded-2xl">
                 <Image
                   src={banner.src}
                   alt={banner.alt}
                   fill
-                  priority={slideIndex === 0}
+                  preload={slideIndex === 0}
                   unoptimized
                   className="object-cover"
                   sizes="(min-width: 640px) 1100px, 100vw"
