@@ -253,7 +253,7 @@ function ProjectRegisterForm({
         },
         {
           onSuccess: () => {
-            toast.success('프로젝트를 수정했습니다');
+            toast.success('프로젝트 수정 완료되었습니다');
             router.push(`/projects/${projectId}`);
           },
           onError: (error) => {

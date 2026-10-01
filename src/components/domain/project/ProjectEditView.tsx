@@ -3,25 +3,12 @@
 import { Button } from '@/components/common/Button';
 import { ProjectRegisterForm } from '@/components/domain/project/ProjectRegisterForm';
 import { useProjectDetail } from '@/hooks/useProjects';
+import { extractImagePathFromUrl } from '@/lib/image';
 import type { ProjectFormValues, ProjectImageValue } from '@/types/project';
 
 type ProjectEditViewProps = {
   projectId: string;
 };
-
-function extractImagePathFromUrl(url: string): string {
-  const marker = '/object/public/';
-  const markerIndex = url.indexOf(marker);
-
-  if (markerIndex === -1) {
-    return url;
-  }
-
-  const pathWithBucket = url.slice(markerIndex + marker.length);
-  const [, ...rest] = pathWithBucket.split('/');
-
-  return rest.join('/');
-}
 
 function buildImageValueFromUrl(url: string): ProjectImageValue {
   const pathname = url.split('?')[0];

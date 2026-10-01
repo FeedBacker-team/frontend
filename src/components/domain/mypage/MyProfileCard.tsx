@@ -21,19 +21,20 @@ function MyProfileCard() {
   );
   const tags = profile?.interests ?? [];
   const introLink = profile?.intro_link ?? '';
+  const avatarSrc = profile?.profile_image_url ?? '/icons/basic-avatars.svg';
 
   return (
     <section className="flex flex-col gap-6 rounded-2xl bg-gray-50 p-8">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <Image
-            src="/icons/basic-avatars.svg"
+            src={avatarSrc}
             alt=""
             aria-hidden
             width={60}
             height={60}
             unoptimized
-            className="size-15 shrink-0 rounded-full"
+            className="size-15 shrink-0 rounded-full object-cover"
           />
           <div className="flex flex-col gap-1">
             <h2 className="text-h2 text-text-default">
@@ -94,6 +95,7 @@ function MyProfileCard() {
             intro_link: introLink,
             interests: tags,
           }}
+          defaultImageUrl={profile.profile_image_url}
         />
       )}
     </section>

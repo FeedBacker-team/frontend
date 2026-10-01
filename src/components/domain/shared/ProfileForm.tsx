@@ -13,10 +13,7 @@ import { toast } from '@/components/common/Sonner';
 import { Tag } from '@/components/common/Tag';
 import { UserError, type UpdateProfileResponse } from '@/apis/users';
 import { ALLOWED_IMAGE_TYPES } from '@/constants/file';
-import {
-  PROFILE_JOBS,
-  PROFILE_NICKNAME_MAX_LENGTH,
-} from '@/constants/profile';
+import { PROFILE_JOBS, PROFILE_NICKNAME_MAX_LENGTH } from '@/constants/profile';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useUploadImages } from '@/hooks/useImages';
 import {
@@ -25,6 +22,7 @@ import {
   useUpdateProfile,
 } from '@/hooks/useProfile';
 import { useTags } from '@/hooks/useTags';
+import { extractImagePathFromUrl } from '@/lib/image';
 import {
   profileCompleteSchema,
   type ProfileCompleteFormValues,
@@ -82,6 +80,8 @@ function getProfileErrorMessage(error: unknown, fallbackMessage: string) {
 }
 
 type ProfileFormProps = {
+  /** 완성 모드와 수정 모드에서 성공 처리와 안내 문구가 다릅니다. */
+  mode?: 'complete' | 'edit';
   /** 수정 모드에서 폼을 미리 채울 기존 프로필 값. 완성 모드에서는 생략합니다. */
   defaultValues?: Partial<ProfileCompleteFormValues>;
   /** 수정 모드에서 미리 보여줄 기존 프로필 이미지 URL. */
@@ -93,11 +93,15 @@ type ProfileFormProps = {
 };
 
 function ProfileForm({
+  mode = 'complete',
   defaultValues,
   defaultImageUrl = null,
   submitLabel,
   onSuccess,
 }: ProfileFormProps) {
+  const defaultImagePath = defaultImageUrl
+    ? extractImagePathFromUrl(defaultImageUrl)
+    : null;
   const queryClient = useQueryClient();
   const { mutate: saveProfile, isPending: isSaving } = useUpdateProfile();
   const { mutateAsync: uploadImageFiles, isPending: isImageUploading } =
@@ -200,7 +204,7 @@ function ProfileForm({
       return;
     }
 
-    let profileImagePath: string | undefined;
+    let profileImagePath: string | undefined = defaultImagePath ?? undefined;
 
     if (selectedFile) {
       if (uploadedImage?.file === selectedFile) {
@@ -237,6 +241,9 @@ function ProfileForm({
       {
         onSuccess: (data) => {
           queryClient.invalidateQueries({ queryKey: profileKeys.me() });
+          if (mode === 'edit') {
+            toast.success('프로필 수정 완료되었습니다');
+          }
           onSuccess(data);
         },
         onError: (error) => {
