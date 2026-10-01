@@ -9,19 +9,6 @@ type CheckNicknameResponse = {
 };
 
 async function checkNickname(nickname: string): Promise<CheckNicknameResponse> {
-  if (!process.env.NEXT_PUBLIC_API_URL) {
-    await new Promise((resolve) => setTimeout(resolve, 400));
-
-    if (nickname === 'taken') {
-      throw new UserError('이미 사용 중인 닉네임입니다.', 409);
-    }
-
-    return {
-      is_available: true,
-      message: '사용 가능한 닉네임입니다.',
-    };
-  }
-
   const query = new URLSearchParams({ nickname });
   const data = await userRequest<CheckNicknameResponse>(
     `${CHECK_NICKNAME_PATH}?${query}`,

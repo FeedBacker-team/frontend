@@ -18,11 +18,6 @@ async function updateProject(
   projectId: string,
   body: ProjectUpdateRequest
 ): Promise<void> {
-  if (!process.env.NEXT_PUBLIC_API_URL) {
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    return;
-  }
-
   return projectRequest<void>(buildProjectPath(projectId), {
     method: 'PUT',
     json: body,
