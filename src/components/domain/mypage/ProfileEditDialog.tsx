@@ -51,6 +51,7 @@ function ProfileEditDialog({
         </div>
 
         <ProfileForm
+          mode="edit"
           defaultValues={defaultValues}
           defaultImageUrl={defaultImageUrl}
           submitLabel="프로필 저장"
