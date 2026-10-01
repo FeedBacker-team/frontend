@@ -1,36 +1,45 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/common/Button';
 import { Radio, RadioGroup } from '@/components/common/RadioGroup';
 import { Textarea } from '@/components/common/Textarea';
 import { WITHDRAW_NOTICES, WITHDRAW_REASONS } from '@/constants/mypage';
 import { MyWithdrawCompleteDialog } from '@/components/domain/mypage/MyWithdrawCompleteDialog';
-import type { WithdrawReasonValue } from '@/types/mypage';
+import { withdrawSchema, type WithdrawFormValues } from '@/lib/schemas/mypage';
 
 function MyWithdrawForm() {
   const router = useRouter();
-  const [reason, setReason] = useState<WithdrawReasonValue | ''>('');
-  const [etcReason, setEtcReason] = useState('');
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
 
+  const {
+    handleSubmit,
+    register,
+    setValue,
+    control,
+    formState: { errors, isValid },
+  } = useForm<WithdrawFormValues>({
+    resolver: zodResolver(withdrawSchema),
+    mode: 'onChange',
+    defaultValues: { etcReason: '' },
+  });
+
+  const reason = useWatch({ control, name: 'reason' });
   const isEtcSelected = reason === 'ETC';
-  const canSubmit =
-    reason !== '' && (!isEtcSelected || etcReason.trim().length > 0);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!canSubmit) return;
-
+  const onSubmit = () => {
     setIsCompleteOpen(true);
   };
 
   return (
     <>
       <form
-        onSubmit={handleSubmit}
+        noValidate
+        onSubmit={handleSubmit(onSubmit)}
         className="mx-auto flex max-w-220 flex-col gap-8"
       >
         <div className="flex flex-col gap-2">
@@ -69,8 +78,12 @@ function MyWithdrawForm() {
           </div>
 
           <RadioGroup
-            value={reason}
-            onValueChange={(value) => setReason(value as WithdrawReasonValue)}
+            value={reason ?? ''}
+            onValueChange={(value) =>
+              setValue('reason', value as WithdrawFormValues['reason'], {
+                shouldValidate: true,
+              })
+            }
             size="medium"
             className="gap-4"
           >
@@ -78,13 +91,23 @@ function MyWithdrawForm() {
               <Radio key={item.value} value={item.value} label={item.label} />
             ))}
           </RadioGroup>
+          {errors.reason?.message ? (
+            <p role="alert" className="text-c1 text-rust-600">
+              {errors.reason.message}
+            </p>
+          ) : null}
 
           <Textarea
             placeholder="아쉬웠던 점을 자유롭게 작성해 주세요."
-            value={etcReason}
-            onChange={(event) => setEtcReason(event.target.value)}
+            aria-invalid={!!errors.etcReason}
             disabled={!isEtcSelected}
+            {...register('etcReason')}
           />
+          {errors.etcReason?.message ? (
+            <p role="alert" className="text-c1 text-rust-600">
+              {errors.etcReason.message}
+            </p>
+          ) : null}
         </section>
 
         <div className="flex items-center justify-between">
@@ -100,7 +123,7 @@ function MyWithdrawForm() {
             type="submit"
             variant="secondary"
             size="medium"
-            disabled={!canSubmit}
+            disabled={!isValid}
           >
             회원 탈퇴하기
           </Button>

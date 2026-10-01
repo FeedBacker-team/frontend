@@ -1,7 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, useWatch } from 'react-hook-form';
 
 import { Badge } from '@/components/common/Badge';
 import { Button } from '@/components/common/Button';
@@ -15,10 +17,11 @@ import {
   MY_QA_PARTICIPATION_STATUS_BADGE_VARIANT,
   MY_QA_PARTICIPATION_STATUS_LABEL,
 } from '@/constants/mypage';
-import type {
-  FeedbackRejectReasonValue,
-  MyQaFeedbackReviewDetail,
-} from '@/types/mypage';
+import {
+  feedbackRejectSchema,
+  type FeedbackRejectFormValues,
+} from '@/lib/schemas/mypage';
+import type { MyQaFeedbackReviewDetail } from '@/types/mypage';
 
 type MyQaFeedbackRejectFormProps = {
   detail: MyQaFeedbackReviewDetail;
@@ -26,8 +29,6 @@ type MyQaFeedbackRejectFormProps = {
 
 function MyQaFeedbackRejectForm({ detail }: MyQaFeedbackRejectFormProps) {
   const router = useRouter();
-  const [reason, setReason] = useState<FeedbackRejectReasonValue | ''>('');
-  const [detailReason, setDetailReason] = useState('');
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
 
@@ -40,14 +41,22 @@ function MyQaFeedbackRejectForm({ detail }: MyQaFeedbackRejectFormProps) {
     responseDeadlineHoursLeft,
   } = detail;
 
-  const canSubmit =
-    reason !== '' &&
-    detailReason.trim().length >= FEEDBACK_REJECT_DETAIL_MIN_LENGTH;
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    control,
+    formState: { errors, isValid },
+  } = useForm<FeedbackRejectFormValues>({
+    resolver: zodResolver(feedbackRejectSchema),
+    mode: 'onChange',
+    defaultValues: { detailReason: '' },
+  });
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!canSubmit) return;
+  const reason = useWatch({ control, name: 'reason' });
+  const detailReason = useWatch({ control, name: 'detailReason' });
 
+  const onSubmit = () => {
     setIsConfirmOpen(true);
   };
 
@@ -60,7 +69,8 @@ function MyQaFeedbackRejectForm({ detail }: MyQaFeedbackRejectFormProps) {
   return (
     <>
       <form
-        onSubmit={handleSubmit}
+        noValidate
+        onSubmit={handleSubmit(onSubmit)}
         className="mx-auto flex max-w-220 flex-col gap-8"
       >
         <div className="flex flex-col gap-2">
@@ -94,9 +104,13 @@ function MyQaFeedbackRejectForm({ detail }: MyQaFeedbackRejectFormProps) {
             거절 사유 <span className="text-rust-600">*</span>
           </h2>
           <RadioGroup
-            value={reason}
+            value={reason ?? ''}
             onValueChange={(value) =>
-              setReason(value as FeedbackRejectReasonValue)
+              setValue(
+                'reason',
+                value as FeedbackRejectFormValues['reason'],
+                { shouldValidate: true }
+              )
             }
             size="medium"
             className="gap-4"
@@ -105,6 +119,11 @@ function MyQaFeedbackRejectForm({ detail }: MyQaFeedbackRejectFormProps) {
               <Radio key={item.value} value={item.value} label={item.label} />
             ))}
           </RadioGroup>
+          {errors.reason?.message ? (
+            <p role="alert" className="text-c1 text-rust-600">
+              {errors.reason.message}
+            </p>
+          ) : null}
         </section>
 
         <section className="flex flex-col gap-3 rounded-2xl border border-gray-300 bg-white p-7">
@@ -114,13 +133,14 @@ function MyQaFeedbackRejectForm({ detail }: MyQaFeedbackRejectFormProps) {
           <Input
             size="large"
             placeholder="어떤 점이 부족했는지 구체적으로 작성해 주세요."
-            value={detailReason}
-            onChange={(event) => setDetailReason(event.target.value)}
+            aria-invalid={!!errors.detailReason}
+            {...register('detailReason')}
           />
           <div className="flex items-center justify-between text-c1 text-text-sub">
             <p>최소 {FEEDBACK_REJECT_DETAIL_MIN_LENGTH}자 이상 작성해 주세요.</p>
             <p>
-              {detailReason.length} / {FEEDBACK_REJECT_DETAIL_MIN_LENGTH}자
+              {detailReason?.length ?? 0} / {FEEDBACK_REJECT_DETAIL_MIN_LENGTH}
+              자
             </p>
           </div>
         </section>
@@ -138,7 +158,7 @@ function MyQaFeedbackRejectForm({ detail }: MyQaFeedbackRejectFormProps) {
           </Button>
           <button
             type="submit"
-            disabled={!canSubmit}
+            disabled={!isValid}
             className="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-[10px] border border-rust-600 bg-white px-4 py-2.5 text-c1 font-bold text-rust-600 whitespace-nowrap outline-none transition-colors select-none hover:bg-rust-50 active:bg-rust-100 focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:border-gray-300 disabled:bg-gray-100 disabled:text-gray-500"
           >
             거절 사유 제출하기

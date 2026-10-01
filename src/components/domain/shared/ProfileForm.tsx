@@ -4,6 +4,7 @@ import { useState, type CSSProperties } from 'react';
 import Image from 'next/image';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { Button } from '@/components/common/Button';
 import { Chip } from '@/components/common/Chip';
@@ -18,7 +19,11 @@ import {
 } from '@/constants/profile';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useUploadImages } from '@/hooks/useImages';
-import { useCheckNickname, useUpdateProfile } from '@/hooks/useProfile';
+import {
+  profileKeys,
+  useCheckNickname,
+  useUpdateProfile,
+} from '@/hooks/useProfile';
 import { useTags } from '@/hooks/useTags';
 import {
   profileCompleteSchema,
@@ -93,6 +98,7 @@ function ProfileForm({
   submitLabel,
   onSuccess,
 }: ProfileFormProps) {
+  const queryClient = useQueryClient();
   const { mutate: saveProfile, isPending: isSaving } = useUpdateProfile();
   const { mutateAsync: uploadImageFiles, isPending: isImageUploading } =
     useUploadImages();
@@ -229,7 +235,10 @@ function ProfileForm({
         profile_image_path: profileImagePath,
       },
       {
-        onSuccess,
+        onSuccess: (data) => {
+          queryClient.invalidateQueries({ queryKey: profileKeys.me() });
+          onSuccess(data);
+        },
         onError: (error) => {
           toast.error(
             getProfileErrorMessage(error, '프로필 저장에 실패했습니다')
