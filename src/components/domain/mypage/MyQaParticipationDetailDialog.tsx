@@ -18,14 +18,33 @@ import type { MyQaParticipationDetail } from '@/types/mypage';
 type MyQaParticipationDetailDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  detail: MyQaParticipationDetail | null;
+  detail: MyQaParticipationDetail | null | undefined;
+  isLoading?: boolean;
 };
 
 function MyQaParticipationDetailDialog({
   open,
   onOpenChange,
   detail,
+  isLoading = false,
 }: MyQaParticipationDetailDialogProps) {
+  if (isLoading) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="w-275 max-w-[calc(100vw-2rem)]">
+          <div
+            className="flex h-100 animate-pulse flex-col gap-4"
+            aria-label="피드백 정보 불러오는 중"
+          >
+            <div className="h-20 rounded-lg bg-gray-100" />
+            <div className="h-20 rounded-lg bg-gray-100" />
+            <div className="h-40 rounded-lg bg-gray-100" />
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   if (!detail) {
     return null;
   }
@@ -84,15 +103,15 @@ function MyQaParticipationDetailDialog({
                   <h2 className="text-h3 truncate text-text-default">
                     {title}
                   </h2>
-                  <p className="text-c1 text-text-info">
-                    {startDate} ~ {endDate}
-                  </p>
+                  {startDate || endDate ? (
+                    <p className="text-c1 text-text-info">
+                      {startDate} ~ {endDate}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
                   <Badge>{contentType}</Badge>
-                  {daysLeft === null ? (
-                    <Badge>{endDate} 종료</Badge>
-                  ) : (
+                  {daysLeft !== null ? (
                     <Badge
                       variant={
                         daysLeft <= QA_URGENT_DAYS_LEFT_THRESHOLD
@@ -102,7 +121,9 @@ function MyQaParticipationDetailDialog({
                     >
                       D-{daysLeft}
                     </Badge>
-                  )}
+                  ) : endDate ? (
+                    <Badge variant="green">{endDate} 종료</Badge>
+                  ) : null}
                   <Badge
                     variant="yellow"
                     icon={

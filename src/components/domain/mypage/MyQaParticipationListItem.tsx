@@ -66,7 +66,7 @@ function MyQaParticipationListItem({
           <div className="flex shrink-0 items-center gap-2">
             <Badge>{contentType}</Badge>
             {daysLeft === null ? (
-              <Badge>{endDate} 종료</Badge>
+              <Badge variant="green">{endDate} 종료</Badge>
             ) : (
               <Badge
                 variant={

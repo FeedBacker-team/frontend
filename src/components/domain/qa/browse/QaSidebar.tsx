@@ -32,9 +32,10 @@ function QaSidebar() {
         recruitmentsQuery.isPending ||
         participationsQuery.isPending));
   const hasStatusError =
-    profileQuery.isError ||
-    recruitmentsQuery.isError ||
-    participationsQuery.isError;
+    isAuthenticated &&
+    (profileQuery.isError ||
+      recruitmentsQuery.isError ||
+      participationsQuery.isError);
   const recruitingCount =
     recruitmentsQuery.data?.filter((qa) => qa.status === 'RECRUITING').length ??
     0;

@@ -90,6 +90,7 @@ function ProjectDetailView({ projectId }: ProjectDetailViewProps) {
           recruitingQa={
             project.hasActiveQa && project.activeQa
               ? {
+                  feedbackPostId: project.activeQa.feedbackPostId,
                   title: project.activeQa.title,
                   slotCapacity: project.activeQa.slotCapacity,
                   endDate: formatDate(project.activeQa.endAt),

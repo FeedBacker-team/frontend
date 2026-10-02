@@ -10,15 +10,20 @@ import {
   type QaRecruitSubmitParams,
 } from '@/components/domain/qa/recruit/QaRecruitDialog';
 import { QaRecruitInProgressDialog } from '@/components/domain/qa/recruit/QaRecruitInProgressDialog';
+import { LoginRequiredDialog } from '@/components/domain/shared/LoginRequiredDialog';
 import { useMyProjects } from '@/hooks/useProjects';
 import { toQaRecruitableProject } from '@/lib/qa/recruitableProjects';
+import { useAuthStore } from '@/stores/authStore';
 import type { QaRecruitDialogState } from '@/types/qa';
 
 function QaRecruitStart() {
   const router = useRouter();
+  const authStatus = useAuthStore((state) => state.status);
+  const isAuthenticated = authStatus === 'authenticated';
   const [openDialog, setOpenDialog] =
     useState<QaRecruitDialogState | null>(null);
-  const projectsQuery = useMyProjects();
+  const [isLoginRequiredOpen, setIsLoginRequiredOpen] = useState(false);
+  const projectsQuery = useMyProjects({ enabled: isAuthenticated });
   const projects =
     projectsQuery.data?.map(toQaRecruitableProject) ?? [];
   const activeProject = projects.find(
@@ -28,6 +33,11 @@ function QaRecruitStart() {
     projects.length > 0 && projects.every((project) => project.hasActiveQa);
 
   const handleStartRecruitment = () => {
+    if (!isAuthenticated) {
+      setIsLoginRequiredOpen(true);
+      return;
+    }
+
     if (projectsQuery.isError) {
       toast.error('내 프로젝트 목록을 불러오지 못했습니다');
       return;
@@ -83,7 +93,7 @@ function QaRecruitStart() {
         aria-haspopup="dialog"
         aria-expanded={openDialog !== null}
         data-open-dialog={openDialog ?? undefined}
-        disabled={projectsQuery.isPending}
+        disabled={isAuthenticated && projectsQuery.isPending}
         onClick={handleStartRecruitment}
         leftIcon={
           <span
@@ -110,6 +120,11 @@ function QaRecruitStart() {
         projects={projects}
         onClose={() => setOpenDialog(null)}
         onSubmit={handleRecruitSubmit}
+      />
+
+      <LoginRequiredDialog
+        open={isLoginRequiredOpen}
+        onOpenChange={setIsLoginRequiredOpen}
       />
     </>
   );

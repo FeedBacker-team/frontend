@@ -10,7 +10,6 @@ import type {
   MyQaParticipationDetail,
   MyQaParticipationItem,
   MyQaParticipationStatus,
-  MyQaRecruitDetail,
   MyQaRecruitItem,
   MyQaResultDetail,
   MyQaResultTesterAnswer,
@@ -176,20 +175,6 @@ const MOCK_MY_QA_FEEDBACK_REVIEWS: MyQaFeedbackReviewItem[] =
     submittedAt: '2026-09-09 18:05',
     ...(status === 'PENDING_REVIEW' ? { responseDeadlineHoursLeft: 71 } : {}),
   }));
-
-/** 상세 디자인이 확정된 모집글(id: '1')만 우선 목데이터를 제공 */
-const MOCK_MY_QA_RECRUIT_DETAILS: Record<string, MyQaRecruitDetail> = {
-  '1': {
-    ...MOCK_MY_QA_RECRUITS[0],
-    authorNickname: '닉네임',
-    usedAcorn: 100,
-    feedbackReviews: MOCK_MY_QA_FEEDBACK_REVIEWS,
-  },
-};
-
-function getMyQaRecruitDetailById(id: string): MyQaRecruitDetail | undefined {
-  return MOCK_MY_QA_RECRUIT_DETAILS[id];
-}
 
 const MOCK_MY_QA_PARTICIPATIONS: MyQaParticipationItem[] = [
   {
@@ -493,19 +478,20 @@ function getMyQaFeedbackReviewDetailById(
   return detail?.feedbackPostId === feedbackPostId ? detail : undefined;
 }
 
-const FEEDBACK_REJECT_DETAIL_MIN_LENGTH = 20;
+const FEEDBACK_REJECT_DETAIL_MIN_LENGTH = 100;
+const FEEDBACK_REJECT_DETAIL_MAX_LENGTH = 2000;
 
 const FEEDBACK_REJECT_REASONS: {
   value: FeedbackRejectReasonValue;
   label: string;
 }[] = [
   { value: 'IRRELEVANT_ANSWER', label: '질문과 무관한 답변이에요.' },
-  { value: 'INSINCERE_ANSWER', label: '성의 없이 작성된 답변이에요.' },
+  { value: 'LOW_EFFORT_ANSWER', label: '성의 없이 작성된 답변이에요.' },
   {
-    value: 'NOT_ACTUALLY_TESTED',
+    value: 'TEST_NOT_PERFORMED',
     label: '테스트를 실제로 진행하지 않은 것 같아요.',
   },
-  { value: 'ETC', label: '기타' },
+  { value: 'OTHER', label: '기타' },
 ];
 
 const MOCK_QA_REJECT_REASON = {
@@ -641,11 +627,11 @@ const WITHDRAW_REASONS: { value: WithdrawReasonValue; label: string }[] = [
 export {
   ACORN_HISTORY_TYPE_LABEL,
   ACORN_TRANSACTIONS_PAGE_SIZE,
+  FEEDBACK_REJECT_DETAIL_MAX_LENGTH,
   FEEDBACK_REJECT_DETAIL_MIN_LENGTH,
   FEEDBACK_REJECT_REASONS,
   getMyQaFeedbackReviewDetailById,
   getMyQaParticipationDetailById,
-  getMyQaRecruitDetailById,
   getMyQaResultDetailById,
   getTreeStageByHumidity,
   isMyPageTab,

@@ -99,13 +99,18 @@ function useDeleteProject() {
   });
 }
 
-function useMyProjects() {
+type UseMyProjectsOptions = {
+  enabled?: boolean;
+};
+
+function useMyProjects({ enabled = true }: UseMyProjectsOptions = {}) {
   return useQuery({
     queryKey: projectKeys.mine(),
     queryFn: async ({ signal }) => {
       const data = await getMyProjects(signal);
       return data.map(mapToMyProjectItem);
     },
+    enabled,
   });
 }
 

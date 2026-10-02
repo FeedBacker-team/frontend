@@ -182,13 +182,20 @@ function getFirstRecruitableProjectId(projects: QaRecruitableProject[]) {
   return projects.find((project) => !project.hasActiveQa)?.projectId ?? null;
 }
 
+/** 모집 가능한 프로젝트가 하나뿐이면 고를 필요가 없으므로 방식 선택 단계부터 시작한다 */
+function getInitialStep(projects: QaRecruitableProject[]): QaRecruitStep {
+  return projects.length === 1 ? 'TEST_METHOD' : 'PROJECT_SELECT';
+}
+
 function QaRecruitDialog({
   open,
   projects,
   onClose,
   onSubmit,
 }: QaRecruitDialogProps) {
-  const [step, setStep] = useState<QaRecruitStep>('PROJECT_SELECT');
+  const [step, setStep] = useState<QaRecruitStep>(() =>
+    getInitialStep(projects)
+  );
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
     () => getFirstRecruitableProjectId(projects)
   );
@@ -197,9 +204,10 @@ function QaRecruitDialog({
   const selectedProject = projects.find(
     (project) => project.projectId === selectedProjectId
   );
+  const canSelectProject = projects.length > 1;
 
   const reset = () => {
-    setStep('PROJECT_SELECT');
+    setStep(getInitialStep(projects));
     setSelectedProjectId(getFirstRecruitableProjectId(projects));
     setTargetType('SERVICE_LINK');
   };
@@ -273,9 +281,11 @@ function QaRecruitDialog({
             <DialogFooter>
               <Button
                 variant="outline"
-                onClick={() => setStep('PROJECT_SELECT')}
+                onClick={() =>
+                  canSelectProject ? setStep('PROJECT_SELECT') : handleClose()
+                }
               >
-                이전
+                {canSelectProject ? '이전' : '닫기'}
               </Button>
               <Button disabled={!selectedProject} onClick={handleSubmit}>
                 모집글 작성하기

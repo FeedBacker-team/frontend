@@ -217,7 +217,10 @@ type MyQaResultDetail = {
 };
 
 type FeedbackRejectReasonValue =
-  'IRRELEVANT_ANSWER' | 'INSINCERE_ANSWER' | 'NOT_ACTUALLY_TESTED' | 'ETC';
+  | 'IRRELEVANT_ANSWER'
+  | 'LOW_EFFORT_ANSWER'
+  | 'TEST_NOT_PERFORMED'
+  | 'OTHER';
 
 type MyPageTab = 'PROJECT' | 'QA_RECRUIT' | 'QA_PARTICIPATION';
 

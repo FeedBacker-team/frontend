@@ -12,9 +12,13 @@ const OBJECTION_STEPS = [
   { key: 'RESOLVED', label: '검토 완료' },
 ] as const;
 
+/**
+ * 백엔드에 "운영팀이 실제로 보기 시작했는지"를 구분하는 상태가 없어(ERD 기준),
+ * 접수와 검토 중을 구분할 방법이 없다. 그래서 해결되기 전까지는 항상
+ * 첫 단계(접수 완료)로 고정하고, 결과가 나왔을 때만 마지막 단계로 넘어간다.
+ */
 function getCurrentStepIndex(status: MyQaParticipationStatus): number {
   if (status === 'DISPUTE_RESOLVED') return 2;
-  if (status === 'DISPUTE_REVIEWING') return 1;
   return 0;
 }
 

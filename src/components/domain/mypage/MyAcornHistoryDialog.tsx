@@ -15,6 +15,10 @@ type MyAcornHistoryDialogProps = {
   acornCount: number;
   transactions: AcornTransactionItem[];
   pageSize: number;
+  isLoading?: boolean;
+  isError?: boolean;
+  errorMessage?: string;
+  onRetry?: () => void;
 };
 
 function MyAcornHistoryDialog({
@@ -23,6 +27,10 @@ function MyAcornHistoryDialog({
   acornCount,
   transactions,
   pageSize,
+  isLoading = false,
+  isError = false,
+  errorMessage,
+  onRetry,
 }: MyAcornHistoryDialogProps) {
   const [page, setPage] = useState(1);
   const totalPages = Math.max(1, Math.ceil(transactions.length / pageSize));
@@ -71,7 +79,30 @@ function MyAcornHistoryDialog({
           </p>
         </div>
 
-        {transactions.length === 0 ? (
+        {isLoading ? (
+          <div
+            className="flex animate-pulse flex-col gap-3"
+            aria-label="도토리 사용 내역 불러오는 중"
+          >
+            {Array.from({ length: pageSize }).map((_, index) => (
+              <div
+                key={index}
+                className="h-16 rounded-lg bg-gray-100"
+              />
+            ))}
+          </div>
+        ) : isError ? (
+          <div className="flex flex-col items-center gap-4 py-16">
+            <p className="text-b2 text-center text-text-sub">
+              {errorMessage ?? '도토리 사용 내역을 불러오지 못했습니다'}
+            </p>
+            {onRetry && (
+              <Button variant="outline" size="medium" onClick={onRetry}>
+                다시 시도
+              </Button>
+            )}
+          </div>
+        ) : transactions.length === 0 ? (
           <div className="flex flex-col items-center gap-4 py-16">
             <p className="text-b2 text-center text-text-sub">
               아직 도토리 사용 내역이 없어요

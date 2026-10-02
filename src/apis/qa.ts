@@ -32,6 +32,8 @@ const QA_PATHS = {
     `/api/feedback-posts/${encodeURIComponent(feedbackPostId)}/participations`,
   complete: (feedbackPostId: string) =>
     `/api/feedback-posts/${encodeURIComponent(feedbackPostId)}/complete`,
+  feedbackProgress: (feedbackPostId: string) =>
+    `/api/feedback-posts/${encodeURIComponent(feedbackPostId)}/feedbacks`,
   feedbacks: '/api/feedbacks',
   myRecruitments: '/api/feedback-posts/mine',
   myParticipations: '/api/feedbacks/mine',
@@ -74,6 +76,14 @@ type QaQuestionConfigApiResponse = {
   choiceQuestionCount: number;
   subjectiveCount: number;
   estimatedMinutes: number;
+};
+
+type FeedbackProgressApiResponse = {
+  feedbackId: string;
+  testerName: string | null;
+  status: MyQaParticipation['status'];
+  submitAt: string;
+  responseDeadlineAt: string;
 };
 
 type QaRecruitmentDetailApiResponse = Omit<
@@ -271,6 +281,30 @@ async function getMyQaParticipations(
   });
 }
 
+async function getFeedbackProgressList(
+  feedbackPostId: string,
+  signal?: AbortSignal
+): Promise<FeedbackProgressApiResponse[]> {
+  if (!process.env.NEXT_PUBLIC_API_URL) {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return [];
+  }
+
+  return apiRequest<FeedbackProgressApiResponse[]>(
+    QA_PATHS.feedbackProgress(feedbackPostId),
+    {
+      method: 'GET',
+      signal,
+      fallbackMessage: (status) =>
+        status === 403
+          ? '게시글 작성자만 조회할 수 있습니다.'
+          : status === 404
+            ? '피드백 모집글을 찾을 수 없습니다.'
+            : '제출된 피드백 목록을 불러오지 못했습니다',
+    }
+  );
+}
+
 async function getQaRecruitmentDetail(
   feedbackPostId: string,
   signal?: AbortSignal
@@ -430,6 +464,7 @@ async function submitQaFeedback(
 export {
   completeQaRecruitment,
   createQaRecruitment,
+  getFeedbackProgressList,
   getMyQaParticipations,
   getMyQaRecruitments,
   getQaFeedbackForm,
@@ -438,3 +473,4 @@ export {
   participateInQa,
   submitQaFeedback,
 };
+export type { FeedbackProgressApiResponse };

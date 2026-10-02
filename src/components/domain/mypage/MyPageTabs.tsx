@@ -8,32 +8,31 @@ import { MyProjectListItem } from '@/components/domain/mypage/MyProjectListItem'
 import { MyQaParticipationDetailDialog } from '@/components/domain/mypage/MyQaParticipationDetailDialog';
 import { MyQaParticipationListItem } from '@/components/domain/mypage/MyQaParticipationListItem';
 import { MyQaRecruitListItem } from '@/components/domain/mypage/MyQaRecruitListItem';
-import {
-  getMyQaParticipationDetailById,
-  MY_PAGE_TAB_LABEL,
-  MY_PAGE_TAB_ORDER,
-} from '@/constants/mypage';
+import { MY_PAGE_TAB_LABEL, MY_PAGE_TAB_ORDER } from '@/constants/mypage';
+import { useFeedbackParticipationDetail } from '@/hooks/useFeedback';
 import { useMyProjects } from '@/hooks/useProjects';
+import { useMyQaParticipations, useMyQaRecruitments } from '@/hooks/useQaRecruitments';
+import { mapToMyQaParticipationItem, mapToMyQaRecruitItem } from '@/lib/qa/myQa';
 import { cn } from '@/lib/utils';
-import type {
-  MyPageTab,
-  MyQaParticipationItem,
-  MyQaRecruitItem,
-} from '@/types/mypage';
+import { useObjectionStore } from '@/stores/objectionStore';
+import type { MyPageTab, MyQaParticipationStatus } from '@/types/mypage';
 
 const TAB_QUERY_KEY = 'tab';
 
+/** 참여자가 실제로 피드백을 제출해 조회 가능한(GET /api/feedbacks/{id}) 상태만 상세 모달을 연다 */
+const CLICKABLE_PARTICIPATION_STATUSES: MyQaParticipationStatus[] = [
+  'PENDING_REVIEW',
+  'ACCEPTED',
+  'REJECTED',
+  'DISPUTE_REVIEWING',
+  'DISPUTE_RESOLVED',
+];
+
 type MyPageTabsProps = {
-  qaRecruits: MyQaRecruitItem[];
-  qaParticipations: MyQaParticipationItem[];
   initialTab?: MyPageTab;
 };
 
-function MyPageTabs({
-  qaRecruits,
-  qaParticipations,
-  initialTab,
-}: MyPageTabsProps) {
+function MyPageTabs({ initialTab }: MyPageTabsProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState<MyPageTab>(
@@ -42,9 +41,10 @@ function MyPageTabs({
   const [selectedParticipationId, setSelectedParticipationId] = useState<
     string | null
   >(null);
-  const selectedParticipationDetail = selectedParticipationId
-    ? (getMyQaParticipationDetailById(selectedParticipationId) ?? null)
-    : null;
+  const participationDetailQuery = useFeedbackParticipationDetail(
+    selectedParticipationId
+  );
+  const filedObjections = useObjectionStore((state) => state.filedByFeedbackId);
 
   const {
     data: projects,
@@ -52,11 +52,43 @@ function MyPageTabs({
     isError: isProjectsError,
   } = useMyProjects();
 
+  const {
+    data: myQaRecruitments,
+    isPending: isQaRecruitsPending,
+    isError: isQaRecruitsError,
+  } = useMyQaRecruitments();
+  const qaRecruits = myQaRecruitments?.map(mapToMyQaRecruitItem) ?? [];
+
+  const {
+    data: myQaParticipations,
+    isPending: isQaParticipationsPending,
+    isError: isQaParticipationsError,
+  } = useMyQaParticipations();
+  const qaParticipations =
+    myQaParticipations?.map((participation) =>
+      mapToMyQaParticipationItem(
+        participation,
+        participation.id in filedObjections
+      )
+    ) ?? [];
+
   useEffect(() => {
     if (isProjectsError) {
       toast.error('내 프로젝트 목록을 불러오지 못했습니다');
     }
   }, [isProjectsError]);
+
+  useEffect(() => {
+    if (isQaRecruitsError) {
+      toast.error('내 QA 모집 목록을 불러오지 못했습니다');
+    }
+  }, [isQaRecruitsError]);
+
+  useEffect(() => {
+    if (isQaParticipationsError) {
+      toast.error('내 QA 참여 목록을 불러오지 못했습니다');
+    }
+  }, [isQaParticipationsError]);
 
   const handleTabChange = (tab: MyPageTab) => {
     setActiveTab(tab);
@@ -128,40 +160,71 @@ function MyPageTabs({
       ) : null}
 
       {activeTab === 'QA_RECRUIT' ? (
-        <ul className="flex flex-col divide-y divide-gray-300">
-          {qaRecruits.map((recruit) => (
-            <li key={recruit.id}>
-              <MyQaRecruitListItem recruit={recruit} />
-            </li>
-          ))}
-        </ul>
+        isQaRecruitsPending ? (
+          <p className="text-b2 py-16 text-center text-text-sub">
+            불러오는 중이에요
+          </p>
+        ) : isQaRecruitsError ? (
+          <p className="text-b2 py-16 text-center text-text-sub">
+            내 QA 모집 목록을 불러오지 못했습니다
+          </p>
+        ) : qaRecruits.length === 0 ? (
+          <p className="text-b2 py-16 text-center text-text-sub">
+            등록한 QA 모집이 없어요
+          </p>
+        ) : (
+          <ul className="flex flex-col divide-y divide-gray-300">
+            {qaRecruits.map((recruit) => (
+              <li key={recruit.id}>
+                <MyQaRecruitListItem recruit={recruit} />
+              </li>
+            ))}
+          </ul>
+        )
       ) : null}
 
       {activeTab === 'QA_PARTICIPATION' ? (
-        <ul className="flex flex-col divide-y divide-gray-300">
-          {qaParticipations.map((participation) => (
-            <li key={participation.id}>
-              <MyQaParticipationListItem
-                participation={participation}
-                onClick={
-                  getMyQaParticipationDetailById(participation.id)
-                    ? () => setSelectedParticipationId(participation.id)
-                    : undefined
-                }
-              />
-            </li>
-          ))}
-        </ul>
+        isQaParticipationsPending ? (
+          <p className="text-b2 py-16 text-center text-text-sub">
+            불러오는 중이에요
+          </p>
+        ) : isQaParticipationsError ? (
+          <p className="text-b2 py-16 text-center text-text-sub">
+            내 QA 참여 목록을 불러오지 못했습니다
+          </p>
+        ) : qaParticipations.length === 0 ? (
+          <p className="text-b2 py-16 text-center text-text-sub">
+            참여한 QA가 없어요
+          </p>
+        ) : (
+          <ul className="flex flex-col divide-y divide-gray-300">
+            {qaParticipations.map((participation) => (
+              <li key={participation.id}>
+                <MyQaParticipationListItem
+                  participation={participation}
+                  onClick={
+                    CLICKABLE_PARTICIPATION_STATUSES.includes(
+                      participation.status
+                    )
+                      ? () => setSelectedParticipationId(participation.id)
+                      : undefined
+                  }
+                />
+              </li>
+            ))}
+          </ul>
+        )
       ) : null}
 
       <MyQaParticipationDetailDialog
-        open={selectedParticipationDetail != null}
+        open={selectedParticipationId !== null}
         onOpenChange={(open) => {
           if (!open) {
             setSelectedParticipationId(null);
           }
         }}
-        detail={selectedParticipationDetail}
+        detail={participationDetailQuery.data}
+        isLoading={participationDetailQuery.isPending}
       />
     </section>
   );

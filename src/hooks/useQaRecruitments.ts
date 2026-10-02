@@ -4,6 +4,7 @@ import { uploadImages } from '@/apis/images';
 import {
   completeQaRecruitment,
   createQaRecruitment,
+  getFeedbackProgressList,
   getMyQaParticipations,
   getMyQaRecruitments,
   getQaFeedbackForm,
@@ -13,8 +14,12 @@ import {
   submitQaFeedback,
 } from '@/apis/qa';
 import { buildSubmitQaFeedbackRequest } from '@/lib/qa/feedback';
+import {
+  mapToMyQaFeedbackReviewItems,
+  mapToMyQaRecruitDetail,
+} from '@/lib/qa/myQa';
 import { buildQaRecruitmentRequest } from '@/lib/qa/recruit';
-import { profileKeys } from '@/hooks/useProfile';
+import { profileKeys, useProfile } from '@/hooks/useProfile';
 import type {
   QaFeedbackFormValues,
   QaFeedbackQuestion,
@@ -34,6 +39,8 @@ const qaRecruitmentKeys = {
     [...qaRecruitmentKeys.all, 'detail', feedbackPostId] as const,
   feedbackForm: (feedbackPostId: string) =>
     [...qaRecruitmentKeys.all, 'feedback-form', feedbackPostId] as const,
+  feedbackReviews: (feedbackPostId: string) =>
+    [...qaRecruitmentKeys.all, 'feedback-reviews', feedbackPostId] as const,
   mine: () => [...qaRecruitmentKeys.all, 'mine'] as const,
   myParticipations: () =>
     [...qaRecruitmentKeys.all, 'my-participations'] as const,
@@ -58,6 +65,49 @@ function useQaRecruitmentDetail(feedbackPostId: string) {
     queryFn: ({ signal }) =>
       getQaRecruitmentDetail(feedbackPostId, signal),
   });
+}
+
+function useMyQaFeedbackReviewList(feedbackPostId: string) {
+  return useQuery({
+    queryKey: qaRecruitmentKeys.feedbackReviews(feedbackPostId),
+    queryFn: ({ signal }) => getFeedbackProgressList(feedbackPostId, signal),
+    select: mapToMyQaFeedbackReviewItems,
+  });
+}
+
+/**
+ * 메이커가 보는 "QA 진행 상황" 화면용 상세 정보.
+ * 모집글 상세, 제출된 피드백 목록, 작성자(본인) 닉네임 세 요청을 합쳐
+ * MyQaRecruitDetail 하나로 만들어 반환한다.
+ */
+function useMyQaRecruitDetail(feedbackPostId: string) {
+  const detailQuery = useQaRecruitmentDetail(feedbackPostId);
+  const reviewListQuery = useMyQaFeedbackReviewList(feedbackPostId);
+  const profileQuery = useProfile();
+
+  const data =
+    detailQuery.data && reviewListQuery.data && profileQuery.data
+      ? mapToMyQaRecruitDetail(
+          feedbackPostId,
+          detailQuery.data,
+          reviewListQuery.data,
+          profileQuery.data.nickname
+        )
+      : undefined;
+
+  return {
+    data,
+    isPending:
+      detailQuery.isPending ||
+      reviewListQuery.isPending ||
+      profileQuery.isPending,
+    isError: detailQuery.isError || reviewListQuery.isError,
+    error: detailQuery.error ?? reviewListQuery.error ?? null,
+    refetch: () => {
+      void detailQuery.refetch();
+      void reviewListQuery.refetch();
+    },
+  };
 }
 
 function useQaFeedbackForm(feedbackPostId: string) {
@@ -232,7 +282,9 @@ export {
   qaRecruitmentKeys,
   useCompleteQaRecruitment,
   useCreateQaRecruitment,
+  useMyQaFeedbackReviewList,
   useMyQaParticipations,
+  useMyQaRecruitDetail,
   useMyQaRecruitments,
   useParticipateInQa,
   useQaFeedbackForm,
