@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 import { Button } from '@/components/common/Button';
 import { toast } from '@/components/common/Sonner';
@@ -85,6 +85,8 @@ function HomeProjectBrowse() {
       description="등록된 프로젝트를 살펴보고 다양한 분야의 작업물을 탐색해 보세요."
       action={
         <Button
+          nativeButton={false}
+          render={<Link href="/projects/new" />}
           size="medium"
           leftIcon={
             <span
@@ -93,7 +95,7 @@ function HomeProjectBrowse() {
             />
           }
         >
-          <Link href="/projects/new">내 프로젝트 등록하기 </Link>
+          내 프로젝트 등록하기
         </Button>
       }
       searchPlaceholder="관심 있는 키워드나 프로젝트를 검색해 보세요"

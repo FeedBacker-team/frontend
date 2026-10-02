@@ -14,6 +14,7 @@ import type { ProjectCard } from '@/types/project';
 function toRankedItem(project: ProjectCard): RankedListItem {
   return {
     id: String(project.project_id),
+    href: `/projects/${project.project_id}`,
     title: project.title,
     description: project.description,
     thumbnailUrl: project.thumbnail_url ?? undefined,
