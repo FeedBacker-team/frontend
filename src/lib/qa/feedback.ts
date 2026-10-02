@@ -98,23 +98,27 @@ function buildSubmitQaFeedbackRequest(
       return {
         order: question.order,
         selectedOption:
-          selectedOptions.length > 0
-            ? selectedOptions.map((option) => option - 1)
-            : null,
+          selectedOptions.length > 0 ? selectedOptions : null,
         images: [],
       };
     });
   const subjectiveAnswers = questions
     .filter((question) => question.type === 'SUBJECTIVE')
-    .map((question) => ({
-      order: question.order,
-      text: values.answers[String(question.order)]?.text.trim() ?? '',
-      images: (uploadedImagePaths[question.order] ?? []).map((path, index) => ({
-        type: 'POST_THUMBNAIL' as const,
-        order: index,
-        path,
-      })),
-    }));
+    .map((question) => {
+      const text = values.answers[String(question.order)]?.text.trim() ?? '';
+
+      return {
+        order: question.order,
+        text: text.length > 0 ? text : null,
+        images: (uploadedImagePaths[question.order] ?? []).map(
+          (path, index) => ({
+            type: 'POST_THUMBNAIL' as const,
+            order: index,
+            path,
+          })
+        ),
+      };
+    });
 
   return {
     feedbackPostId,

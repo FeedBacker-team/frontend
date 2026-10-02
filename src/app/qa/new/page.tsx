@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation';
 
-import { QaRecruitForm } from '@/components/domain/qa/recruit/QaRecruitForm';
-import { MOCK_QA_RECRUITABLE_PROJECTS } from '@/mocks/qa';
+import { QaRecruitNewView } from '@/components/domain/qa/recruit/QaRecruitNewView';
 import type { QaTargetType } from '@/types/qa';
 
 type QaRecruitNewPageProps = {
@@ -30,13 +29,5 @@ export default async function QaRecruitNewPage({
     redirect('/qa');
   }
 
-  const project = MOCK_QA_RECRUITABLE_PROJECTS.find(
-    (item) => String(item.projectId) === projectId && !item.hasActiveQa
-  );
-
-  if (!project) {
-    redirect('/qa');
-  }
-
-  return <QaRecruitForm project={project} target={target} />;
+  return <QaRecruitNewView projectId={projectId} target={target} />;
 }

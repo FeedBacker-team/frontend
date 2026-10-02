@@ -3,9 +3,12 @@ import {
   MOCK_QA_RECRUITMENT_DETAILS,
   MOCK_QA_RECRUITMENTS,
 } from '@/mocks/qa';
+import { apiRequest } from '@/apis/client';
 import type {
   CreateQaRecruitmentRequest,
   CreateQaRecruitmentResponse,
+  MyQaParticipation,
+  MyQaRecruitment,
   QaFeedbackFormResponse,
   QaRecruitmentCard,
   QaRecruitmentDetailResponse,
@@ -16,6 +19,7 @@ import type {
   SubmitQaFeedbackResponse,
 } from '@/types/qa';
 import { QaApiError } from '@/types/qa';
+import type { ProjectTag } from '@/types/project';
 
 const DEFAULT_QA_PAGE_SIZE = 5;
 const QA_PATHS = {
@@ -26,7 +30,11 @@ const QA_PATHS = {
     `/api/feedback-posts/${encodeURIComponent(feedbackPostId)}/form`,
   participations: (feedbackPostId: string) =>
     `/api/feedback-posts/${encodeURIComponent(feedbackPostId)}/participations`,
+  complete: (feedbackPostId: string) =>
+    `/api/feedback-posts/${encodeURIComponent(feedbackPostId)}/complete`,
   feedbacks: '/api/feedbacks',
+  myRecruitments: '/api/feedback-posts/mine',
+  myParticipations: '/api/feedbacks/mine',
 } as const;
 
 type NormalizedQaRecruitmentListParams = {
@@ -36,6 +44,98 @@ type NormalizedQaRecruitmentListParams = {
   page: number;
   size: number;
 };
+
+type QaRecruitmentCardResponse = {
+  feedback_post_id: string;
+  project_id: string;
+  project_title: string;
+  title: string;
+  thumbnail_url: string | null;
+  tags: ProjectTag[];
+  status: QaRecruitmentCard['status'];
+  target_type: QaRecruitmentCard['targetType'];
+  start_at: string;
+  end_at: string;
+  slot_capacity: number;
+  remain_slot_count: number;
+  reward_acorn: number;
+};
+
+type QaRecruitmentListApiResponse = {
+  total_count: number;
+  page: number;
+  size: number;
+  has_next: boolean;
+  feedback_posts: QaRecruitmentCardResponse[];
+};
+
+type QaQuestionConfigApiResponse = {
+  totalCount: number;
+  choiceQuestionCount: number;
+  subjectiveCount: number;
+  estimatedMinutes: number;
+};
+
+type QaRecruitmentDetailApiResponse = Omit<
+  QaRecruitmentDetailResponse,
+  'status' | 'questionConfig'
+> & {
+  feedbackPostStatus: QaRecruitmentDetailResponse['status'];
+  questionConfig: QaQuestionConfigApiResponse;
+};
+
+function mapQaRecruitmentCard(
+  response: QaRecruitmentCardResponse
+): QaRecruitmentCard {
+  return {
+    feedbackPostId: response.feedback_post_id,
+    projectId: response.project_id,
+    projectTitle: response.project_title,
+    title: response.title,
+    thumbnailUrl: response.thumbnail_url,
+    tags: response.tags,
+    status: response.status,
+    targetType: response.target_type,
+    startAt: response.start_at,
+    endAt: response.end_at,
+    capacity: response.slot_capacity,
+    participantCount: Math.max(
+      0,
+      response.slot_capacity - response.remain_slot_count
+    ),
+    requiredAcorns: response.reward_acorn * response.slot_capacity,
+    createdAt: response.start_at,
+  };
+}
+
+function mapQaRecruitmentListResponse(
+  response: QaRecruitmentListApiResponse
+): QaRecruitmentListResponse {
+  return {
+    totalCount: response.total_count,
+    page: response.page,
+    size: response.size,
+    hasNext: response.has_next,
+    feedbackPosts: response.feedback_posts.map(mapQaRecruitmentCard),
+  };
+}
+
+function mapQaRecruitmentDetailResponse(
+  response: QaRecruitmentDetailApiResponse
+): QaRecruitmentDetailResponse {
+  const { feedbackPostStatus, questionConfig, ...detail } = response;
+
+  return {
+    ...detail,
+    status: feedbackPostStatus,
+    questionConfig: {
+      totalQuestionCount: questionConfig.totalCount,
+      choiceQuestionCount: questionConfig.choiceQuestionCount,
+      subjectiveQuestionCount: questionConfig.subjectiveCount,
+      estimatedTime: questionConfig.estimatedMinutes,
+    },
+  };
+}
 
 function normalizeQaRecruitmentListParams(
   params: QaRecruitmentListParams
@@ -78,13 +178,6 @@ function sortMockQaRecruitments(
 
   if (sort === 'DEADLINE') {
     return sorted.sort((a, b) => a.endAt.localeCompare(b.endAt));
-  }
-
-  if (sort === 'REWARD') {
-    return sorted.sort(
-      (a, b) =>
-        b.requiredAcorns / b.capacity - a.requiredAcorns / a.capacity
-    );
   }
 
   return sorted.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
@@ -143,26 +236,39 @@ async function getQaRecruitments(
     throw new Error('QA 모집 목록을 불러오지 못했습니다');
   }
 
-  return response.json();
+  const data: QaRecruitmentListApiResponse = await response.json();
+
+  return mapQaRecruitmentListResponse(data);
 }
 
-async function parseQaError(response: Response, fallbackMessage: string) {
-  try {
-    const data: unknown = await response.json();
-
-    if (
-      typeof data === 'object' &&
-      data !== null &&
-      'message' in data &&
-      typeof data.message === 'string'
-    ) {
-      return data.message;
-    }
-  } catch {
-    // 에러 body가 JSON이 아닌 경우
+async function getMyQaRecruitments(
+  signal?: AbortSignal
+): Promise<MyQaRecruitment[]> {
+  if (!process.env.NEXT_PUBLIC_API_URL) {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return [];
   }
 
-  return fallbackMessage;
+  return apiRequest<MyQaRecruitment[]>(QA_PATHS.myRecruitments, {
+    method: 'GET',
+    signal,
+    fallbackMessage: '내 QA 모집 목록을 불러오지 못했습니다',
+  });
+}
+
+async function getMyQaParticipations(
+  signal?: AbortSignal
+): Promise<MyQaParticipation[]> {
+  if (!process.env.NEXT_PUBLIC_API_URL) {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return [];
+  }
+
+  return apiRequest<MyQaParticipation[]>(QA_PATHS.myParticipations, {
+    method: 'GET',
+    signal,
+    fallbackMessage: '내 QA 참여 목록을 불러오지 못했습니다',
+  });
 }
 
 async function getQaRecruitmentDetail(
@@ -184,25 +290,19 @@ async function getQaRecruitmentDetail(
     return detail;
   }
 
-  const baseUrl = apiBaseUrl.replace(/\/$/, '');
-  // TODO: 실제 인증 연동 시 메모리에서 관리하는 access token을
-  // Authorization: Bearer 헤더로 공통 API 클라이언트에서 주입한다.
-  const response = await fetch(`${baseUrl}${QA_PATHS.detail(feedbackPostId)}`, {
-    signal,
-  });
-
-  if (!response.ok) {
-    throw new Error(
-      await parseQaError(
-        response,
-        response.status === 404
+  const response = await apiRequest<QaRecruitmentDetailApiResponse>(
+    QA_PATHS.detail(feedbackPostId),
+    {
+      method: 'GET',
+      signal,
+      fallbackMessage: (status) =>
+        status === 404
           ? '피드백 모집글을 찾을 수 없습니다.'
-          : 'QA 모집글을 불러오지 못했습니다'
-      )
-    );
-  }
+          : 'QA 모집글을 불러오지 못했습니다',
+    }
+  );
 
-  return response.json();
+  return mapQaRecruitmentDetailResponse(response);
 }
 
 async function getQaFeedbackForm(
@@ -222,29 +322,17 @@ async function getQaFeedbackForm(
     return form;
   }
 
-  const baseUrl = apiBaseUrl.replace(/\/$/, '');
-  // TODO: 실제 인증 연동 시 메모리 access token을 Bearer 헤더로 주입한다.
-  const response = await fetch(
-    `${baseUrl}${QA_PATHS.feedbackForm(feedbackPostId)}`,
+  return apiRequest<QaFeedbackFormResponse>(
+    QA_PATHS.feedbackForm(feedbackPostId),
     {
+      method: 'GET',
       signal,
-      credentials: 'include',
+      fallbackMessage: (status) =>
+        status === 404
+          ? 'QA 작성 정보를 찾을 수 없습니다.'
+          : 'QA 작성 화면을 불러오지 못했습니다',
     }
   );
-
-  if (!response.ok) {
-    throw new QaApiError(
-      await parseQaError(
-        response,
-        response.status === 404
-          ? 'QA 작성 정보를 찾을 수 없습니다.'
-          : 'QA 작성 화면을 불러오지 못했습니다'
-      ),
-      response.status
-    );
-  }
-
-  return response.json();
 }
 
 async function createQaRecruitment(
@@ -262,27 +350,18 @@ async function createQaRecruitment(
     };
   }
 
-  const baseUrl = apiBaseUrl.replace(/\/$/, '');
-  const response = await fetch(`${baseUrl}${QA_PATHS.recruitments}`, {
+  const data = await apiRequest<unknown>(QA_PATHS.recruitments, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify(body),
+    json: body,
+    fallbackMessage: 'QA 모집 글 등록에 실패했습니다',
   });
-
-  if (!response.ok) {
-    throw new Error(
-      await parseQaError(response, 'QA 모집 글 등록에 실패했습니다')
-    );
-  }
-
-  const data: unknown = await response.json();
 
   if (
     typeof data !== 'object' ||
     data === null ||
     !('feedbackPostId' in data) ||
-    typeof data.feedbackPostId !== 'string'
+    typeof data.feedbackPostId !== 'string' ||
+    data.feedbackPostId.length === 0
   ) {
     throw new Error('QA 모집 글 등록 응답 형식이 올바르지 않습니다');
   }
@@ -291,28 +370,29 @@ async function createQaRecruitment(
 }
 
 async function participateInQa(feedbackPostId: string): Promise<void> {
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
-
-  if (!apiBaseUrl) {
+  if (!process.env.NEXT_PUBLIC_API_URL) {
     await new Promise((resolve) => setTimeout(resolve, 300));
     return;
   }
 
-  const baseUrl = apiBaseUrl.replace(/\/$/, '');
-  // TODO: 실제 인증 연동 시 메모리 access token을 Bearer 헤더로 주입한다.
-  const response = await fetch(
-    `${baseUrl}${QA_PATHS.participations(feedbackPostId)}`,
-    { method: 'POST' }
-  );
+  return apiRequest<void>(QA_PATHS.participations(feedbackPostId), {
+    method: 'POST',
+    responseType: 'void',
+    fallbackMessage: 'QA 참여 신청에 실패했습니다',
+  });
+}
 
-  if (!response.ok) {
-    throw new QaApiError(
-      await parseQaError(response, 'QA 참여 신청에 실패했습니다'),
-      response.status
-    );
+async function completeQaRecruitment(feedbackPostId: string): Promise<void> {
+  if (!process.env.NEXT_PUBLIC_API_URL) {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return;
   }
 
-  // TODO: 참여 성공 응답 명세가 확정되면 참여 ID 등 필요한 값을 반환한다.
+  return apiRequest<void>(QA_PATHS.complete(feedbackPostId), {
+    method: 'PATCH',
+    responseType: 'void',
+    fallbackMessage: 'QA 모집 조기 마감에 실패했습니다',
+  });
 }
 
 async function submitQaFeedback(
@@ -325,23 +405,11 @@ async function submitQaFeedback(
     return { feedbackId: '770e8400-e29b-41d4-a716-446655440000' };
   }
 
-  const baseUrl = apiBaseUrl.replace(/\/$/, '');
-  // TODO: 실제 인증 연동 시 메모리 access token을 Bearer 헤더로 주입한다.
-  const response = await fetch(`${baseUrl}${QA_PATHS.feedbacks}`, {
+  const data = await apiRequest<unknown>(QA_PATHS.feedbacks, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify(body),
+    json: body,
+    fallbackMessage: '피드백 제출에 실패했습니다',
   });
-
-  if (!response.ok) {
-    throw new QaApiError(
-      await parseQaError(response, '피드백 제출에 실패했습니다'),
-      response.status
-    );
-  }
-
-  const data: unknown = await response.json();
 
   if (typeof data === 'string' && data.length > 0) {
     return { feedbackId: data };
@@ -360,7 +428,10 @@ async function submitQaFeedback(
 }
 
 export {
+  completeQaRecruitment,
   createQaRecruitment,
+  getMyQaParticipations,
+  getMyQaRecruitments,
   getQaFeedbackForm,
   getQaRecruitmentDetail,
   getQaRecruitments,

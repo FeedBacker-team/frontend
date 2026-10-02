@@ -344,12 +344,12 @@ function QaRecruitQuestionEditor({
         isDragging && 'relative z-10 opacity-70 shadow-lg'
       )}
     >
-      <header className="grid grid-cols-[auto_auto_minmax(0,1fr)_auto_auto] items-center gap-3">
+      <header className="grid grid-cols-[auto_auto_minmax(0,1fr)_auto_auto] items-start gap-3">
         <button
           ref={handleRef}
           type="button"
           aria-label={`${index + 1}번 질문 순서 변경`}
-          className="flex size-6 touch-none cursor-grab items-center justify-center active:cursor-grabbing"
+          className="mt-2.5 flex size-6 touch-none cursor-grab items-center justify-center active:cursor-grabbing"
         >
           <Image
             src="/icons/grip-horizontal.svg"
@@ -360,7 +360,7 @@ function QaRecruitQuestionEditor({
             unoptimized
           />
         </button>
-        <span className="text-h3 whitespace-nowrap text-text-default">
+        <span className="mt-2 whitespace-nowrap text-h3 text-text-default">
           {index + 1}번
         </span>
         <div className="flex min-w-0 flex-col gap-1">

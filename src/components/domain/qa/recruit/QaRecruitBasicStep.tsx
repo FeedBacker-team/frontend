@@ -13,6 +13,7 @@ import { FileUpload, FileUploadItem } from '@/components/common/FileUpload';
 import { Input, inputVariants } from '@/components/common/Input';
 import { Textarea } from '@/components/common/Textarea';
 import { ALLOWED_IMAGE_TYPES } from '@/constants/file';
+import { QA_RECRUIT_TITLE_MAX_LENGTH } from '@/constants/qa';
 import { cn } from '@/lib/utils';
 import { validateImageFiles } from '@/lib/validateImageFile';
 import type {
@@ -240,6 +241,7 @@ function QaRecruitBasicStep({ project, target }: QaRecruitBasicStepProps) {
     register,
     formState: { errors },
   } = useFormContext<QaRecruitFormValues>();
+  const title = useWatch({ control, name: 'title' }) ?? '';
   const today = startOfDay(new Date());
   const maxEndAt = addDays(today, 28);
 
@@ -255,13 +257,29 @@ function QaRecruitBasicStep({ project, target }: QaRecruitBasicStepProps) {
         <Input
           id="qa-recruit-title"
           required
+          maxLength={QA_RECRUIT_TITLE_MAX_LENGTH}
           size="medium"
           aria-invalid={!!errors.title}
-          aria-describedby={errors.title ? 'qa-recruit-title-error' : undefined}
+          aria-describedby={
+            errors.title
+              ? 'qa-recruit-title-hint qa-recruit-title-error'
+              : 'qa-recruit-title-hint'
+          }
           state={errors.title ? 'error' : 'default'}
           placeholder="예) 신규 결제 기능 모듈 및 예외 처리 플로우 QA"
           {...register('title')}
         />
+        <div
+          id="qa-recruit-title-hint"
+          className="flex items-center justify-between"
+        >
+          <span className="text-c1 text-text-info">
+            최대 {QA_RECRUIT_TITLE_MAX_LENGTH}자까지 입력 가능해요.
+          </span>
+          <span className="text-h4 text-text-sub">
+            {title.length} / {QA_RECRUIT_TITLE_MAX_LENGTH}자
+          </span>
+        </div>
         <FieldErrorMessage
           id="qa-recruit-title-error"
           message={errors.title?.message}

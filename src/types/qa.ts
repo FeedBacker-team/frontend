@@ -1,6 +1,6 @@
 import type { ProjectTag } from '@/types/project';
 
-type QaRecruitmentStatus = 'RECRUITING' | 'CLOSED';
+type QaRecruitmentStatus = 'RECRUITING' | 'CLOSED' | 'COMPLETED';
 
 type QaTargetType = 'SERVICE_LINK' | 'IMAGE';
 
@@ -45,7 +45,9 @@ type QaRecruitFormValues = {
   questions: QaRecruitQuestionFormValue[];
 };
 
-type QaRecruitImageType = 'POST_THUMBNAIL';
+type QaImageType = 'POST' | 'POST_THUMBNAIL' | 'QUESTION' | 'ANSWER';
+
+type QaRecruitImageType = QaImageType;
 
 type QaRecruitImageRequest = {
   type: QaRecruitImageType;
@@ -82,7 +84,7 @@ type CreateQaRecruitmentRequest = {
   endAt: string;
   target: QaTargetType;
   tags?: ProjectTag[];
-  serviceUrl: string;
+  serviceUrl: string | null;
   images?: QaRecruitImageRequest[];
   choiceQuestions?: QaRecruitChoiceQuestionRequest[];
   subjectiveQuestions?: QaRecruitSubjectiveQuestionRequest[];
@@ -93,15 +95,15 @@ type CreateQaRecruitmentResponse = {
 };
 
 type ActiveQaSummary = {
-  feedbackPostId: number;
-  title: string;
-  thumbnailUrl: string | null;
-  startAt: string;
-  endAt: string;
+  feedbackPostId: string;
+  title?: string;
+  thumbnailUrl?: string | null;
+  startAt?: string;
+  endAt?: string;
 };
 
 type QaRecruitableProject = {
-  projectId: number;
+  projectId: string;
   title: string;
   description: string;
   thumbnailUrl: string | null;
@@ -109,7 +111,7 @@ type QaRecruitableProject = {
   activeQa: ActiveQaSummary | null;
 };
 
-type QaSort = 'LATEST' | 'DEADLINE' | 'REWARD';
+type QaSort = 'LATEST' | 'DEADLINE';
 
 type QaRecruitmentListParams = {
   keyword?: string;
@@ -120,8 +122,8 @@ type QaRecruitmentListParams = {
 };
 
 type QaRecruitmentCard = {
-  feedbackPostId: number;
-  projectId: number;
+  feedbackPostId: string;
+  projectId: string;
   projectTitle: string;
   title: string;
   thumbnailUrl: string | null;
@@ -144,7 +146,37 @@ type QaRecruitmentListResponse = {
   feedbackPosts: QaRecruitmentCard[];
 };
 
-type QaImageType = 'POST_THUMBNAIL';
+type MyQaRecruitment = {
+  id: string;
+  title: string;
+  startAt: string;
+  endAt: string;
+  type: QaTargetType;
+  status: QaRecruitmentStatus;
+  rewardAcorn: number;
+  slotCapacity: number;
+  remainSlot: number;
+  tags: ProjectTag[];
+  thumbnailInfo: ImageResponse | null;
+};
+
+type MyQaParticipationStatus =
+  | 'WRITING'
+  | 'SUBMITTED'
+  | 'ACCEPTED'
+  | 'REJECTED'
+  | 'CANCELED'
+  | 'EXPIRED';
+
+type MyQaParticipation = {
+  id: string;
+  title: string;
+  status: MyQaParticipationStatus;
+  rewardAcorn: number;
+  rejectType: string | null;
+  submitAt: string;
+  processedAt: string | null;
+};
 
 type ImageResponse = {
   type: QaImageType;
@@ -170,11 +202,11 @@ type QaRecruitmentDetailResponse = {
   images: ImageResponse[];
   slotCapacity: number;
   remainSlotCount: number;
-  completedParticipantCount: number;
   depositAcorn: number;
   rewardAcorn: number;
   startAt: string;
   endAt: string;
+  myFeedbackStatus: MyQaParticipationStatus | null;
   expireAt: string | null;
   tags: ProjectTag[];
   questionConfig: QuestionConfigResponse;
@@ -242,7 +274,7 @@ type QaFeedbackChoiceAnswerRequest = {
 
 type QaFeedbackSubjectiveAnswerRequest = {
   order: number;
-  text: string;
+  text: string | null;
   images: QaRecruitImageRequest[];
 };
 
@@ -274,6 +306,9 @@ export type {
   CreateQaRecruitmentRequest,
   CreateQaRecruitmentResponse,
   ImageResponse,
+  MyQaParticipation,
+  MyQaParticipationStatus,
+  MyQaRecruitment,
   QuestionConfigResponse,
   QaFeedbackChoiceQuestionResponse,
   QaFeedbackAnswerFormValue,

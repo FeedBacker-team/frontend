@@ -1,6 +1,6 @@
 type MyQaStatusProps = {
   nickname: string;
-  pendingFeedbackCount: number;
+  recruitingCount: number;
   submissionPendingCount: number;
   reviewingCount: number;
   isLoading?: boolean;
@@ -67,7 +67,7 @@ function MyQaStatusSkeleton() {
 
 function MyQaStatus({
   nickname,
-  pendingFeedbackCount,
+  recruitingCount,
   submissionPendingCount,
   reviewingCount,
   isLoading = false,
@@ -97,7 +97,7 @@ function MyQaStatus({
               className="size-5 shrink-0 bg-current mask-[url(/icons/chevron-right.svg)] mask-center mask-contain mask-no-repeat"
             />
           </div>
-          <StatusCount label="미처리 피드백" count={pendingFeedbackCount} />
+          <StatusCount label="진행 중" count={recruitingCount} />
         </div>
 
         <div className="flex flex-col gap-2 rounded-xl border border-border-default p-4">

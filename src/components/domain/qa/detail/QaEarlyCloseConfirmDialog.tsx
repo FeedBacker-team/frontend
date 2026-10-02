@@ -12,12 +12,14 @@ type QaEarlyCloseConfirmDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
+  isPending?: boolean;
 };
 
 function QaEarlyCloseConfirmDialog({
   open,
   onOpenChange,
   onConfirm,
+  isPending = false,
 }: QaEarlyCloseConfirmDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -43,6 +45,7 @@ function QaEarlyCloseConfirmDialog({
             type="button"
             variant="outline"
             size="large"
+            disabled={isPending}
             onClick={() => onOpenChange(false)}
           >
             취소
@@ -51,9 +54,10 @@ function QaEarlyCloseConfirmDialog({
             type="button"
             variant="secondary"
             size="large"
+            disabled={isPending}
             onClick={onConfirm}
           >
-            조기 마감하기
+            {isPending ? '마감 중...' : '조기 마감하기'}
           </Button>
         </DialogFooter>
       </DialogContent>

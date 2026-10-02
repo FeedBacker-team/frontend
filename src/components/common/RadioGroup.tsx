@@ -86,11 +86,22 @@ function RadioGroup({ className, size = 'large', ...props }: RadioGroupProps) {
 
 type RadioProps = Omit<RadioPrimitive.Root.Props, 'className' | 'children'> & {
   className?: string;
+  contentClassName?: string;
+  labelClassName?: string;
+  descriptionClassName?: string;
   label?: ReactNode;
   description?: ReactNode;
 };
 
-function Radio({ className, label, description, ...props }: RadioProps) {
+function Radio({
+  className,
+  contentClassName,
+  labelClassName,
+  descriptionClassName,
+  label,
+  description,
+  ...props
+}: RadioProps) {
   const size = useContext(RadioGroupSizeContext);
 
   const control = (
@@ -124,12 +135,18 @@ function Radio({ className, label, description, ...props }: RadioProps) {
       <span
         className={cn(
           'flex min-w-0 flex-col items-start',
-          radioLabelVariants({ size })
+          radioLabelVariants({ size }),
+          contentClassName
         )}
       >
-        {label != null && <span>{label}</span>}
+        {label != null && <span className={labelClassName}>{label}</span>}
         {description != null && (
-          <span className={radioDescriptionVariants({ size })}>
+          <span
+            className={cn(
+              radioDescriptionVariants({ size }),
+              descriptionClassName
+            )}
+          >
             {description}
           </span>
         )}

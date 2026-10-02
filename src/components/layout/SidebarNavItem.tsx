@@ -10,6 +10,7 @@ type SidebarNavItemProps = {
   href: string;
   label: string;
   iconSrc: string;
+  activePaths?: readonly string[];
   collapsed?: boolean;
 };
 
@@ -17,13 +18,16 @@ function SidebarNavItem({
   href,
   label,
   iconSrc,
+  activePaths,
   collapsed = false,
 }: SidebarNavItemProps) {
   const pathname = usePathname();
-  const isActive =
-    href === '/'
-      ? pathname === '/' || pathname === '/ex'
-      : pathname === href || pathname.startsWith(`${href}/`);
+  const paths = activePaths ?? [href];
+  const isActive = paths.some((path) =>
+    path === '/'
+      ? pathname === path
+      : pathname === path || pathname.startsWith(`${path}/`)
+  );
 
   return (
     <Link

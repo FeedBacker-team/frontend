@@ -23,16 +23,19 @@ const NAV_ITEMS = [
     href: '/',
     label: '프로젝트 둘러보기',
     iconSrc: '/icons/flag.svg',
+    activePaths: ['/', '/ex', '/projects'],
   },
   {
     href: '/qa',
     label: '모집 중인 QA',
     iconSrc: '/icons/megaphone.svg',
+    activePaths: ['/qa'],
   },
   {
     href: '/mypage',
     label: '마이페이지',
     iconSrc: '/icons/mypage.svg',
+    activePaths: ['/mypage'],
   },
 ] as const;
 
@@ -239,6 +242,7 @@ function Sidebar() {
               href={item.href}
               label={item.label}
               iconSrc={item.iconSrc}
+              activePaths={item.activePaths}
               collapsed={isCollapsed}
             />
           ))}

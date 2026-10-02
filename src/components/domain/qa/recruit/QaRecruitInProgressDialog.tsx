@@ -10,13 +10,14 @@ import {
   DialogFooter,
   DialogHeader,
 } from '@/components/common/Dialog';
-import type { ActiveQaSummary } from '@/types/qa';
+import type { ActiveQaSummary, QaRecruitableProject } from '@/types/qa';
 
 type QaRecruitInProgressDialogProps = {
   open: boolean;
   qa: ActiveQaSummary;
+  project: QaRecruitableProject;
   onClose: () => void;
-  onViewProgress: (feedbackPostId: number) => void;
+  onViewProgress: (feedbackPostId: string) => void;
 };
 
 function formatDate(value: string) {
@@ -26,6 +27,7 @@ function formatDate(value: string) {
 function QaRecruitInProgressDialog({
   open,
   qa,
+  project,
   onClose,
   onViewProgress,
 }: QaRecruitInProgressDialogProps) {
@@ -57,11 +59,11 @@ function QaRecruitInProgressDialog({
         />
 
         <DialogBody>
-          <article className="flex items-center gap-3 rounded-[12px] bg-bg-light px-5 py-4">
+          <article className="flex min-w-0 items-center gap-3 overflow-hidden rounded-[12px] bg-bg-light px-5 py-4">
             <div className="relative size-13 shrink-0 overflow-hidden rounded-[4px] bg-[#d9d9d9]">
-              {qa.thumbnailUrl ? (
+              {qa.thumbnailUrl || project.thumbnailUrl ? (
                 <Image
-                  src={qa.thumbnailUrl}
+                  src={qa.thumbnailUrl ?? project.thumbnailUrl ?? ''}
                   alt=""
                   fill
                   unoptimized
@@ -70,11 +72,25 @@ function QaRecruitInProgressDialog({
                 />
               ) : null}
             </div>
-            <div className="flex min-w-0 flex-1 flex-col items-start">
-              <h3 className="text-h2 truncate text-text-default">{qa.title}</h3>
-              <p className="text-c1 text-text-info">
-                {formatDate(qa.startAt)} ~ {formatDate(qa.endAt)}
-              </p>
+            <div className="flex min-w-0 flex-1 flex-col items-start overflow-hidden">
+              <h3
+                title={qa.title ?? project.title}
+                className="text-h2 w-full truncate text-text-default"
+              >
+                {qa.title ?? project.title}
+              </h3>
+              {qa.startAt && qa.endAt ? (
+                <p className="text-c1 text-text-info">
+                  {formatDate(qa.startAt)} ~ {formatDate(qa.endAt)}
+                </p>
+              ) : (
+                <p
+                  title={project.description}
+                  className="text-c1 w-full truncate text-text-sub"
+                >
+                  {project.description}
+                </p>
+              )}
             </div>
           </article>
         </DialogBody>
