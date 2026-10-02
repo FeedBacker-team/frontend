@@ -14,12 +14,14 @@ type QaParticipationConfirmDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
+  isPending?: boolean;
 };
 
 function QaParticipationConfirmDialog({
   open,
   onOpenChange,
   onConfirm,
+  isPending = false,
 }: QaParticipationConfirmDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -46,12 +48,18 @@ function QaParticipationConfirmDialog({
             type="button"
             variant="outline"
             size="large"
+            disabled={isPending}
             onClick={() => onOpenChange(false)}
           >
             다음에 하기
           </Button>
-          <Button type="button" size="large" onClick={onConfirm}>
-            참여하기
+          <Button
+            type="button"
+            size="large"
+            disabled={isPending}
+            onClick={onConfirm}
+          >
+            {isPending ? '참여 중...' : '참여하기'}
           </Button>
         </DialogFooter>
       </DialogContent>

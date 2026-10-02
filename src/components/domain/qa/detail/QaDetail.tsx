@@ -9,6 +9,7 @@ import { Badge } from '@/components/common/Badge';
 import { Button } from '@/components/common/Button';
 import { Chip } from '@/components/common/Chip';
 import { Input } from '@/components/common/Input';
+import { toast } from '@/components/common/Sonner';
 import { ToastLarge } from '@/components/common/ToastLarge';
 import {
   Tooltip,
@@ -25,7 +26,11 @@ import {
 } from '@/components/domain/shared/ImageViewer';
 import { PROJECT_TAG_LABEL } from '@/constants/project';
 import { useProjectDetail } from '@/hooks/useProjects';
-import { useQaRecruitmentDetail } from '@/hooks/useQaRecruitments';
+import {
+  useCompleteQaRecruitment,
+  useParticipateInQa,
+  useQaRecruitmentDetail,
+} from '@/hooks/useQaRecruitments';
 import type {
   QaRecruitmentDetailResponse,
   QuestionConfigResponse,
@@ -36,6 +41,7 @@ const TARGET_TYPE_LABEL = {
   SERVICE_LINK: '링크형',
   IMAGE: '이미지형',
 } as const;
+const QA_PARTICIPATION_DURATION_MS = 24 * 60 * 60 * 1000;
 
 type QaDetailProps = {
   feedbackPostId: string;
@@ -93,11 +99,18 @@ type QaProjectBannerProps = {
 
 function QaProjectBanner({ project }: QaProjectBannerProps) {
   return (
-    <section className="flex items-center justify-between rounded-2xl border border-rust-600 bg-rust-50 px-7 py-6">
-      <div className="flex min-w-0 flex-col gap-1">
+    <section className="flex items-center justify-between gap-4 overflow-hidden rounded-2xl border border-rust-600 bg-rust-50 px-7 py-6">
+      <div className="flex min-w-0 flex-1 flex-col gap-1 overflow-hidden">
         <p className="text-c1 text-rust-600">프로젝트</p>
-        <h2 className="text-h3 text-text-default">{project.title}</h2>
-        <p className="text-b2 text-text-sub">{project.description}</p>
+        <h2 className="text-h3 w-full truncate text-text-default">
+          {project.title}
+        </h2>
+        <p
+          title={project.description}
+          className="text-b2 w-full truncate text-text-sub"
+        >
+          {project.description}
+        </p>
       </div>
       <Button
         nativeButton={false}
@@ -162,7 +175,9 @@ function QaTargetPreview({ qa }: QaTargetPreviewProps) {
     );
   }
 
-  const testImages = [...qa.images].sort((a, b) => a.order - b.order);
+  const testImages = qa.images
+    .filter((image) => image.type === 'POST')
+    .sort((a, b) => a.order - b.order);
   const viewerImages: ImageViewerItem[] = testImages.map((image, index) => ({
     id: `${image.type}-${image.order}`,
     src: image.url,
@@ -371,28 +386,68 @@ function QaRecruitmentStatusCard({
   const [isParticipationDialogOpen, setIsParticipationDialogOpen] =
     useState(false);
   const [isAbandonDialogOpen, setIsAbandonDialogOpen] = useState(false);
-  const [participationDeadlineAt, setParticipationDeadlineAt] = useState<
-    number | null
-  >(null);
-  const completedParticipantCount = qa.completedParticipantCount;
-  const requiredParticipantCount = Math.max(
+  const [localParticipationDeadlineAt, setLocalParticipationDeadlineAt] =
+    useState<number | null>(null);
+  const participationMutation = useParticipateInQa(qa.feedbackPostId);
+  const completeMutation = useCompleteQaRecruitment(qa.feedbackPostId);
+  const serverParticipationDeadlineAt = qa.expireAt
+    ? new Date(qa.expireAt).getTime()
+    : null;
+  const participationDeadlineAt =
+    serverParticipationDeadlineAt !== null &&
+    Number.isFinite(serverParticipationDeadlineAt)
+      ? serverParticipationDeadlineAt
+      : localParticipationDeadlineAt;
+  const hasParticipated =
+    qa.myFeedbackStatus !== null || localParticipationDeadlineAt !== null;
+  const isWriting =
+    qa.myFeedbackStatus === 'WRITING' ||
+    (qa.myFeedbackStatus === null && localParticipationDeadlineAt !== null);
+  const hasActiveParticipation =
+    isWriting &&
+    participationDeadlineAt !== null &&
+    Number.isFinite(participationDeadlineAt);
+  const participantCount = Math.max(
     0,
-    qa.slotCapacity - completedParticipantCount
+    qa.slotCapacity - qa.remainSlotCount
   );
+  const requiredParticipantCount = Math.max(0, qa.remainSlotCount);
   const completionRate =
     qa.slotCapacity > 0
       ? Math.min(
           100,
-          Math.max(
-            0,
-            (completedParticipantCount / qa.slotCapacity) * 100
-          )
+          Math.max(0, (participantCount / qa.slotCapacity) * 100)
         )
       : 0;
   const isRecruiting = qa.status === 'RECRUITING';
-  const canParticipate = isRecruiting && qa.remainSlotCount > 0;
+  const canParticipate =
+    !hasParticipated && isRecruiting && qa.remainSlotCount > 0;
+  const participationButtonLabel = (() => {
+    switch (qa.myFeedbackStatus) {
+      case 'SUBMITTED':
+      case 'ACCEPTED':
+      case 'REJECTED':
+        return '참여 완료';
+      case 'WRITING':
+        return '참여 중';
+      case 'CANCELED':
+        return '참여 취소';
+      case 'EXPIRED':
+        return '제출 기한 만료';
+      default:
+        if (!isRecruiting) {
+          return '모집이 종료되었습니다';
+        }
 
-  if (!isOwner && participationDeadlineAt !== null) {
+        if (qa.remainSlotCount <= 0) {
+          return '모집 인원 마감';
+        }
+
+        return 'QA 참여하기';
+    }
+  })();
+
+  if (!isOwner && hasActiveParticipation) {
     return (
       <>
         <QaParticipationActiveCard
@@ -410,7 +465,6 @@ function QaRecruitmentStatusCard({
           onConfirm={() => {
             // TODO: 참여 포기 API가 확정되면 mutation 성공 후 상태를 초기화한다.
             setIsAbandonDialogOpen(false);
-            setParticipationDeadlineAt(null);
           }}
         />
       </>
@@ -430,9 +484,9 @@ function QaRecruitmentStatusCard({
               </dd>
             </div>
             <div className="flex items-center justify-between">
-              <dt className="text-text-info text-c1">완료 인원</dt>
+              <dt className="text-text-info text-c1">참여 인원</dt>
               <dd className="text-text-default text-h4">
-                {completedParticipantCount}명
+                {participantCount}명
               </dd>
             </div>
             <div className="flex items-center justify-between">
@@ -446,11 +500,11 @@ function QaRecruitmentStatusCard({
 
         <div
           role="progressbar"
-          aria-label="QA 완료 인원 진행도"
+          aria-label="QA 참여 인원 진행도"
           aria-valuenow={Math.round(completionRate)}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-valuetext={`${completedParticipantCount}명 / ${qa.slotCapacity}명`}
+          aria-valuetext={`${participantCount}명 / ${qa.slotCapacity}명`}
           className="h-2.5 w-full overflow-hidden rounded-full bg-gray-200"
         >
           <div
@@ -484,9 +538,10 @@ function QaRecruitmentStatusCard({
                 variant="outline"
                 size="medium"
                 className="w-full"
+                disabled={!isRecruiting}
                 onClick={() => setIsEarlyCloseDialogOpen(true)}
               >
-                조기 마감하기
+                {isRecruiting ? '조기 마감하기' : '모집이 종료되었습니다'}
               </Button>
             </>
           ) : (
@@ -498,7 +553,7 @@ function QaRecruitmentStatusCard({
                   disabled={!canParticipate}
                   onClick={() => setIsParticipationDialogOpen(true)}
                 >
-                  {canParticipate ? 'QA 참여하기' : '모집이 마감되었습니다'}
+                  {participationButtonLabel}
                 </Button>
               </TooltipTrigger>
               <TooltipContent
@@ -516,20 +571,54 @@ function QaRecruitmentStatusCard({
 
       <QaEarlyCloseConfirmDialog
         open={isEarlyCloseDialogOpen}
-        onOpenChange={setIsEarlyCloseDialogOpen}
+        onOpenChange={(open) => {
+          if (!completeMutation.isPending) {
+            setIsEarlyCloseDialogOpen(open);
+          }
+        }}
+        isPending={completeMutation.isPending}
         onConfirm={() => {
-          // TODO: 조기 마감 API 명세가 확정되면 mutation을 연결한다.
-          setIsEarlyCloseDialogOpen(false);
+          completeMutation.mutate(undefined, {
+            onSuccess: () => {
+              setIsEarlyCloseDialogOpen(false);
+              toast.success('QA 모집을 조기 마감했습니다');
+            },
+            onError: (error) => {
+              toast.error(
+                error instanceof Error
+                  ? error.message
+                  : 'QA 모집 조기 마감에 실패했습니다'
+              );
+            },
+          });
         }}
       />
 
       <QaParticipationConfirmDialog
         open={isParticipationDialogOpen}
-        onOpenChange={setIsParticipationDialogOpen}
+        onOpenChange={(open) => {
+          if (!participationMutation.isPending) {
+            setIsParticipationDialogOpen(open);
+          }
+        }}
+        isPending={participationMutation.isPending}
         onConfirm={() => {
-          // TODO: 참여 API mutation 성공 응답의 제출 기한으로 교체한다.
-          setIsParticipationDialogOpen(false);
-          setParticipationDeadlineAt(Date.now() + 24 * 60 * 60 * 1000);
+          participationMutation.mutate(undefined, {
+            onSuccess: () => {
+              setLocalParticipationDeadlineAt(
+                Date.now() + QA_PARTICIPATION_DURATION_MS
+              );
+              setIsParticipationDialogOpen(false);
+              toast.success('QA 참여가 완료되었습니다');
+            },
+            onError: (error) => {
+              toast.error(
+                error instanceof Error
+                  ? error.message
+                  : 'QA 참여 신청에 실패했습니다'
+              );
+            },
+          });
         }}
       />
     </>
