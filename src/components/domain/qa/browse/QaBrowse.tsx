@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { differenceInCalendarDays } from 'date-fns';
+import Link from 'next/link';
 
 import { toast } from '@/components/common/Sonner';
 import { QaBrowseCard } from '@/components/domain/qa/browse/QaBrowseCard';
@@ -118,21 +119,26 @@ function QaBrowse() {
               )
             : qas.map((qa) => (
                 <li key={qa.feedbackPostId}>
-                  <QaBrowseCard
-                    title={qa.title}
-                    thumbnailUrl={qa.thumbnailUrl}
-                    tags={qa.tags.map((tag) => PROJECT_TAG_LABEL[tag])}
-                    targetType={qa.targetType}
-                    startAt={qa.startAt}
-                    endAt={qa.endAt}
-                    capacity={qa.capacity}
-                    participantCount={qa.participantCount}
-                    requiredAcorns={qa.requiredAcorns}
-                    daysRemaining={Math.max(
-                      0,
-                      differenceInCalendarDays(new Date(qa.endAt), today)
-                    )}
-                  />
+                  <Link
+                    href={`/qa/${qa.feedbackPostId}`}
+                    className="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <QaBrowseCard
+                      title={qa.title}
+                      thumbnailUrl={qa.thumbnailUrl}
+                      tags={qa.tags.map((tag) => PROJECT_TAG_LABEL[tag])}
+                      targetType={qa.targetType}
+                      startAt={qa.startAt}
+                      endAt={qa.endAt}
+                      capacity={qa.capacity}
+                      participantCount={qa.participantCount}
+                      requiredAcorns={qa.requiredAcorns}
+                      daysRemaining={Math.max(
+                        0,
+                        differenceInCalendarDays(new Date(qa.endAt), today)
+                      )}
+                    />
+                  </Link>
                 </li>
               ))}
       </ul>

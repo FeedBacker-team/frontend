@@ -8,9 +8,7 @@ import {
   RankedList,
   type RankedListItem,
 } from '@/components/domain/shared/RankedList';
-import { useQaRecruitments } from '@/hooks/useQaRecruitments';
-
-const RANKING_QA_SIZE = 5;
+import { useQaRewardRanking } from '@/hooks/useQaRecruitments';
 
 function QaRewardRankingsSkeleton() {
   return (
@@ -29,11 +27,7 @@ function QaRewardRankingsSkeleton() {
 }
 
 function QaRewardRankings() {
-  const { data, isPending, isError } = useQaRecruitments({
-    sort: 'REWARD',
-    page: 0,
-    size: RANKING_QA_SIZE,
-  });
+  const { data, isPending, isError } = useQaRewardRanking();
 
   useEffect(() => {
     if (isError) {
@@ -42,8 +36,9 @@ function QaRewardRankings() {
   }, [isError]);
 
   const items: RankedListItem[] =
-    data?.feedbackPosts.map((qa) => ({
-      id: String(qa.feedbackPostId),
+    data?.map((qa) => ({
+      id: qa.feedbackPostId,
+      href: `/qa/${qa.feedbackPostId}`,
       title: qa.title,
       thumbnailUrl: qa.thumbnailUrl ?? undefined,
       description: (
