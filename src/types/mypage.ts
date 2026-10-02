@@ -6,6 +6,8 @@ type MyProjectItem = {
   thumbnailUrl: string | null;
   publishedAt: string;
   viewCount: number;
+  hasActiveQa: boolean;
+  activeFeedbackPostId: string | null;
 };
 
 type QaContentType = '이미지형' | '링크형';

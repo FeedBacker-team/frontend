@@ -65,7 +65,7 @@ function buildQaRecruitmentRequest(
   const images: QaRecruitImageRequest[] | undefined =
     values.target === 'IMAGE'
       ? uploadedPaths.map((path, index) => ({
-          type: 'POST_THUMBNAIL',
+          type: 'POST',
           order: index,
           path,
         }))
@@ -83,7 +83,7 @@ function buildQaRecruitmentRequest(
     endAt: `${values.endAt}T23:59:59`,
     target: values.target,
     serviceUrl:
-      values.target === 'SERVICE_LINK' ? values.serviceUrl.trim() : '',
+      values.target === 'SERVICE_LINK' ? values.serviceUrl.trim() : null,
     images,
     choiceQuestions: choiceQuestions.length > 0 ? choiceQuestions : undefined,
     subjectiveQuestions:

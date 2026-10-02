@@ -35,6 +35,8 @@ function mapToMyProjectItem(response: MyProjectResponse): MyProjectItem {
     thumbnailUrl: response.thumbnail_image,
     publishedAt: formatDate(response.created_at),
     viewCount: response.view_count,
+    hasActiveQa: response.has_active_qa,
+    activeFeedbackPostId: response.active_feedback_post_id,
   };
 }
 
