@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -23,6 +23,31 @@ const TARGET_LABEL: Record<QaTargetType, string> = {
   SERVICE_LINK: '링크형 테스트',
   IMAGE: '이미지형 테스트',
 };
+
+const QA_RECRUIT_HISTORY_STEP_KEY = 'qaRecruitFormStep';
+
+function getQaRecruitHistoryStep(state: unknown): QaRecruitFormStep | null {
+  if (typeof state !== 'object' || state === null) {
+    return null;
+  }
+
+  const step = (state as Record<string, unknown>)[
+    QA_RECRUIT_HISTORY_STEP_KEY
+  ];
+
+  return step === 'BASIC' || step === 'QUESTIONS' ? step : null;
+}
+
+function createQaRecruitHistoryState(step: QaRecruitFormStep) {
+  const currentState = window.history.state;
+
+  return {
+    ...(typeof currentState === 'object' && currentState !== null
+      ? currentState
+      : {}),
+    [QA_RECRUIT_HISTORY_STEP_KEY]: step,
+  };
+}
 
 const FORM_STEPS: Array<{
   value: QaRecruitFormStep;
@@ -115,6 +140,22 @@ function QaRecruitForm({ project, target }: QaRecruitFormProps) {
     shouldUnregister: false,
   });
 
+  useEffect(() => {
+    window.history.replaceState(createQaRecruitHistoryState('BASIC'), '');
+
+    const handlePopState = (event: PopStateEvent) => {
+      const nextStep = getQaRecruitHistoryStep(event.state);
+
+      if (nextStep) {
+        setStep(nextStep);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   const handleBasicNext = async () => {
     const fields: Array<keyof QaRecruitFormValues> = [
       'title',
@@ -126,8 +167,21 @@ function QaRecruitForm({ project, target }: QaRecruitFormProps) {
     const isValid = await form.trigger(fields, { shouldFocus: true });
 
     if (isValid) {
+      window.history.pushState(
+        createQaRecruitHistoryState('QUESTIONS'),
+        ''
+      );
       setStep('QUESTIONS');
     }
+  };
+
+  const handleQuestionBack = () => {
+    if (getQaRecruitHistoryStep(window.history.state) === 'QUESTIONS') {
+      window.history.back();
+      return;
+    }
+
+    setStep('BASIC');
   };
 
   const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -194,7 +248,7 @@ function QaRecruitForm({ project, target }: QaRecruitFormProps) {
         {step === 'QUESTIONS' ? (
           <QaRecruitQuestionStep
             target={target}
-            onBack={() => setStep('BASIC')}
+            onBack={handleQuestionBack}
           />
         ) : null}
       </form>

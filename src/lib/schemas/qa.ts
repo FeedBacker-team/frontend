@@ -9,6 +9,7 @@ import {
 import { z } from 'zod';
 
 import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE_BYTES } from '@/constants/file';
+import { QA_RECRUIT_TITLE_MAX_LENGTH } from '@/constants/qa';
 import type {
   QaRecruitFormValues,
 } from '@/types/qa';
@@ -119,7 +120,14 @@ const qaRecruitQuestionSchema = z.discriminatedUnion('type', [
 
 const qaRecruitSharedFields = {
   projectId: z.string().min(1),
-  title: z.string().trim().min(1, '제목을 입력해 주세요'),
+  title: z
+    .string()
+    .trim()
+    .min(1, '제목을 입력해 주세요')
+    .max(
+      QA_RECRUIT_TITLE_MAX_LENGTH,
+      `제목은 ${QA_RECRUIT_TITLE_MAX_LENGTH}자 이내로 입력해 주세요`
+    ),
   description: z.string().trim().min(1, '설명을 입력해 주세요'),
   slotCapacity: z
     .number({ error: '모집 인원을 입력해 주세요' })

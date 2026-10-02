@@ -18,10 +18,10 @@ import {
   type ImageViewerItem,
 } from '@/components/domain/shared/ImageViewer';
 import {
-  MOCK_OWNED_ACORNS,
   QA_CHOICE_QUESTION_COST,
   QA_SUBJECTIVE_QUESTION_COST,
 } from '@/constants/qa';
+import { useProfile } from '@/hooks/useProfile';
 import type { QaRecruitFormValues, QaTargetType } from '@/types/qa';
 
 type TestImagePreviewItemProps = {
@@ -176,6 +176,7 @@ type AcornUsageSummaryProps = {
 
 function AcornUsageSummary({ onBack }: AcornUsageSummaryProps) {
   const { control } = useFormContext<QaRecruitFormValues>();
+  const profileQuery = useProfile();
   const questions = useWatch({ control, name: 'questions' }) ?? [];
   const slotCapacity = useWatch({ control, name: 'slotCapacity' }) ?? 0;
   const choiceQuestionCount = questions.filter(
@@ -188,7 +189,10 @@ function AcornUsageSummary({ onBack }: AcornUsageSummaryProps) {
     choiceQuestionCount * QA_CHOICE_QUESTION_COST +
     subjectiveQuestionCount * QA_SUBJECTIVE_QUESTION_COST;
   const totalCost = questionCost * slotCapacity;
-  const hasInsufficientAcorns = totalCost > MOCK_OWNED_ACORNS;
+  const ownedAcorns = profileQuery.data?.acorn;
+  const isAcornBalanceUnavailable = ownedAcorns === undefined;
+  const hasInsufficientAcorns =
+    ownedAcorns !== undefined && totalCost > ownedAcorns;
 
   return (
     <aside className="sticky top-10 flex flex-col gap-4">
@@ -243,7 +247,12 @@ function AcornUsageSummary({ onBack }: AcornUsageSummaryProps) {
 
         <div className="flex items-center justify-end">
           <span className="mt-2 w-fit rounded-lg bg-bg-deep px-2 py-1 text-c2 text-text-sub">
-            내 도토리 보유량: {MOCK_OWNED_ACORNS}
+            내 도토리 보유량:{' '}
+            {profileQuery.isPending
+              ? '확인 중'
+              : profileQuery.isError
+                ? '조회 실패'
+                : ownedAcorns}
           </span>
         </div>
 
@@ -254,7 +263,7 @@ function AcornUsageSummary({ onBack }: AcornUsageSummaryProps) {
           <Button
             type="submit"
             size="medium"
-            disabled={hasInsufficientAcorns}
+            disabled={isAcornBalanceUnavailable || hasInsufficientAcorns}
           >
             모집 글 등록하기
           </Button>
