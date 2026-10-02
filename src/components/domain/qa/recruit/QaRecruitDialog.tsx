@@ -42,7 +42,7 @@ const TEST_METHODS: Array<{
 ];
 
 type QaRecruitSubmitParams = {
-  projectId: number;
+  projectId: string;
   targetType: QaTargetType;
 };
 
@@ -55,8 +55,8 @@ type QaRecruitDialogProps = {
 
 type ProjectStepProps = {
   projects: QaRecruitableProject[];
-  selectedProjectId: number | null;
-  onSelectProject: (projectId: number) => void;
+  selectedProjectId: string | null;
+  onSelectProject: (projectId: string) => void;
 };
 
 function ProjectStep({
@@ -68,17 +68,20 @@ function ProjectStep({
     <RadioGroup
       size="medium"
       aria-label="QA를 모집할 프로젝트"
-      value={selectedProjectId?.toString() ?? ''}
-      onValueChange={(value) => onSelectProject(Number(value))}
+      value={selectedProjectId ?? ''}
+      onValueChange={onSelectProject}
       className="max-h-80 gap-2 overflow-y-auto pr-1"
     >
       {projects.map((project) => (
         <Radio
           key={project.projectId}
-          value={project.projectId.toString()}
+          value={project.projectId}
           disabled={project.hasActiveQa}
           label={project.title}
           description={project.description}
+          contentClassName="flex-1 overflow-hidden"
+          labelClassName="w-full truncate"
+          descriptionClassName="w-full truncate"
           className="w-full rounded-[12px] border border-gray-400 p-4 has-data-checked:border-rust-600 has-data-checked:bg-rust-50 has-data-disabled:border-gray-300 has-data-disabled:bg-gray-100"
         />
       ))}
@@ -98,8 +101,8 @@ function TestMethodStep({
   onSelectTargetType,
 }: TestMethodStepProps) {
   return (
-    <div className="flex flex-col gap-3">
-      <article className="flex items-center gap-3 rounded-[12px] bg-bg-light px-5 py-4">
+    <div className="flex min-w-0 flex-col gap-3">
+      <article className="flex min-w-0 items-center gap-3 overflow-hidden rounded-[12px] bg-bg-light px-5 py-4">
         <div className="relative size-13 shrink-0 overflow-hidden rounded-[4px] bg-[#d9d9d9]">
           {project.thumbnailUrl ? (
             <Image
@@ -112,11 +115,17 @@ function TestMethodStep({
             />
           ) : null}
         </div>
-        <div className="flex min-w-0 flex-1 flex-col items-start">
-          <h3 className="text-h4 truncate text-text-default">
+        <div className="flex min-w-0 flex-1 flex-col items-start overflow-hidden">
+          <h3
+            title={project.title}
+            className="text-h4 w-full truncate text-text-default"
+          >
             {project.title}
           </h3>
-          <p className="text-b3 truncate text-text-sub">
+          <p
+            title={project.description}
+            className="text-b3 w-full truncate text-text-sub"
+          >
             {project.description}
           </p>
         </div>
@@ -180,7 +189,7 @@ function QaRecruitDialog({
   onSubmit,
 }: QaRecruitDialogProps) {
   const [step, setStep] = useState<QaRecruitStep>('PROJECT_SELECT');
-  const [selectedProjectId, setSelectedProjectId] = useState<number | null>(
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
     () => getFirstRecruitableProjectId(projects)
   );
   const [targetType, setTargetType] =

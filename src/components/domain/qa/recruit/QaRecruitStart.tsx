@@ -4,35 +4,48 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/common/Button';
+import { toast } from '@/components/common/Sonner';
 import {
   QaRecruitDialog,
   type QaRecruitSubmitParams,
 } from '@/components/domain/qa/recruit/QaRecruitDialog';
 import { QaRecruitInProgressDialog } from '@/components/domain/qa/recruit/QaRecruitInProgressDialog';
-import { MOCK_QA_RECRUITABLE_PROJECTS } from '@/mocks/qa';
+import { useMyProjects } from '@/hooks/useProjects';
+import { toQaRecruitableProject } from '@/lib/qa/recruitableProjects';
 import type { QaRecruitDialogState } from '@/types/qa';
 
 function QaRecruitStart() {
   const router = useRouter();
   const [openDialog, setOpenDialog] =
     useState<QaRecruitDialogState | null>(null);
-  // const [isAllProjectsRecruiting] = useState(true);
-  const [isAllProjectsRecruiting] = useState(false);
-  const activeQa = MOCK_QA_RECRUITABLE_PROJECTS.find(
-    (project) => project.hasActiveQa
-  )?.activeQa;
+  const projectsQuery = useMyProjects();
+  const projects =
+    projectsQuery.data?.map(toQaRecruitableProject) ?? [];
+  const activeProject = projects.find(
+    (project) => project.hasActiveQa && project.activeQa
+  );
+  const isAllProjectsRecruiting =
+    projects.length > 0 && projects.every((project) => project.hasActiveQa);
 
   const handleStartRecruitment = () => {
-    if (isAllProjectsRecruiting && activeQa) {
+    if (projectsQuery.isError) {
+      toast.error('내 프로젝트 목록을 불러오지 못했습니다');
+      return;
+    }
+
+    if (projects.length === 0) {
+      toast.error('QA를 모집할 프로젝트를 먼저 등록해 주세요');
+      router.push('/projects/new');
+      return;
+    }
+
+    if (isAllProjectsRecruiting && activeProject?.activeQa) {
       setOpenDialog('IN_PROGRESS');
       return;
     }
 
-    const hasRecruitableProject = MOCK_QA_RECRUITABLE_PROJECTS.some(
+    const hasRecruitableProject = projects.some(
       (project) => !project.hasActiveQa
-    );
-    const hasActiveQa = MOCK_QA_RECRUITABLE_PROJECTS.some(
-      (project) => project.hasActiveQa
     );
 
     if (hasRecruitableProject) {
@@ -40,13 +53,14 @@ function QaRecruitStart() {
       return;
     }
 
-    if (hasActiveQa) {
+    if (activeProject) {
       setOpenDialog('IN_PROGRESS');
     }
   };
 
-  const handleViewProgress = () => {
+  const handleViewProgress = (feedbackPostId: string) => {
     setOpenDialog(null);
+    router.push(`/qa/${encodeURIComponent(feedbackPostId)}`);
   };
 
   const handleRecruitSubmit = ({
@@ -55,7 +69,7 @@ function QaRecruitStart() {
   }: QaRecruitSubmitParams) => {
     setOpenDialog(null);
     const searchParams = new URLSearchParams({
-      projectId: String(projectId),
+      projectId,
       target: targetType,
     });
 
@@ -69,6 +83,7 @@ function QaRecruitStart() {
         aria-haspopup="dialog"
         aria-expanded={openDialog !== null}
         data-open-dialog={openDialog ?? undefined}
+        disabled={projectsQuery.isPending}
         onClick={handleStartRecruitment}
         leftIcon={
           <span
@@ -80,10 +95,11 @@ function QaRecruitStart() {
         내 QA 모집글 작성하기
       </Button>
 
-      {activeQa ? (
+      {activeProject?.activeQa ? (
         <QaRecruitInProgressDialog
           open={openDialog === 'IN_PROGRESS'}
-          qa={activeQa}
+          qa={activeProject.activeQa}
+          project={activeProject}
           onClose={() => setOpenDialog(null)}
           onViewProgress={handleViewProgress}
         />
@@ -91,7 +107,7 @@ function QaRecruitStart() {
 
       <QaRecruitDialog
         open={openDialog === 'RECRUIT_STEP'}
-        projects={MOCK_QA_RECRUITABLE_PROJECTS}
+        projects={projects}
         onClose={() => setOpenDialog(null)}
         onSubmit={handleRecruitSubmit}
       />
