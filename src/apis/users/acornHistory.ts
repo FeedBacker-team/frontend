@@ -1,6 +1,6 @@
 import { userRequest } from './request';
 
-const ACORN_HISTORY_PATH = '/api/acorn-histories';
+const ACORN_HISTORY_PATH = '/api/acorn-history';
 
 type AcornHistoryType =
   | 'FEEDBACK_ACCEPT'

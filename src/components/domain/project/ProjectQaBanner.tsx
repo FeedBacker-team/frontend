@@ -1,8 +1,10 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { Button } from '@/components/common/Button';
 
 type ProjectQaBannerProps = {
+  feedbackPostId: string;
   title: string;
   slotCapacity: number;
   endDate: string;
@@ -10,6 +12,7 @@ type ProjectQaBannerProps = {
 };
 
 function ProjectQaBanner({
+  feedbackPostId,
   title,
   slotCapacity,
   endDate,
@@ -45,6 +48,8 @@ function ProjectQaBanner({
       <Button
         size="medium"
         className="shrink-0 font-normal"
+        nativeButton={false}
+        render={<Link href={`/qa/${feedbackPostId}`} />}
         leftIcon={
           <span
             aria-hidden

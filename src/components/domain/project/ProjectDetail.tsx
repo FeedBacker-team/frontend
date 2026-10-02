@@ -130,7 +130,19 @@ function ProjectDetail({
         </div>
       </section>
 
-      {isOwner ? <ProjectActionBar projectId={projectId} /> : null}
+      {isOwner ? (
+        <ProjectActionBar
+          projectId={projectId}
+          recruitableProject={{
+            projectId,
+            title,
+            description: typeof description === 'string' ? description : '',
+            thumbnailUrl: thumbnailUrl ?? null,
+            hasActiveQa: Boolean(recruitingQa),
+            activeQa: null,
+          }}
+        />
+      ) : null}
     </article>
   );
 }

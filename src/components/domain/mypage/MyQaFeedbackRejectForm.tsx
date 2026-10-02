@@ -1,45 +1,79 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
 
+import { FeedbackError } from '@/apis/feedbacks';
 import { Badge } from '@/components/common/Badge';
 import { Button } from '@/components/common/Button';
 import { Input } from '@/components/common/Input';
 import { Radio, RadioGroup } from '@/components/common/RadioGroup';
+import { toast } from '@/components/common/Sonner';
 import { MyQaFeedbackRejectConfirmDialog } from '@/components/domain/mypage/MyQaFeedbackRejectConfirmDialog';
 import { MyQaFeedbackReviewCompleteDialog } from '@/components/domain/mypage/MyQaFeedbackReviewCompleteDialog';
 import {
+  FEEDBACK_REJECT_DETAIL_MAX_LENGTH,
   FEEDBACK_REJECT_DETAIL_MIN_LENGTH,
   FEEDBACK_REJECT_REASONS,
   MY_QA_PARTICIPATION_STATUS_BADGE_VARIANT,
   MY_QA_PARTICIPATION_STATUS_LABEL,
 } from '@/constants/mypage';
+import { useFeedbackDetail, useRejectFeedback } from '@/hooks/useFeedback';
 import {
   feedbackRejectSchema,
   type FeedbackRejectFormValues,
 } from '@/lib/schemas/mypage';
-import type { MyQaFeedbackReviewDetail } from '@/types/mypage';
 
 type MyQaFeedbackRejectFormProps = {
-  detail: MyQaFeedbackReviewDetail;
+  feedbackPostId: string;
+  feedbackId: string;
 };
 
-function MyQaFeedbackRejectForm({ detail }: MyQaFeedbackRejectFormProps) {
+function getFeedbackErrorMessage(error: unknown, fallbackMessage: string) {
+  return error instanceof FeedbackError ? error.message : fallbackMessage;
+}
+
+function MyQaFeedbackRejectFormLoading() {
+  return (
+    <div
+      className="mx-auto flex max-w-220 animate-pulse flex-col gap-8"
+      aria-label="피드백 정보 불러오는 중"
+    >
+      <div className="h-24 rounded-2xl bg-gray-100" />
+      <div className="h-40 rounded-2xl bg-gray-100" />
+      <div className="h-40 rounded-2xl bg-gray-100" />
+    </div>
+  );
+}
+
+function MyQaFeedbackRejectForm({
+  feedbackPostId,
+  feedbackId,
+}: MyQaFeedbackRejectFormProps) {
   const router = useRouter();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
+  const detailQuery = useFeedbackDetail(feedbackPostId, feedbackId);
+  const { mutate: rejectFeedback, isPending: isRejecting } =
+    useRejectFeedback(feedbackPostId, feedbackId);
 
-  const {
-    id,
-    feedbackPostId,
-    reviewerNickname,
-    status,
-    submittedAt,
-    responseDeadlineHoursLeft,
-  } = detail;
+  const detail = detailQuery.data;
+
+  useEffect(() => {
+    if (detail && detail.status !== 'PENDING_REVIEW') {
+      router.replace(`/mypage/my-qa/${feedbackPostId}/feedback/${feedbackId}`);
+    }
+  }, [detail, feedbackPostId, feedbackId, router]);
+
+  useEffect(() => {
+    if (detailQuery.isError) {
+      toast.error(
+        getFeedbackErrorMessage(detailQuery.error, '피드백 정보를 불러오지 못했습니다')
+      );
+    }
+  }, [detailQuery.isError, detailQuery.error]);
 
   const {
     register,
@@ -56,14 +90,35 @@ function MyQaFeedbackRejectForm({ detail }: MyQaFeedbackRejectFormProps) {
   const reason = useWatch({ control, name: 'reason' });
   const detailReason = useWatch({ control, name: 'detailReason' });
 
+  if (detailQuery.isPending) {
+    return <MyQaFeedbackRejectFormLoading />;
+  }
+
+  if (detailQuery.isError || !detail || detail.status !== 'PENDING_REVIEW') {
+    return null;
+  }
+
+  const { id, reviewerNickname, status, submittedAt, responseDeadlineHoursLeft } =
+    detail;
+
   const onSubmit = () => {
     setIsConfirmOpen(true);
   };
 
   const handleConfirmReject = () => {
-    // TODO: PATCH /api/feedbacks/{feedbackId}/reject 연동. 아직 API가 없어 목업으로 거절 완료 처리만 한다.
-    setIsConfirmOpen(false);
-    setIsCompleteOpen(true);
+    rejectFeedback(
+      { rejectType: reason, rejectDetail: detailReason.trim() },
+      {
+        onSuccess: () => {
+          setIsConfirmOpen(false);
+          setIsCompleteOpen(true);
+        },
+        onError: (error) => {
+          setIsConfirmOpen(false);
+          toast.error(getFeedbackErrorMessage(error, '피드백 거절에 실패했습니다'));
+        },
+      }
+    );
   };
 
   return (
@@ -139,7 +194,7 @@ function MyQaFeedbackRejectForm({ detail }: MyQaFeedbackRejectFormProps) {
           <div className="flex items-center justify-between text-c1 text-text-sub">
             <p>최소 {FEEDBACK_REJECT_DETAIL_MIN_LENGTH}자 이상 작성해 주세요.</p>
             <p>
-              {detailReason?.length ?? 0} / {FEEDBACK_REJECT_DETAIL_MIN_LENGTH}
+              {detailReason?.length ?? 0} / {FEEDBACK_REJECT_DETAIL_MAX_LENGTH}
               자
             </p>
           </div>
@@ -158,7 +213,7 @@ function MyQaFeedbackRejectForm({ detail }: MyQaFeedbackRejectFormProps) {
           </Button>
           <button
             type="submit"
-            disabled={!isValid}
+            disabled={!isValid || isRejecting}
             className="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-[10px] border border-rust-600 bg-white px-4 py-2.5 text-c1 font-bold text-rust-600 whitespace-nowrap outline-none transition-colors select-none hover:bg-rust-50 active:bg-rust-100 focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:border-gray-300 disabled:bg-gray-100 disabled:text-gray-500"
           >
             거절 사유 제출하기

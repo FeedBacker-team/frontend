@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
+import { UserError } from '@/apis/users';
 import { Badge } from '@/components/common/Badge';
 import { MyAcornHistoryDialog } from '@/components/domain/mypage/MyAcornHistoryDialog';
 import { MyGrowthInfoDialog } from '@/components/domain/mypage/MyGrowthInfoDialog';
@@ -17,7 +18,13 @@ function MyGrowthSummary() {
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [isAcornHistoryOpen, setIsAcornHistoryOpen] = useState(false);
   const { data: profile } = useProfile();
-  const { data: acornTransactions = [] } = useAcornHistories({
+  const {
+    data: acornTransactions = [],
+    isPending: isAcornHistoryPending,
+    isError: isAcornHistoryError,
+    error: acornHistoryError,
+    refetch: refetchAcornHistory,
+  } = useAcornHistories({
     enabled: isAcornHistoryOpen,
   });
   const acornCount = profile?.acorn ?? 0;
@@ -115,6 +122,14 @@ function MyGrowthSummary() {
         acornCount={acornCount}
         transactions={acornTransactions}
         pageSize={ACORN_TRANSACTIONS_PAGE_SIZE}
+        isLoading={isAcornHistoryPending}
+        isError={isAcornHistoryError}
+        errorMessage={
+          acornHistoryError instanceof UserError
+            ? acornHistoryError.message
+            : undefined
+        }
+        onRetry={() => void refetchAcornHistory()}
       />
     </div>
   );

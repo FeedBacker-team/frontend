@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import {
+  FEEDBACK_REJECT_DETAIL_MAX_LENGTH,
   FEEDBACK_REJECT_DETAIL_MIN_LENGTH,
   FEEDBACK_REJECT_REASONS,
   OBJECTION_DETAIL_MIN_LENGTH,
@@ -60,6 +61,10 @@ const feedbackRejectSchema = z.object({
     .min(
       FEEDBACK_REJECT_DETAIL_MIN_LENGTH,
       `상세 사유는 최소 ${FEEDBACK_REJECT_DETAIL_MIN_LENGTH}자 이상 작성해 주세요`
+    )
+    .max(
+      FEEDBACK_REJECT_DETAIL_MAX_LENGTH,
+      `상세 사유는 최대 ${FEEDBACK_REJECT_DETAIL_MAX_LENGTH}자까지 작성할 수 있어요`
     ),
 });
 

@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 type MyQaStatusProps = {
   nickname: string;
   recruitingCount: number;
@@ -83,7 +85,10 @@ function MyQaStatus({
       </h2>
 
       <div className="flex flex-col gap-2">
-        <div className="flex flex-col gap-4 rounded-xl border border-border-default p-4">
+        <Link
+          href="/mypage?tab=QA_RECRUIT"
+          className="flex flex-col gap-4 rounded-xl border border-border-default p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-c1 text-text-default">
               <span
@@ -98,9 +103,12 @@ function MyQaStatus({
             />
           </div>
           <StatusCount label="진행 중" count={recruitingCount} />
-        </div>
+        </Link>
 
-        <div className="flex flex-col gap-2 rounded-xl border border-border-default p-4">
+        <Link
+          href="/mypage?tab=QA_PARTICIPATION"
+          className="flex flex-col gap-2 rounded-xl border border-border-default p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-c1 text-text-default">
               <span
@@ -118,7 +126,7 @@ function MyQaStatus({
             <StatusCount label="제출 대기" count={submissionPendingCount} />
             <StatusCount label="검토 중" count={reviewingCount} />
           </div>
-        </div>
+        </Link>
       </div>
     </section>
   );

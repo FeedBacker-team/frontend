@@ -531,7 +531,13 @@ function QaRecruitmentStatusCard({
         <div className="flex flex-col gap-2">
           {isOwner ? (
             <>
-              <Button size="medium" className="w-full">
+              <Button
+                size="medium"
+                className="w-full"
+                onClick={() =>
+                  router.push(`/mypage/my-qa/${qa.feedbackPostId}`)
+                }
+              >
                 진행 상황 자세히 보기
               </Button>
               <Button

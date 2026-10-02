@@ -2,14 +2,16 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
 
+import { FeedbackError } from '@/apis/feedbacks';
 import { Badge } from '@/components/common/Badge';
 import { Button } from '@/components/common/Button';
 import { Input } from '@/components/common/Input';
 import { Radio, RadioGroup } from '@/components/common/RadioGroup';
+import { toast } from '@/components/common/Sonner';
 import { MyObjectionCompleteDialog } from '@/components/domain/mypage/MyObjectionCompleteDialog';
 import {
   MY_QA_PARTICIPATION_STATUS_BADGE_VARIANT,
@@ -19,31 +21,57 @@ import {
   QA_URGENT_DAYS_LEFT_THRESHOLD,
 } from '@/constants/mypage';
 import {
+  useFeedbackParticipationDetail,
+  useSubmitObjection,
+} from '@/hooks/useFeedback';
+import {
   objectionSchema,
   type ObjectionFormValues,
 } from '@/lib/schemas/mypage';
-import type { MyQaParticipationDetail } from '@/types/mypage';
+
+function getFeedbackErrorMessage(error: unknown, fallbackMessage: string) {
+  return error instanceof FeedbackError ? error.message : fallbackMessage;
+}
 
 type MyObjectionFormProps = {
-  detail: MyQaParticipationDetail;
+  feedbackId: string;
 };
 
-function MyObjectionForm({ detail }: MyObjectionFormProps) {
+function MyObjectionFormLoading() {
+  return (
+    <div
+      className="mx-auto flex max-w-220 animate-pulse flex-col gap-8"
+      aria-label="피드백 정보 불러오는 중"
+    >
+      <div className="h-40 rounded-2xl bg-gray-100" />
+      <div className="h-40 rounded-2xl bg-gray-100" />
+      <div className="h-40 rounded-2xl bg-gray-100" />
+    </div>
+  );
+}
+
+function MyObjectionForm({ feedbackId }: MyObjectionFormProps) {
   const router = useRouter();
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
+  const detailQuery = useFeedbackParticipationDetail(feedbackId);
+  const { mutate: submitObjection, isPending: isSubmitting } =
+    useSubmitObjection(feedbackId);
 
-  const {
-    title,
-    status,
-    startDate,
-    endDate,
-    contentType,
-    daysLeft,
-    rewardAcorn,
-    participatedAt,
-    submittedAt,
-    rejectReason,
-  } = detail;
+  const detail = detailQuery.data;
+
+  useEffect(() => {
+    if (detail && detail.status !== 'REJECTED') {
+      router.replace('/mypage?tab=QA_PARTICIPATION');
+    }
+  }, [detail, router]);
+
+  useEffect(() => {
+    if (detailQuery.isError) {
+      toast.error(
+        getFeedbackErrorMessage(detailQuery.error, '피드백 정보를 불러오지 못했습니다')
+      );
+    }
+  }, [detailQuery.isError, detailQuery.error]);
 
   const {
     register,
@@ -60,9 +88,38 @@ function MyObjectionForm({ detail }: MyObjectionFormProps) {
   const reason = useWatch({ control, name: 'reason' });
   const detailReason = useWatch({ control, name: 'detailReason' });
 
-  const onSubmit = () => {
-    // TODO: PATCH /api/feedbacks/{feedbackId}/objection 연동. 아직 API가 없어 목업으로 접수 완료 처리만 한다.
-    setIsCompleteOpen(true);
+  if (detailQuery.isPending) {
+    return <MyObjectionFormLoading />;
+  }
+
+  if (detailQuery.isError || !detail || detail.status !== 'REJECTED') {
+    return null;
+  }
+
+  const {
+    title,
+    status,
+    startDate,
+    endDate,
+    contentType,
+    daysLeft,
+    rewardAcorn,
+    participatedAt,
+    submittedAt,
+    rejectReason,
+  } = detail;
+
+  const onSubmit = (values: ObjectionFormValues) => {
+    submitObjection(
+      { reason: values.reason, detailReason: values.detailReason.trim() },
+      {
+        onSuccess: () => setIsCompleteOpen(true),
+        onError: (error) =>
+          toast.error(
+            getFeedbackErrorMessage(error, '이의제기 접수에 실패했습니다')
+          ),
+      }
+    );
   };
 
   return (
@@ -95,15 +152,15 @@ function MyObjectionForm({ detail }: MyObjectionFormProps) {
                   <h2 className="text-h3 truncate text-text-default">
                     {title}
                   </h2>
-                  <p className="text-c1 text-text-info">
-                    {startDate} ~ {endDate}
-                  </p>
+                  {startDate || endDate ? (
+                    <p className="text-c1 text-text-info">
+                      {startDate} ~ {endDate}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
                   <Badge>{contentType}</Badge>
-                  {daysLeft === null ? (
-                    <Badge>{endDate} 종료</Badge>
-                  ) : (
+                  {daysLeft !== null ? (
                     <Badge
                       variant={
                         daysLeft <= QA_URGENT_DAYS_LEFT_THRESHOLD
@@ -113,7 +170,9 @@ function MyObjectionForm({ detail }: MyObjectionFormProps) {
                     >
                       D-{daysLeft}
                     </Badge>
-                  )}
+                  ) : endDate ? (
+                    <Badge>{endDate} 종료</Badge>
+                  ) : null}
                   <Badge
                     variant="yellow"
                     icon={
@@ -216,7 +275,7 @@ function MyObjectionForm({ detail }: MyObjectionFormProps) {
             type="submit"
             variant="secondary"
             size="medium"
-            disabled={!isValid}
+            disabled={!isValid || isSubmitting}
           >
             이의제기 접수하기
           </Button>
