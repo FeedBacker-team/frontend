@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -96,7 +97,15 @@ function MyQaFeedbackReviewList({
               className="flex items-center justify-between gap-4 py-5"
             >
               <div className="flex items-center gap-3">
-                <div className="size-10 shrink-0 rounded-full bg-gray-200" />
+                <Image
+                  src={review.reviewerProfileImageUrl ?? '/icons/basic-avatars.svg'}
+                  alt=""
+                  aria-hidden
+                  width={40}
+                  height={40}
+                  unoptimized
+                  className="size-10 shrink-0 rounded-full object-cover bg-gray-200"
+                />
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-2">
                     <p className="text-b1 text-text-default">

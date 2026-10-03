@@ -45,11 +45,11 @@ function MyQaEarlyCloseControls({
         disabled={daysLeft === null}
         onClick={handleEarlyCloseClick}
       >
-        조기 마감하기
+        {status === 'RECRUITING' ? '조기 마감하기' : '종료된 QA입니다.'}
       </Button>
       <Button
         size="medium"
-        disabled={status !== 'COMPLETED'}
+        disabled={status === 'RECRUITING'}
         onClick={() => router.push(`/mypage/my-qa/${feedbackPostId}/result`)}
       >
         QA 결과 확인하기

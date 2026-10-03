@@ -1,10 +1,13 @@
 import { feedbackRequest } from './request';
 
+import type { ObjectType } from '@/types/mypage';
+
 function buildObjectionPath(feedbackId: string) {
   return `/api/feedbacks/${encodeURIComponent(feedbackId)}/objection`;
 }
 
 type SubmitObjectionRequest = {
+  objectType: ObjectType;
   objectReason: string;
 };
 
