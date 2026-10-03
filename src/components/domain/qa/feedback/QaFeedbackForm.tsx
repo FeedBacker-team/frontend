@@ -33,6 +33,7 @@ import {
 } from '@/lib/qa/feedbackDraft';
 import { createQaFeedbackFormSchema } from '@/lib/schemas/qaFeedback';
 import {
+  useGiveUpQaParticipation,
   useQaFeedbackForm,
   useQaRecruitmentDetail,
   useSubmitQaFeedback,
@@ -94,6 +95,7 @@ function QaFeedbackFormContent({
   const answers = useWatch({ control: form.control, name: 'answers' });
   const { mutate: submitFeedback, isPending: isSubmitting } =
     useSubmitQaFeedback(feedbackPostId);
+  const giveUpMutation = useGiveUpQaParticipation(feedbackPostId);
 
   const persistDraft = useCallback(() => {
     if (!isDraftReadyRef.current || isDraftExpiredRef.current) {
@@ -288,10 +290,22 @@ function QaFeedbackFormContent({
     setPendingHref(null);
   };
   const handleAbandon = () => {
-    isDraftExpiredRef.current = true;
-    removeQaFeedbackDraft(feedbackPostId, MOCK_CURRENT_USER_ID);
-    setIsAbandonDialogOpen(false);
-    router.push(`/qa/${feedbackPostId}`);
+    giveUpMutation.mutate(undefined, {
+      onSuccess: () => {
+        isDraftExpiredRef.current = true;
+        removeQaFeedbackDraft(feedbackPostId, MOCK_CURRENT_USER_ID);
+        setIsAbandonDialogOpen(false);
+        toast.success('QA 참여를 포기했습니다');
+        router.replace(`/qa/${feedbackPostId}`);
+      },
+      onError: (error) => {
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : 'QA 참여 포기에 실패했습니다'
+        );
+      },
+    });
   };
 
   return (
@@ -353,8 +367,13 @@ function QaFeedbackFormContent({
 
         <QaParticipationAbandonDialog
           open={isAbandonDialogOpen}
-          onOpenChange={setIsAbandonDialogOpen}
+          onOpenChange={(open) => {
+            if (!giveUpMutation.isPending) {
+              setIsAbandonDialogOpen(open);
+            }
+          }}
           onConfirm={handleAbandon}
+          isPending={giveUpMutation.isPending}
         />
       </>
     </FormProvider>

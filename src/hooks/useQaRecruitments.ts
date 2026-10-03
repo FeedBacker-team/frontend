@@ -4,6 +4,7 @@ import { uploadImages } from '@/apis/images';
 import {
   completeQaRecruitment,
   createQaRecruitment,
+  giveUpQaParticipation,
   getFeedbackProgressList,
   getMyQaParticipations,
   getMyQaRecruitments,
@@ -243,6 +244,27 @@ function useParticipateInQa(feedbackPostId: string) {
   });
 }
 
+function useGiveUpQaParticipation(feedbackPostId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => giveUpQaParticipation(feedbackPostId),
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: qaRecruitmentKeys.detail(feedbackPostId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: qaRecruitmentKeys.myParticipations(),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: [...qaRecruitmentKeys.all, 'list'],
+        }),
+      ]);
+    },
+  });
+}
+
 function useCompleteQaRecruitment(feedbackPostId: string) {
   const queryClient = useQueryClient();
 
@@ -322,6 +344,7 @@ export {
   qaRecruitmentKeys,
   useCompleteQaRecruitment,
   useCreateQaRecruitment,
+  useGiveUpQaParticipation,
   useMyQaFeedbackReviewList,
   useMyQaParticipations,
   useMyQaRecruitDetail,

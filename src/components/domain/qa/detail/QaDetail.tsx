@@ -28,6 +28,7 @@ import { PROJECT_TAG_LABEL } from '@/constants/project';
 import { useProjectDetail } from '@/hooks/useProjects';
 import {
   useCompleteQaRecruitment,
+  useGiveUpQaParticipation,
   useParticipateInQa,
   useQaRecruitmentDetail,
 } from '@/hooks/useQaRecruitments';
@@ -404,6 +405,7 @@ function QaRecruitmentStatusCard({
   const [localParticipationDeadlineAt, setLocalParticipationDeadlineAt] =
     useState<number | null>(null);
   const participationMutation = useParticipateInQa(qa.feedbackPostId);
+  const giveUpMutation = useGiveUpQaParticipation(qa.feedbackPostId);
   const completeMutation = useCompleteQaRecruitment(qa.feedbackPostId);
   const serverParticipationDeadlineAt = qa.expireAt
     ? new Date(qa.expireAt).getTime()
@@ -486,10 +488,26 @@ function QaRecruitmentStatusCard({
 
         <QaParticipationAbandonDialog
           open={isAbandonDialogOpen}
-          onOpenChange={setIsAbandonDialogOpen}
+          onOpenChange={(open) => {
+            if (!giveUpMutation.isPending) {
+              setIsAbandonDialogOpen(open);
+            }
+          }}
+          isPending={giveUpMutation.isPending}
           onConfirm={() => {
-            // TODO: 참여 포기 API가 확정되면 mutation 성공 후 상태를 초기화한다.
-            setIsAbandonDialogOpen(false);
+            giveUpMutation.mutate(undefined, {
+              onSuccess: () => {
+                setIsAbandonDialogOpen(false);
+                toast.success('QA 참여를 포기했습니다');
+              },
+              onError: (error) => {
+                toast.error(
+                  error instanceof Error
+                    ? error.message
+                    : 'QA 참여 포기에 실패했습니다'
+                );
+              },
+            });
           }}
         />
       </>

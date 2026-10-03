@@ -31,6 +31,8 @@ const QA_PATHS = {
     `/api/feedback-posts/${encodeURIComponent(feedbackPostId)}/form`,
   participations: (feedbackPostId: string) =>
     `/api/feedback-posts/${encodeURIComponent(feedbackPostId)}/participations`,
+  giveUp: (feedbackPostId: string) =>
+    `/api/feedback-posts/${encodeURIComponent(feedbackPostId)}/giveup`,
   complete: (feedbackPostId: string) =>
     `/api/feedback-posts/${encodeURIComponent(feedbackPostId)}/complete`,
   feedbackProgress: (feedbackPostId: string) =>
@@ -434,6 +436,19 @@ async function participateInQa(feedbackPostId: string): Promise<void> {
   });
 }
 
+async function giveUpQaParticipation(feedbackPostId: string): Promise<void> {
+  if (!process.env.NEXT_PUBLIC_API_URL) {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return;
+  }
+
+  return apiRequest<void>(QA_PATHS.giveUp(feedbackPostId), {
+    method: 'PATCH',
+    responseType: 'void',
+    fallbackMessage: 'QA 참여 포기에 실패했습니다',
+  });
+}
+
 async function completeQaRecruitment(feedbackPostId: string): Promise<void> {
   if (!process.env.NEXT_PUBLIC_API_URL) {
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -482,6 +497,7 @@ async function submitQaFeedback(
 export {
   completeQaRecruitment,
   createQaRecruitment,
+  giveUpQaParticipation,
   getFeedbackProgressList,
   getMyQaParticipations,
   getMyQaRecruitments,
