@@ -82,6 +82,7 @@ function ProjectDetailView({ projectId }: ProjectDetailViewProps) {
           tags={project.tags.map((tag) => PROJECT_TAG_LABEL[tag])}
           thumbnailUrl={project.thumbnailUrl}
           authorNickname={project.ownerNickname}
+          authorProfileImageUrl={project.ownerProfileImageUrl}
           publishedAt={formatDate(project.createdAt)}
           viewCount={project.viewCount}
           url={project.serviceUrl}

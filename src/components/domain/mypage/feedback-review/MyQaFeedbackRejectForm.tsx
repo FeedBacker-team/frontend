@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -98,8 +99,14 @@ function MyQaFeedbackRejectForm({
     return null;
   }
 
-  const { id, reviewerNickname, status, submittedAt, responseDeadlineHoursLeft } =
-    detail;
+  const {
+    id,
+    reviewerNickname,
+    reviewerProfileImageUrl,
+    status,
+    submittedAt,
+    responseDeadlineHoursLeft,
+  } = detail;
 
   const onSubmit = () => {
     setIsConfirmOpen(true);
@@ -137,7 +144,15 @@ function MyQaFeedbackRejectForm({
         </div>
 
         <section className="flex items-center gap-3 rounded-2xl border border-gray-300 bg-white p-7">
-          <div className="size-10 shrink-0 rounded-full bg-gray-200" />
+          <Image
+            src={reviewerProfileImageUrl ?? '/icons/basic-avatars.svg'}
+            alt=""
+            aria-hidden
+            width={40}
+            height={40}
+            unoptimized
+            className="size-10 shrink-0 rounded-full object-cover bg-gray-200"
+          />
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
               <p className="text-b1 text-text-default">{reviewerNickname}</p>

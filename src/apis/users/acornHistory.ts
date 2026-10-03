@@ -4,7 +4,8 @@ const ACORN_HISTORY_PATH = '/api/acorn-history';
 
 type AcornHistoryType =
   | 'FEEDBACK_ACCEPT'
-  | 'FEEDBACK_RECRUIT'
+  | 'FEEDBACK_DEPOSIT'
+  | 'FEEDBACK_REFUND'
   | 'SIGNUP_REWARD'
   | 'EVENT_REWARD';
 

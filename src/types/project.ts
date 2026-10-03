@@ -65,6 +65,7 @@ type ProjectDetailResponse = {
   thumbnail_image: string;
   owner_id: string;
   owner_nickname: string;
+  profile_image_path: string | null;
   view_count: number;
   created_at: string;
   updated_at: string;
@@ -93,6 +94,7 @@ type ProjectDetail = {
   serviceUrl: string;
   ownerId: string;
   ownerNickname: string;
+  ownerProfileImageUrl: string | null;
   viewCount: number;
   createdAt: string;
   updatedAt: string;

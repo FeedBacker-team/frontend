@@ -3,6 +3,7 @@ import {
   computeResponseDeadlineHoursLeft,
   UNKNOWN_REVIEWER_NICKNAME,
 } from '@/lib/feedback';
+import { normalizeImageUrl } from '@/lib/image';
 import type {
   MyQaFeedbackReviewItem,
   MyQaParticipationItem,
@@ -79,7 +80,9 @@ function mapToMyQaFeedbackReviewItem(
 
   return {
     id: response.feedbackId,
-    reviewerNickname: response.testerName ?? UNKNOWN_REVIEWER_NICKNAME,
+    reviewerNickname:
+      response.nickname ?? response.testerName ?? UNKNOWN_REVIEWER_NICKNAME,
+    reviewerProfileImageUrl: normalizeImageUrl(response.profileImage),
     status,
     submittedAt: toDateOnly(response.submitAt),
     ...(status === 'PENDING_REVIEW'

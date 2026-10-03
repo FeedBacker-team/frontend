@@ -1,3 +1,4 @@
+import { resolveImageUrl } from '@/lib/image';
 import type { ProjectDetail, ProjectDetailResponse } from '@/types/project';
 
 import { projectRequest } from './request';
@@ -18,6 +19,9 @@ function mapProjectDetailResponse(
     serviceUrl: response.service_link,
     ownerId: response.owner_id,
     ownerNickname: response.owner_nickname,
+    ownerProfileImageUrl: response.profile_image_path
+      ? resolveImageUrl(response.profile_image_path, response.thumbnail_image)
+      : null,
     viewCount: response.view_count,
     createdAt: response.created_at,
     updatedAt: response.updated_at,

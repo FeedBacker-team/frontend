@@ -8,7 +8,7 @@ import {
 } from '@/apis/feedbacks';
 import type { RejectFeedbackRequest } from '@/apis/feedbacks';
 import { getQaFeedbackForm } from '@/apis/qa';
-import { OBJECTION_REASONS } from '@/constants/mypage';
+import { OBJECTION_REASON_TO_OBJECT_TYPE } from '@/constants/mypage';
 import { qaRecruitmentKeys } from '@/hooks/useQaRecruitments';
 import {
   mapFeedbackDetailToParticipationDetail,
@@ -145,21 +145,17 @@ type SubmitObjectionInput = {
   detailReason: string;
 };
 
-function buildObjectReason({ reason, detailReason }: SubmitObjectionInput) {
-  const label =
-    OBJECTION_REASONS.find((item) => item.value === reason)?.label ?? reason;
-
-  return `${label}\n${detailReason}`;
-}
-
 function useSubmitObjection(feedbackId: string) {
   const markObjectionFiled = useObjectionStore(
     (state) => state.markObjectionFiled
   );
 
   return useMutation({
-    mutationFn: (input: SubmitObjectionInput) =>
-      submitObjection(feedbackId, { objectReason: buildObjectReason(input) }),
+    mutationFn: ({ reason, detailReason }: SubmitObjectionInput) =>
+      submitObjection(feedbackId, {
+        objectType: OBJECTION_REASON_TO_OBJECT_TYPE[reason],
+        objectReason: detailReason,
+      }),
     onSuccess: (_data, input) => {
       markObjectionFiled(feedbackId, {
         reason: input.reason,

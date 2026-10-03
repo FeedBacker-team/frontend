@@ -12,6 +12,7 @@ import type {
   MyQaParticipationStatus,
   MyQaRecruitItem,
   ObjectionReasonValue,
+  ObjectType,
   QaFeedbackQuestion,
   TreeStageInfo,
   WithdrawReasonValue,
@@ -26,7 +27,8 @@ const ACORN_TRANSACTIONS_PAGE_SIZE = 5;
 
 const ACORN_HISTORY_TYPE_LABEL: Record<AcornHistoryType, string> = {
   FEEDBACK_ACCEPT: '피드백 수락 보상',
-  FEEDBACK_RECRUIT: 'QA 모집',
+  FEEDBACK_DEPOSIT: 'QA 모집 예치',
+  FEEDBACK_REFUND: 'QA 모집 예치금 환급',
   SIGNUP_REWARD: '가입 보상',
   EVENT_REWARD: '이벤트 보상',
 };
@@ -172,6 +174,7 @@ const MOCK_MY_QA_FEEDBACK_REVIEWS: MyQaFeedbackReviewItem[] =
   MOCK_QA_FEEDBACK_REVIEW_STATUSES.map((status, index) => ({
     id: `review-${index + 1}`,
     reviewerNickname: '닉네임',
+    reviewerProfileImageUrl: null,
     status,
     submittedAt: '2026-09-09 18:05',
     ...(status === 'PENDING_REVIEW' ? { responseDeadlineHoursLeft: 71 } : {}),
@@ -499,6 +502,13 @@ const OBJECTION_REASONS: { value: ObjectionReasonValue; label: string }[] = [
   { value: 'ETC', label: '기타' },
 ];
 
+const OBJECTION_REASON_TO_OBJECT_TYPE: Record<ObjectionReasonValue, ObjectType> = {
+  SINCERELY_WRITTEN: 'FAITHFUUL_ANSWER',
+  REASON_MISMATCH: 'REJECT_REASON_MISMATCH',
+  PROJECT_ISSUE: 'QA_PROJECT_ISSUE',
+  ETC: 'OTHER',
+};
+
 const WITHDRAW_REASONS: { value: WithdrawReasonValue; label: string }[] = [
   { value: 'INCONVENIENT', label: '이용이 불편하고 잦은 오류가 발생해서' },
   { value: 'LACK_OF_QA', label: '참여하고 싶은 QA 프로젝트가 부족해서' },
@@ -534,6 +544,7 @@ export {
   MY_QA_PARTICIPATION_STATUS_BADGE_VARIANT,
   MY_QA_PARTICIPATION_STATUS_LABEL,
   OBJECTION_DETAIL_MIN_LENGTH,
+  OBJECTION_REASON_TO_OBJECT_TYPE,
   OBJECTION_REASONS,
   QA_URGENT_DAYS_LEFT_THRESHOLD,
   REVIEW_FILTER_QUERY_KEY,

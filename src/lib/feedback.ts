@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 
 import type { FeedbackDetailResponse } from '@/apis/feedbacks';
 import { FEEDBACK_REJECT_REASONS } from '@/constants/mypage';
+import { normalizeImageUrl } from '@/lib/image';
 import type { FiledObjection } from '@/stores/objectionStore';
 import type {
   MyQaFeedbackReviewDetail,
@@ -13,7 +14,7 @@ import type {
 } from '@/types/mypage';
 import type { MyQaParticipationStatus } from '@/types/qa';
 
-/** 백엔드가 아직 테스터 닉네임을 내려주지 않아 사용하는 임시 표시값 */
+/** 응답에 닉네임이 없을 때(null) 쓰는 대체 표시값 */
 const UNKNOWN_REVIEWER_NICKNAME = '테스터';
 
 function mapFeedbackStatusToReviewStatus(
@@ -133,7 +134,8 @@ function mapFeedbackDetailToReviewDetail(
   return {
     id: feedbackId,
     feedbackPostId,
-    reviewerNickname: UNKNOWN_REVIEWER_NICKNAME,
+    reviewerNickname: response.nickname ?? UNKNOWN_REVIEWER_NICKNAME,
+    reviewerProfileImageUrl: normalizeImageUrl(response.profileImage),
     status,
     submittedAt: response.submitAt,
     ...(status === 'PENDING_REVIEW'

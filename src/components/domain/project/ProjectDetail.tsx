@@ -20,6 +20,7 @@ type ProjectDetailProps = {
   tags: string[];
   thumbnailUrl?: string | null;
   authorNickname: string;
+  authorProfileImageUrl?: string | null;
   publishedAt: string;
   viewCount: number;
   url: string;
@@ -34,6 +35,7 @@ function ProjectDetail({
   tags,
   thumbnailUrl,
   authorNickname,
+  authorProfileImageUrl,
   publishedAt,
   viewCount,
   url,
@@ -72,13 +74,13 @@ function ProjectDetail({
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <Image
-                src="/icons/basic-avatars.svg"
+                src={authorProfileImageUrl ?? '/icons/basic-avatars.svg'}
                 alt=""
                 aria-hidden
                 width={32}
                 height={32}
                 unoptimized
-                className="size-8 shrink-0 rounded-full"
+                className="size-8 shrink-0 rounded-full object-cover"
               />
               <span className="text-c1 text-gray-900">{authorNickname}</span>
             </div>

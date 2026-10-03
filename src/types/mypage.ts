@@ -128,6 +128,13 @@ type WithdrawReasonValue =
 type ObjectionReasonValue =
   'SINCERELY_WRITTEN' | 'REASON_MISMATCH' | 'PROJECT_ISSUE' | 'ETC';
 
+/** 이의제기 사유 백엔드 enum */
+type ObjectType =
+  | 'FAITHFUUL_ANSWER'
+  | 'REJECT_REASON_MISMATCH'
+  | 'QA_PROJECT_ISSUE'
+  | 'OTHER';
+
 type MyQaFeedbackReviewStatus = Extract<
   MyQaParticipationStatus,
   'PENDING_REVIEW' | 'ACCEPTED' | 'REJECTED'
@@ -136,6 +143,7 @@ type MyQaFeedbackReviewStatus = Extract<
 type MyQaFeedbackReviewItem = {
   id: string;
   reviewerNickname: string;
+  reviewerProfileImageUrl: string | null;
   status: MyQaFeedbackReviewStatus;
   submittedAt: string;
   /** status가 PENDING_REVIEW일 때만 존재 */
@@ -256,6 +264,7 @@ export type {
   MyQaResultTesterAnswer,
   ObjectionReasonValue,
   ObjectionResolutionResult,
+  ObjectType,
   QaContentType,
   QaFeedbackMultipleChoiceQuestion,
   QaFeedbackQuestion,
