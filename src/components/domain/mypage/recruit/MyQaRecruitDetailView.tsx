@@ -102,6 +102,8 @@ function MyQaRecruitDetailView({
   const pendingReviewCount = feedbackReviews.filter(
     (review) => review.status === 'PENDING_REVIEW'
   ).length;
+  const completedCount = feedbackReviews.length;
+  const inProgressCount = Math.max(0, recruitedCount - completedCount);
 
   return (
     <div className="flex gap-10">
@@ -182,8 +184,12 @@ function MyQaRecruitDetailView({
             <span className="text-text-default">{capacity}명</span>
           </div>
           <div className="flex items-center justify-between text-b2">
+            <span className="text-text-sub">진행중인 인원</span>
+            <span className="text-text-default">{inProgressCount}명</span>
+          </div>
+          <div className="flex items-center justify-between text-b2">
             <span className="text-text-sub">완료 인원</span>
-            <span className="text-text-default">{recruitedCount}명</span>
+            <span className="text-text-default">{completedCount}명</span>
           </div>
           <div className="flex items-center justify-between text-b2">
             <span className="text-text-sub">필요 인원</span>
@@ -215,6 +221,8 @@ function MyQaRecruitDetailView({
           status={status}
           daysLeft={daysLeft}
           pendingReviewCount={pendingReviewCount}
+          recruitedCount={recruitedCount}
+          completedCount={completedCount}
         />
       </aside>
     </div>

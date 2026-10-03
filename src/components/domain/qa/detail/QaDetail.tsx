@@ -211,6 +211,9 @@ function QaTargetPreview({ qa }: QaTargetPreviewProps) {
                   sizes="200px"
                   className="cursor-pointer object-cover transition-transform group-hover:scale-[1.02]"
                 />
+                <span className="absolute inset-0 flex items-center justify-center bg-gray-900/0 text-c1 text-gray-50 opacity-0 transition-all group-hover:bg-gray-900/50 group-hover:opacity-100">
+                  자세히 보기
+                </span>
               </button>
             </li>
           ))}
@@ -293,14 +296,16 @@ function QaDetailCard({ qa, project }: QaDetailCardProps) {
   const daysRemaining = getDaysRemaining(qa.endAt);
   const ownerProfileImageSrc =
     project.ownerProfileImageUrl || '/icons/basic-avatars.svg';
+  const postThumbnailUrl =
+    qa.images.find((image) => image.type === 'POST_THUMBNAIL')?.url ?? null;
 
   return (
     <article className="flex w-full flex-col gap-8 rounded-2xl bg-bg-default p-9">
       <header className="flex gap-6">
         <div className="relative size-50 shrink-0 overflow-hidden rounded-xl bg-[#d9d9d9]">
-          {project.thumbnailUrl ? (
+          {postThumbnailUrl ? (
             <Image
-              src={project.thumbnailUrl}
+              src={postThumbnailUrl}
               alt=""
               fill
               unoptimized

@@ -37,6 +37,16 @@ function computeDaysLeft(endAt: string | undefined) {
   return Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
 }
 
+/** 모집 기간이 이미 지났으면(종료) null, 아니면 D-day 계산값을 돌려준다 */
+function computeParticipationDaysLeft(endAt: string | undefined) {
+  if (!endAt) {
+    return null;
+  }
+
+  const diffMs = new Date(endAt).getTime() - Date.now();
+  return diffMs > 0 ? Math.ceil(diffMs / (1000 * 60 * 60 * 24)) : null;
+}
+
 function mapToMyQaRecruitItem(recruitment: MyQaRecruitment): MyQaRecruitItem {
   return {
     id: recruitment.id,
@@ -80,9 +90,8 @@ function mapToMyQaFeedbackReviewItem(
 
   return {
     id: response.feedbackId,
-    reviewerNickname:
-      response.nickname ?? response.testerName ?? UNKNOWN_REVIEWER_NICKNAME,
-    reviewerProfileImageUrl: normalizeImageUrl(response.profileImage),
+    reviewerNickname: response.testerName ?? UNKNOWN_REVIEWER_NICKNAME,
+    reviewerProfileImageUrl: normalizeImageUrl(response.testerProfileImageUrl),
     status,
     submittedAt: toDateOnly(response.submitAt),
     ...(status === 'PENDING_REVIEW'
@@ -178,13 +187,15 @@ function mapToMyQaParticipationItem(
   return {
     id: participation.id,
     title: participation.title,
+    thumbnailUrl: normalizeImageUrl(participation.thumbnail),
     status: mapParticipationStatus(participation.status, hasFiledObjection),
-    // 이 API 응답에는 모집 기간/콘텐츠 타입이 없다. feedbackPostId가 추가되면
-    // getQaRecruitmentDetail(feedbackPostId)로 조회해 채우는 방식으로 교체한다.
-    startDate: '',
-    endDate: '',
-    contentType: '링크형',
-    daysLeft: null,
+    startDate: toDateOnly(participation.startAt),
+    endDate: toDateOnly(participation.endAt),
+    contentType: toContentType(participation.targetType),
+    daysLeft: computeParticipationDaysLeft(participation.endAt),
+    completeDate: participation.completeAt
+      ? toDateOnly(participation.completeAt)
+      : null,
     rewardAcorn: participation.rewardAcorn,
   };
 }

@@ -174,15 +174,13 @@ type MyQaParticipation = {
   status: MyQaParticipationStatus;
   rewardAcorn: number;
   rejectType: string | null;
+  startAt: string;
+  endAt: string;
+  targetType: QaTargetType;
   submitAt: string;
-  processedAt: string | null;
-  /**
-   * 마이페이지 "내 QA 참여" 카드에 기간/콘텐츠 타입/D-day를 보여주려면 모집글 식별자가 필요하다.
-   * 이 값이 생기면 이미 동작 중인 QA 모집글 상세 조회(getQaRecruitmentDetail)로
-   * 해당 정보를 그대로 가져다 쓸 수 있어, 날짜 필드를 이 응답에 중복으로 추가하는
-   * 대신 feedbackPostId만 추가해 달라고 백엔드에 요청할 예정. 아직 응답에 없을 수 있음.
-   */
-  feedbackPostId?: string;
+  /** 피드백이 수락/거절 등으로 처리 완료된 시각. 아직 검토 전이면 null */
+  completeAt: string | null;
+  thumbnail: string | null;
 };
 
 type ImageResponse = {
