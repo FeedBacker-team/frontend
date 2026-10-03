@@ -20,7 +20,6 @@ function normalizeQaFeedbackQuestions(
     response.subjectiveQuestionResponses.map((question) => ({
       ...question,
       type: 'SUBJECTIVE',
-      allowImageAttachment: question.allowImageAttachment ?? false,
     }));
 
   return [...choiceQuestions, ...subjectiveQuestions].sort(

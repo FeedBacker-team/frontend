@@ -234,7 +234,7 @@ type QaFeedbackSubjectiveQuestionResponse = {
   images: ImageResponse[];
   isRequire: boolean;
   minimumLength: number | null;
-  allowImageAttachment?: boolean;
+  allowImageAttachment: boolean;
 };
 
 type QaFeedbackFormResponse = {

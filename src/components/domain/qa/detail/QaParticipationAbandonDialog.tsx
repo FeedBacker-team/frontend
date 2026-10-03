@@ -12,12 +12,14 @@ type QaParticipationAbandonDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
+  isPending?: boolean;
 };
 
 function QaParticipationAbandonDialog({
   open,
   onOpenChange,
   onConfirm,
+  isPending = false,
 }: QaParticipationAbandonDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -43,6 +45,7 @@ function QaParticipationAbandonDialog({
             type="button"
             variant="outline"
             size="large"
+            disabled={isPending}
             onClick={() => onOpenChange(false)}
           >
             계속 작성하기
@@ -51,9 +54,10 @@ function QaParticipationAbandonDialog({
             type="button"
             variant="secondary"
             size="large"
+            disabled={isPending}
             onClick={onConfirm}
           >
-            피드백 포기하기
+            {isPending ? '포기 중...' : '피드백 포기하기'}
           </Button>
         </DialogFooter>
       </DialogContent>
