@@ -291,6 +291,8 @@ type QaDetailCardProps = {
 
 function QaDetailCard({ qa, project }: QaDetailCardProps) {
   const daysRemaining = getDaysRemaining(qa.endAt);
+  const ownerProfileImageSrc =
+    project.ownerProfileImageUrl || '/icons/basic-avatars.svg';
 
   return (
     <article className="flex w-full flex-col gap-8 rounded-2xl bg-bg-default p-9">
@@ -320,7 +322,15 @@ function QaDetailCard({ qa, project }: QaDetailCardProps) {
             <h1 className="text-t3 text-text-default">{qa.title}</h1>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
-                <div className="relative size-8 shrink-0 overflow-hidden rounded-full bg-gray-200 border border-border-default" />
+                <Image
+                  src={ownerProfileImageSrc}
+                  alt=""
+                  aria-hidden
+                  width={32}
+                  height={32}
+                  unoptimized
+                  className="size-8 shrink-0 rounded-full border border-border-default bg-gray-200 object-cover"
+                />
                 <span className="text-c1 text-text-default">
                   {project.ownerNickname}
                 </span>
@@ -446,6 +456,16 @@ function QaRecruitmentStatusCard({
         return 'QA 참여하기';
     }
   })();
+  const participationButton = (
+    <Button
+      size="medium"
+      className="w-full"
+      disabled={!canParticipate}
+      onClick={() => setIsParticipationDialogOpen(true)}
+    >
+      {participationButtonLabel}
+    </Button>
+  );
 
   if (!isOwner && hasActiveParticipation) {
     return (
@@ -551,26 +571,25 @@ function QaRecruitmentStatusCard({
               </Button>
             </>
           ) : (
-            <Tooltip>
-              <TooltipTrigger render={<span className="inline-flex w-full" />}>
-                <Button
-                  size="medium"
-                  className="w-full"
-                  disabled={!canParticipate}
-                  onClick={() => setIsParticipationDialogOpen(true)}
+            canParticipate ? (
+              <Tooltip>
+                <TooltipTrigger
+                  render={<span className="inline-flex w-full" />}
                 >
-                  {participationButtonLabel}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent
-                side="bottom"
-                sideOffset={16}
-                className="max-w-none px-4 py-3 whitespace-nowrap"
-              >
-                참여 후 <span className="text-rust-600">24시간</span> 내에
-                피드백을 제출해야 해요.
-              </TooltipContent>
-            </Tooltip>
+                  {participationButton}
+                </TooltipTrigger>
+                <TooltipContent
+                  side="bottom"
+                  sideOffset={16}
+                  className="max-w-none px-4 py-3 whitespace-nowrap"
+                >
+                  참여 후 <span className="text-rust-600">24시간</span> 내에
+                  피드백을 제출해야 해요.
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              participationButton
+            )
           )}
         </div>
       </section>
