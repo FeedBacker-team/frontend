@@ -11,11 +11,8 @@ import type {
   MyQaParticipationItem,
   MyQaParticipationStatus,
   MyQaRecruitItem,
-  MyQaResultDetail,
-  MyQaResultTesterAnswer,
   ObjectionReasonValue,
   QaFeedbackQuestion,
-  QaResultQuestion,
   TreeStageInfo,
   WithdrawReasonValue,
 } from '@/types/mypage';
@@ -109,6 +106,7 @@ const MOCK_MY_QA_RECRUITS: MyQaRecruitItem[] = [
   {
     id: '1',
     title: 'QA 제목',
+    thumbnailUrl: null,
     tags: MOCK_MY_PROJECT_TAGS,
     startDate: '2026-09-09',
     endDate: '2026-09-14',
@@ -121,6 +119,7 @@ const MOCK_MY_QA_RECRUITS: MyQaRecruitItem[] = [
   {
     id: '2',
     title: 'QA 제목',
+    thumbnailUrl: null,
     tags: MOCK_MY_PROJECT_TAGS,
     startDate: '2026-09-09',
     endDate: '2026-09-14',
@@ -133,6 +132,7 @@ const MOCK_MY_QA_RECRUITS: MyQaRecruitItem[] = [
   {
     id: '3',
     title: 'QA 제목',
+    thumbnailUrl: null,
     tags: MOCK_MY_PROJECT_TAGS,
     startDate: '2026-09-09',
     endDate: '2026-09-14',
@@ -145,6 +145,7 @@ const MOCK_MY_QA_RECRUITS: MyQaRecruitItem[] = [
   {
     id: '4',
     title: 'QA 제목',
+    thumbnailUrl: null,
     tags: MOCK_MY_PROJECT_TAGS,
     startDate: '2026-09-09',
     endDate: '2026-09-14',
@@ -336,117 +337,6 @@ const MOCK_QA_FEEDBACK_QUESTIONS_PAYMENT: QaFeedbackQuestion[] = [
   },
 ];
 
-/** 문항별 보기 탭에서 보여줄 문항별 집계 결과. 링크형/이미지형 모두 아래 내용은 동일해 목데이터를 공유한다. */
-const MOCK_QA_RESULT_QUESTION_STATS: QaResultQuestion[] = [
-  {
-    id: 'result-q1',
-    order: 1,
-    required: true,
-    question: '어떤 시안이 메인 CTA 버튼의 위치가 가장 직관적인가요?',
-    type: 'SINGLE_CHOICE',
-    responseCount: 8,
-    optionStats: [
-      { option: '1번: 우측 상단 헤더', count: 4, percent: 50 },
-      { option: '2번: 화면 하단 플로팅 바', count: 3, percent: 37.5 },
-      { option: '3번: 콘텐츠 중앙', count: 1, percent: 12.5 },
-    ],
-  },
-  {
-    id: 'result-q2',
-    order: 2,
-    required: false,
-    question:
-      '1번 문항에서 선택하신 시안에서 시각적으로 아쉽거나, 동선을 방해할 것 같은 요소가 있다면 자유롭게 적어주세요.',
-    type: 'TEXT',
-    responseCount: 8,
-    answers: [
-      '콘텐츠 중앙에 버튼이 배치되어 있어 직관적이고 눈에는 잘 띕니다. 하지만 시안 이미지 전체를 보았을 때 본문 한가운데 위치해 있어 전체적인 디자인 통일감이나 레이아웃 균형을 깨뜨리는 느낌입니다.',
-      '헤더 영역에 위치하니 스크롤을 내려도 계속 보여서 편리했지만, 다른 메뉴 아이콘과 붙어 있어 오터치가 걱정됩니다.',
-      '플로팅 바 형태라 시선이 자연스럽게 이동되지만, 하단 내비게이션과 겹쳐 보이는 기기가 있을 것 같습니다.',
-      '별다른 불편함은 없었습니다.',
-      '버튼 색상 대비가 낮아 배경과 잘 구분되지 않았습니다.',
-      '동선 자체는 좋았지만 버튼 문구가 조금 길게 느껴졌습니다.',
-      '특이사항 없습니다.',
-      '중앙 배치라 콘텐츠를 가리는 느낌이 들어 스크롤 후 노출되면 더 좋을 것 같습니다.',
-    ],
-  },
-  {
-    id: 'result-q3',
-    order: 3,
-    required: true,
-    question:
-      '메인 CTA 버튼의 문구(UX 라이팅) 중 어떤 점이 다음 동작을 예측하는 데 도움이 되었나요?',
-    type: 'MULTIPLE_CHOICE',
-    responseCount: 8,
-    optionStats: [
-      {
-        option: '한눈에 어떤 동작이 일어날지 명확하게 표현되어 있다.',
-        count: 4,
-        percent: 50,
-      },
-      {
-        option: '다음 단계의 행동과 결과가 예측 가능한 단어이다.',
-        count: 4,
-        percent: 50,
-      },
-      {
-        option: '사용자의 목적과 일치하는 직관적인 용어이다.',
-        count: 2,
-        percent: 25,
-      },
-    ],
-  },
-];
-
-/** 테스터별 보기 탭에서 보여줄, 결과에 반영된(수락된) 테스터별 응답. 8명 모두 같은 문항 세트를 목데이터로 재사용한다. */
-const MOCK_QA_RESULT_TESTER_ANSWERS: MyQaResultTesterAnswer[] = Array.from(
-  { length: 8 },
-  (_, index) => ({
-    id: `result-tester-${index + 1}`,
-    reviewerNickname: '닉네임',
-    submittedAt: '2026-09-09 18:05',
-    feedbackQuestions: MOCK_QA_FEEDBACK_QUESTIONS,
-  })
-);
-
-/** 상세 디자인이 확정된 모집글(이미지형: id '1', 링크형: id '2')만 우선 목데이터를 제공 */
-const MOCK_MY_QA_RESULT_DETAILS: Record<string, MyQaResultDetail> = {
-  '1': {
-    id: '1',
-    title: '메인 홈 화면 구성 시안 비교',
-    tags: MOCK_MY_PROJECT_TAGS,
-    authorNickname: '닉네임',
-    startDate: '2026-09-09',
-    endDate: '2026-09-14',
-    contentType: '이미지형',
-    rewardAcorn: 15,
-    reviewImages: ['1', '2', '3'],
-    totalAcorn: 140,
-    usedAcorn: 75,
-    questionStats: MOCK_QA_RESULT_QUESTION_STATS,
-    testerAnswers: MOCK_QA_RESULT_TESTER_ANSWERS,
-  },
-  '2': {
-    id: '2',
-    title: '신규 결제 기능 모듈 및 예외 처리 플로우 QA',
-    tags: MOCK_MY_PROJECT_TAGS,
-    authorNickname: '닉네임',
-    startDate: '2026-09-09',
-    endDate: '2026-09-14',
-    contentType: '링크형',
-    rewardAcorn: 20,
-    reviewUrl: 'https://aibiz.example.com',
-    totalAcorn: 140,
-    usedAcorn: 75,
-    questionStats: MOCK_QA_RESULT_QUESTION_STATS,
-    testerAnswers: MOCK_QA_RESULT_TESTER_ANSWERS,
-  },
-};
-
-function getMyQaResultDetailById(id: string): MyQaResultDetail | undefined {
-  return MOCK_MY_QA_RESULT_DETAILS[id];
-}
-
 /** 상세 디자인이 확정된 모집글(id: '1')에 제출된 피드백만 우선 목데이터를 제공. 링크형/이미지형 화면을 모두 보여주기 위해 홀짝으로 컨텐츠 타입을 나눈다. */
 const MOCK_MY_QA_FEEDBACK_REVIEW_DETAILS: Record<
   string,
@@ -632,7 +522,6 @@ export {
   FEEDBACK_REJECT_REASONS,
   getMyQaFeedbackReviewDetailById,
   getMyQaParticipationDetailById,
-  getMyQaResultDetailById,
   getTreeStageByHumidity,
   isMyPageTab,
   isMyQaFeedbackReviewFilter,

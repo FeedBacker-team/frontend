@@ -16,6 +16,7 @@ function MyQaRecruitListItem({ recruit }: MyQaRecruitListItemProps) {
   const {
     id,
     title,
+    thumbnailUrl,
     tags,
     startDate,
     endDate,
@@ -32,7 +33,18 @@ function MyQaRecruitListItem({ recruit }: MyQaRecruitListItemProps) {
       href={`/mypage/my-qa/${id}`}
       className="flex items-center gap-4 py-5"
     >
-      <div className="size-27 shrink-0 rounded-lg bg-gray-200" />
+      <div className="relative size-27 shrink-0 overflow-hidden rounded-lg bg-gray-200">
+        {thumbnailUrl ? (
+          <Image
+            src={thumbnailUrl}
+            alt=""
+            fill
+            unoptimized
+            className="object-cover"
+            sizes="108px"
+          />
+        ) : null}
+      </div>
       <div className="flex min-w-0 flex-1 flex-col gap-3">
         <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 flex-col gap-1">

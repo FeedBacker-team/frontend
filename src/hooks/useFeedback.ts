@@ -14,6 +14,7 @@ import {
   mapFeedbackDetailToParticipationDetail,
   mapFeedbackDetailToReviewDetail,
 } from '@/lib/feedback';
+import type { ChoiceQuestionMeta } from '@/lib/feedback';
 import { useObjectionStore } from '@/stores/objectionStore';
 import type { ObjectionReasonValue } from '@/types/mypage';
 
@@ -26,22 +27,30 @@ const feedbackKeys = {
 };
 
 /**
- * 상세보기 응답은 객관식 문항의 단일/다중 선택 여부를 알려주지 않는다.
- * 모집글 작성 폼 설정(maxSelectionCount)을 같이 조회해 order로 대조한다.
+ * 상세보기 응답은 객관식 문항의 단일/다중 선택 여부와 각 문항의 필수 여부를 알려주지 않는다.
+ * 모집글 작성 폼 설정(maxSelectionCount, isRequire)을 같이 조회해 order로 대조한다.
  * 조회에 실패해도 상세 화면 자체는 보여줘야 하므로 실패는 무시하고 undefined를 반환한다.
  */
-async function getChoiceMaxSelections(
-  feedbackPostId: string,
-  signal?: AbortSignal
-) {
+async function getQuestionFormMeta(feedbackPostId: string, signal?: AbortSignal) {
   try {
     const form = await getQaFeedbackForm(feedbackPostId, signal);
-    return new Map(
+    const choiceMeta = new Map<number, ChoiceQuestionMeta>(
       form.choiceQuestionResponses.map((question) => [
         question.order,
-        question.maxSelectionCount,
+        {
+          isRequire: question.isRequire,
+          maxSelectionCount: question.maxSelectionCount,
+        },
       ])
     );
+    const subjectiveRequired = new Map<number, boolean>(
+      form.subjectiveQuestionResponses.map((question) => [
+        question.order,
+        question.isRequire,
+      ])
+    );
+
+    return { choiceMeta, subjectiveRequired };
   } catch {
     return undefined;
   }
@@ -51,16 +60,17 @@ function useFeedbackDetail(feedbackPostId: string, feedbackId: string) {
   return useQuery({
     queryKey: feedbackKeys.reviewDetail(feedbackId),
     queryFn: async ({ signal }) => {
-      const [response, choiceMaxSelections] = await Promise.all([
+      const [response, formMeta] = await Promise.all([
         getFeedbackDetail(feedbackId, signal),
-        getChoiceMaxSelections(feedbackPostId, signal),
+        getQuestionFormMeta(feedbackPostId, signal),
       ]);
 
       return mapFeedbackDetailToReviewDetail(
         feedbackPostId,
         feedbackId,
         response,
-        choiceMaxSelections
+        formMeta?.choiceMeta,
+        formMeta?.subjectiveRequired
       );
     },
   });

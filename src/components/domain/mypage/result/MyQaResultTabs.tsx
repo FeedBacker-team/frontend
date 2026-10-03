@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 
-import { MyQaResultQuestionStatsView } from '@/components/domain/mypage/MyQaResultQuestionStatsView';
-import { MyQaResultTesterAnswerPager } from '@/components/domain/mypage/MyQaResultTesterAnswerPager';
+import { MyQaResultQuestionStatsView } from '@/components/domain/mypage/result/MyQaResultQuestionStatsView';
+import { MyQaResultTesterAnswerPager } from '@/components/domain/mypage/result/MyQaResultTesterAnswerPager';
 import { cn } from '@/lib/utils';
 import type { MyQaResultDetail } from '@/types/mypage';
 

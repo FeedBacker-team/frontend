@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { MyQaFeedbackReviewDetailView } from '@/components/domain/mypage/MyQaFeedbackReviewDetailView';
+import { MyQaFeedbackReviewDetailView } from '@/components/domain/mypage/feedback-review/MyQaFeedbackReviewDetailView';
 
 export const metadata: Metadata = {
   title: '제출된 피드백 확인하기',

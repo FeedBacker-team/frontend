@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { Button } from '@/components/common/Button';
 import { chipVariants } from '@/components/common/Chip';
 import { Input } from '@/components/common/Input';
-import { ProfileEditDialog } from '@/components/domain/mypage/ProfileEditDialog';
+import { ProfileEditDialog } from '@/components/domain/mypage/overview/ProfileEditDialog';
 import { PROFILE_ROLE_LABEL } from '@/constants/profile';
 import { useProfile } from '@/hooks/useProfile';
 import { useTags } from '@/hooks/useTags';

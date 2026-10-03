@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { MyQaRecruitDetailView } from '@/components/domain/mypage/MyQaRecruitDetailView';
+import { MyQaRecruitDetailView } from '@/components/domain/mypage/recruit/MyQaRecruitDetailView';
 import {
   isMyQaFeedbackReviewFilter,
   REVIEW_FILTER_QUERY_KEY,

@@ -44,26 +44,33 @@ function computeResponseDeadlineHoursLeft(responseDeadlineAt: string) {
   return Math.max(0, hoursLeft);
 }
 
+type ChoiceQuestionMeta = {
+  isRequire: boolean;
+  maxSelectionCount: number;
+};
+
 /**
- * 상세보기 응답은 각 객관식 문항이 단일/다중 선택이었는지 알려주지 않는다.
- * 대신 같은 모집글의 작성 폼 설정(maxSelectionCount)을 order로 대조해 판별하고,
- * 대조할 정보가 없으면(메이커-테스터 간 feedbackPostId를 모르는 화면 등) 다중선택으로 간주한다.
+ * 상세보기 응답은 각 객관식 문항이 단일/다중 선택이었는지, 필수 여부가 무엇인지 알려주지 않는다.
+ * 대신 같은 모집글의 작성 폼 설정(maxSelectionCount, isRequire)을 order로 대조해 판별하고,
+ * 대조할 정보가 없으면(메이커-테스터 간 feedbackPostId를 모르는 화면 등) 다중선택/필수로 간주한다.
  */
 function buildFeedbackQuestions(
   response: FeedbackDetailResponse['questionAnswerResponses'],
-  choiceMaxSelections?: Map<number, number>
+  choiceMeta?: Map<number, ChoiceQuestionMeta>,
+  subjectiveRequired?: Map<number, boolean>
 ): QaFeedbackQuestion[] {
   const choiceQuestions: QaFeedbackQuestion[] =
     response.choiceQuestionAnswerResponses.map((question) => {
+      const meta = choiceMeta?.get(question.order);
       const selectedOptions = (question.selectedOption ?? [])
-        .map((index) => question.optionText[index])
+        .map((index) => question.optionText[index - 1])
         .filter((option): option is string => option !== undefined);
 
-      if (choiceMaxSelections?.get(question.order) === 1) {
+      if (meta?.maxSelectionCount === 1) {
         return {
           id: `choice-${question.order}`,
           order: question.order,
-          required: true,
+          required: meta?.isRequire ?? true,
           type: 'SINGLE_CHOICE',
           question: question.questionText,
           options: question.optionText,
@@ -74,7 +81,7 @@ function buildFeedbackQuestions(
       return {
         id: `choice-${question.order}`,
         order: question.order,
-        required: true,
+        required: meta?.isRequire ?? true,
         type: 'MULTIPLE_CHOICE',
         question: question.questionText,
         options: question.optionText,
@@ -86,7 +93,7 @@ function buildFeedbackQuestions(
     response.subjectiveQuestionAnswerResponses.map((question) => ({
       id: `text-${question.order}`,
       order: question.order,
-      required: true,
+      required: subjectiveRequired?.get(question.order) ?? true,
       type: 'TEXT',
       question: question.questionText,
       answer: question.answerText ?? '',
@@ -116,7 +123,8 @@ function mapFeedbackDetailToReviewDetail(
   feedbackPostId: string,
   feedbackId: string,
   response: FeedbackDetailResponse,
-  choiceMaxSelections?: Map<number, number>
+  choiceMeta?: Map<number, ChoiceQuestionMeta>,
+  subjectiveRequired?: Map<number, boolean>
 ): MyQaFeedbackReviewDetail {
   const status = mapFeedbackStatusToReviewStatus(response.feedbackStatus);
   const contentType = mapTargetTypeToContentType(response.targetType);
@@ -141,7 +149,8 @@ function mapFeedbackDetailToReviewDetail(
       : {}),
     feedbackQuestions: buildFeedbackQuestions(
       response.questionAnswerResponses,
-      choiceMaxSelections
+      choiceMeta,
+      subjectiveRequired
     ),
   };
 }
@@ -202,3 +211,4 @@ export {
   mapFeedbackDetailToReviewDetail,
   UNKNOWN_REVIEWER_NICKNAME,
 };
+export type { ChoiceQuestionMeta };

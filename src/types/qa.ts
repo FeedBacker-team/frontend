@@ -242,6 +242,48 @@ type QaFeedbackFormResponse = {
   subjectiveQuestionResponses: QaFeedbackSubjectiveQuestionResponse[];
 };
 
+type QaResultChoiceAnswerResponse = {
+  order: number;
+  questionText: string;
+  optionText: string[];
+  optionCount: number;
+  selectedOption: number[] | null;
+  images: ImageResponse[];
+};
+
+type QaResultSubjectiveAnswerResponse = {
+  order: number;
+  questionText: string;
+  answerText: string | null;
+  images: ImageResponse[];
+};
+
+type QaResultFeedbackResponse = {
+  feedbackId: string;
+  testerName: string | null;
+  submitAt: string;
+  status: MyQaParticipationStatus;
+  questionAnswer: {
+    choiceQuestionAnswerResponses: QaResultChoiceAnswerResponse[];
+    subjectiveQuestionAnswerResponses: QaResultSubjectiveAnswerResponse[];
+  };
+};
+
+type QaResultResponse = {
+  feedbackPostTitle: string;
+  feedbackPostStatus: QaRecruitmentStatus;
+  images: ImageResponse[];
+  writerName: string | null;
+  startAt: string;
+  endAt: string;
+  type: QaTargetType;
+  tags: ProjectTag[];
+  rewardAcorn: number;
+  changeAcorn?: number;
+  serviceLink: string | null;
+  feedbackResult: QaResultFeedbackResponse[];
+};
+
 type QaFeedbackSingleChoiceQuestion = QaFeedbackChoiceQuestionResponse & {
   type: 'SINGLE_CHOICE';
 };
@@ -346,6 +388,10 @@ export type {
   QaRecruitStep,
   QaRecruitSubjectiveQuestionRequest,
   QaRecruitSubjectiveQuestionFormValue,
+  QaResultChoiceAnswerResponse,
+  QaResultFeedbackResponse,
+  QaResultResponse,
+  QaResultSubjectiveAnswerResponse,
   QaSort,
   QaTargetType,
   SubmitQaFeedbackRequest,

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { MyWithdrawForm } from '@/components/domain/mypage/MyWithdrawForm';
+import { MyWithdrawForm } from '@/components/domain/mypage/withdraw/MyWithdrawForm';
 
 export const metadata: Metadata = {
   title: '회원 탈퇴',

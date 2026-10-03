@@ -10,6 +10,7 @@ import {
   getQaFeedbackForm,
   getQaRecruitmentDetail,
   getQaRecruitments,
+  getQaResult,
   participateInQa,
   submitQaFeedback,
 } from '@/apis/qa';
@@ -19,6 +20,7 @@ import {
   mapToMyQaRecruitDetail,
 } from '@/lib/qa/myQa';
 import { buildQaRecruitmentRequest } from '@/lib/qa/recruit';
+import { mapToMyQaResultDetail } from '@/lib/qa/result';
 import { profileKeys, useProfile } from '@/hooks/useProfile';
 import type {
   QaFeedbackFormValues,
@@ -41,6 +43,8 @@ const qaRecruitmentKeys = {
     [...qaRecruitmentKeys.all, 'feedback-form', feedbackPostId] as const,
   feedbackReviews: (feedbackPostId: string) =>
     [...qaRecruitmentKeys.all, 'feedback-reviews', feedbackPostId] as const,
+  result: (feedbackPostId: string) =>
+    [...qaRecruitmentKeys.all, 'result', feedbackPostId] as const,
   mine: () => [...qaRecruitmentKeys.all, 'mine'] as const,
   myParticipations: () =>
     [...qaRecruitmentKeys.all, 'my-participations'] as const,
@@ -106,6 +110,42 @@ function useMyQaRecruitDetail(feedbackPostId: string) {
     refetch: () => {
       void detailQuery.refetch();
       void reviewListQuery.refetch();
+    },
+  };
+}
+
+/**
+ * 메이커가 QA완료 처리 후 보는 "QA 결과" 화면용 상세 정보.
+ * 모집글 총 결과, 작성 폼 설정(문항 필수 여부·단일/다중 선택 여부), 보유 도토리
+ * 세 요청을 합쳐 MyQaResultDetail 하나로 만들어 반환한다.
+ */
+function useMyQaResultDetail(feedbackPostId: string) {
+  const resultQuery = useQuery({
+    queryKey: qaRecruitmentKeys.result(feedbackPostId),
+    queryFn: ({ signal }) => getQaResult(feedbackPostId, signal),
+  });
+  const formQuery = useQaFeedbackForm(feedbackPostId);
+  const profileQuery = useProfile();
+
+  const data =
+    resultQuery.data && formQuery.data && profileQuery.data
+      ? mapToMyQaResultDetail(
+          feedbackPostId,
+          resultQuery.data,
+          formQuery.data,
+          profileQuery.data
+        )
+      : undefined;
+
+  return {
+    data,
+    isPending:
+      resultQuery.isPending || formQuery.isPending || profileQuery.isPending,
+    isError: resultQuery.isError || formQuery.isError,
+    error: resultQuery.error ?? formQuery.error ?? null,
+    refetch: () => {
+      void resultQuery.refetch();
+      void formQuery.refetch();
     },
   };
 }
@@ -286,6 +326,7 @@ export {
   useMyQaParticipations,
   useMyQaRecruitDetail,
   useMyQaRecruitments,
+  useMyQaResultDetail,
   useParticipateInQa,
   useQaFeedbackForm,
   useQaRecruitmentDetail,

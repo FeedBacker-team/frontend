@@ -5,8 +5,8 @@ import Image from 'next/image';
 
 import { UserError } from '@/apis/users';
 import { Badge } from '@/components/common/Badge';
-import { MyAcornHistoryDialog } from '@/components/domain/mypage/MyAcornHistoryDialog';
-import { MyGrowthInfoDialog } from '@/components/domain/mypage/MyGrowthInfoDialog';
+import { MyAcornHistoryDialog } from '@/components/domain/mypage/overview/MyAcornHistoryDialog';
+import { MyGrowthInfoDialog } from '@/components/domain/mypage/overview/MyGrowthInfoDialog';
 import {
   ACORN_TRANSACTIONS_PAGE_SIZE,
   getTreeStageByHumidity,

@@ -5,8 +5,8 @@ import Link from 'next/link';
 
 import { Badge } from '@/components/common/Badge';
 import { Dialog, DialogContent } from '@/components/common/Dialog';
-import { MyQaFeedbackQuestionView } from '@/components/domain/mypage/MyQaFeedbackQuestionView';
-import { MyQaObjectionStatusSection } from '@/components/domain/mypage/MyQaObjectionStatusSection';
+import { MyQaFeedbackQuestionView } from '@/components/domain/mypage/feedback-review/MyQaFeedbackQuestionView';
+import { MyQaObjectionStatusSection } from '@/components/domain/mypage/objection/MyQaObjectionStatusSection';
 import {
   MY_QA_PARTICIPATION_STATUS_BADGE_VARIANT,
   MY_QA_PARTICIPATION_STATUS_LABEL,
