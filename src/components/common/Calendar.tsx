@@ -2,12 +2,14 @@
 
 import * as React from 'react';
 import { cn } from 'cn';
+import { startOfDay, subDays } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import {
   DayPicker,
   getDefaultClassNames,
   type DayButton,
   type Locale,
+  type Matcher,
 } from 'react-day-picker';
 
 import { Button, buttonVariants } from '@/components/common/Button';
@@ -26,14 +28,22 @@ function Calendar({
   locale = ko,
   formatters,
   components,
+  disabled,
   ...props
 }: React.ComponentProps<typeof DayPicker> & {
   buttonVariant?: React.ComponentProps<typeof Button>['variant'];
 }) {
   const defaultClassNames = getDefaultClassNames();
 
+  const minSelectableDate = startOfDay(subDays(new Date(), 2));
+  const pastDisabled: Matcher = { before: minSelectableDate };
+  const mergedDisabled = disabled
+    ? [...(Array.isArray(disabled) ? disabled : [disabled]), pastDisabled]
+    : pastDisabled;
+
   return (
     <DayPicker
+      disabled={mergedDisabled}
       showOutsideDays={showOutsideDays}
       className={cn(
         'group/calendar rounded-sm border border-[#e4e4e7] bg-white p-3.25 [--cell-radius:4px] [--cell-size:--spacing(7)] in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent',
