@@ -5,8 +5,8 @@ import { Controller, useFormContext, useWatch } from 'react-hook-form';
 
 import { CheckBox } from '@/components/common/CheckBox';
 import { FileUpload, FileUploadItem } from '@/components/common/FileUpload';
-import { Input } from '@/components/common/Input';
 import { Radio, RadioGroup } from '@/components/common/RadioGroup';
+import { Textarea } from '@/components/common/Textarea';
 import { ALLOWED_IMAGE_TYPES } from '@/constants/file';
 import { cn } from '@/lib/utils';
 import { validateImageFile } from '@/lib/validateImageFile';
@@ -39,12 +39,8 @@ function QaFeedbackQuestionCard({ question }: QaFeedbackQuestionCardProps) {
     `answers.${question.order}.selectedOptions` as const;
   const textFieldName = `answers.${question.order}.text` as const;
   const imageFieldName = `answers.${question.order}.image` as const;
-  const {
-    control,
-    formState,
-    getFieldState,
-    setValue,
-  } = useFormContext<QaFeedbackFormValues>();
+  const { control, formState, getFieldState, setValue } =
+    useFormContext<QaFeedbackFormValues>();
   const text = useWatch({ control, name: textFieldName }) ?? '';
   const image = useWatch({ control, name: imageFieldName });
   const answerError = isSubjective
@@ -165,8 +161,7 @@ function QaFeedbackQuestionCard({ question }: QaFeedbackQuestionCardProps) {
                         checked
                           ? [...field.value, optionValue]
                           : field.value.filter(
-                              (selectedOption) =>
-                                selectedOption !== optionValue
+                              (selectedOption) => selectedOption !== optionValue
                             )
                       );
                     }}
@@ -188,14 +183,13 @@ function QaFeedbackQuestionCard({ question }: QaFeedbackQuestionCardProps) {
               control={control}
               name={textFieldName}
               render={({ field }) => (
-                <Input
+                <Textarea
                   {...field}
                   aria-label={`${question.order}번 주관식 답변`}
                   aria-invalid={!!answerError}
                   aria-describedby={answerError ? errorId : undefined}
                   placeholder="내용을 입력하세요"
                   state={answerError ? 'error' : 'default'}
-                  className="bg-white"
                 />
               )}
             />
@@ -223,8 +217,8 @@ function QaFeedbackQuestionCard({ question }: QaFeedbackQuestionCardProps) {
                   aria-hidden
                   className="size-4 shrink-0 bg-system-alert mask-[url(/icons/alert-circle.svg)] mask-center mask-contain mask-no-repeat"
                 />
-                답변을 더 정확하게 설명할 수 있는 화면 캡처나 이미지를
-                첨부해 주세요.
+                답변을 더 정확하게 설명할 수 있는 화면 캡처나 이미지를 첨부해
+                주세요.
               </p>
               <FileUpload
                 id={`qa-feedback-question-${question.order}-image`}

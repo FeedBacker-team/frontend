@@ -6,6 +6,34 @@ function buildProjectPath(projectId: string) {
   return `/api/projects/${encodeURIComponent(projectId)}`;
 }
 
+function resolveProfileImageUrl(response: ProjectDetailResponse) {
+  if (response.profile_image_url) {
+    return response.profile_image_url;
+  }
+
+  if (!response.profile_image_path) {
+    return null;
+  }
+
+  if (/^https?:\/\//.test(response.profile_image_path)) {
+    return response.profile_image_path;
+  }
+
+  const publicBucketMarker = '/storage/v1/object/public/public-images/';
+  const markerIndex = response.thumbnail_image.indexOf(publicBucketMarker);
+
+  if (markerIndex === -1) {
+    return null;
+  }
+
+  const publicBucketUrl = response.thumbnail_image.slice(
+    0,
+    markerIndex + publicBucketMarker.length
+  );
+
+  return `${publicBucketUrl}${response.profile_image_path.replace(/^\/+/, '')}`;
+}
+
 function mapProjectDetailResponse(
   response: ProjectDetailResponse
 ): ProjectDetail {
@@ -18,6 +46,7 @@ function mapProjectDetailResponse(
     serviceUrl: response.service_link,
     ownerId: response.owner_id,
     ownerNickname: response.owner_nickname,
+    ownerProfileImageUrl: resolveProfileImageUrl(response),
     viewCount: response.view_count,
     createdAt: response.created_at,
     updatedAt: response.updated_at,
