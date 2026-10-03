@@ -98,26 +98,14 @@ function buildFeedbackQuestions(
       type: 'TEXT',
       question: question.questionText,
       answer: question.answerText ?? '',
+      ...(question.images.length > 0
+        ? { images: question.images.map((image) => image.url) }
+        : {}),
     }));
 
   return [...choiceQuestions, ...subjectiveQuestions].sort(
     (a, b) => a.order - b.order
   );
-}
-
-function collectReviewImages(
-  response: FeedbackDetailResponse['questionAnswerResponses']
-): string[] {
-  const urls = [
-    ...response.choiceQuestionAnswerResponses.flatMap((question) =>
-      question.images.map((image) => image.url)
-    ),
-    ...response.subjectiveQuestionAnswerResponses.flatMap((question) =>
-      question.images.map((image) => image.url)
-    ),
-  ];
-
-  return Array.from(new Set(urls));
 }
 
 function mapFeedbackDetailToReviewDetail(
@@ -129,7 +117,6 @@ function mapFeedbackDetailToReviewDetail(
 ): MyQaFeedbackReviewDetail {
   const status = mapFeedbackStatusToReviewStatus(response.feedbackStatus);
   const contentType = mapTargetTypeToContentType(response.targetType);
-  const reviewImages = collectReviewImages(response.questionAnswerResponses);
 
   return {
     id: feedbackId,
@@ -137,7 +124,7 @@ function mapFeedbackDetailToReviewDetail(
     reviewerNickname: response.nickname ?? UNKNOWN_REVIEWER_NICKNAME,
     reviewerProfileImageUrl: normalizeImageUrl(response.profileImage),
     status,
-    submittedAt: response.submitAt,
+    submittedAt: toDateTimeDisplay(response.submitAt),
     ...(status === 'PENDING_REVIEW'
       ? {
           responseDeadlineHoursLeft: computeResponseDeadlineHoursLeft(
@@ -146,9 +133,6 @@ function mapFeedbackDetailToReviewDetail(
         }
       : {}),
     contentType,
-    ...(contentType === '이미지형' && reviewImages.length > 0
-      ? { reviewImages }
-      : {}),
     feedbackQuestions: buildFeedbackQuestions(
       response.questionAnswerResponses,
       choiceMeta,
@@ -191,11 +175,13 @@ function mapFeedbackDetailToParticipationDetail(
   return {
     id: feedbackId,
     title: response.feedbackPostTitle,
+    thumbnailUrl: null,
     status,
     startDate: '',
     endDate: '',
     contentType: mapTargetTypeToContentType(response.targetType),
     daysLeft: null,
+    completeDate: null,
     rewardAcorn: response.rewardAcorn,
     participatedAt: toDateTimeDisplay(response.participateAt),
     submittedAt: toDateTimeDisplay(response.submitAt),

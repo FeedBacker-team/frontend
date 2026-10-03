@@ -58,12 +58,12 @@ function ProfileEditDialog({
           onSuccess={handleSuccess}
         />
 
-        <Link
+        {/* <Link
           href="/mypage/withdraw"
           className="text-center text-c1 text-text-sub underline underline-offset-2"
         >
           회원 탈퇴
-        </Link>
+        </Link> */}
       </DialogContent>
     </Dialog>
   );

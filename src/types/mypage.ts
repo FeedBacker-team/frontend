@@ -41,12 +41,15 @@ type MyQaParticipationStatus =
 type MyQaParticipationItem = {
   id: string;
   title: string;
+  thumbnailUrl: string | null;
   status: MyQaParticipationStatus;
   startDate: string;
   endDate: string;
   contentType: QaContentType;
   /** 모집이 끝났으면 null */
   daysLeft: number | null;
+  /** 피드백이 처리 완료된 날짜. 아직 처리되지 않았으면 null */
+  completeDate: string | null;
   rewardAcorn: number;
 };
 
@@ -72,6 +75,8 @@ type QaFeedbackMultipleChoiceQuestion = QaFeedbackQuestionBase & {
 type QaFeedbackTextQuestion = QaFeedbackQuestionBase & {
   type: 'TEXT';
   answer: string;
+  /** 주관식 질문에 첨부 허용된 이미지가 있을 때만 존재 */
+  images?: string[];
 };
 
 type QaFeedbackQuestion =
@@ -162,8 +167,6 @@ type MyQaRecruitDetail = MyQaRecruitItem & {
 type MyQaFeedbackReviewDetail = MyQaFeedbackReviewItem & {
   feedbackPostId: string;
   contentType: QaContentType;
-  /** contentType이 '이미지형'일 때만 존재 */
-  reviewImages?: string[];
   feedbackQuestions: QaFeedbackQuestion[];
 };
 

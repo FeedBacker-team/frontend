@@ -54,5 +54,22 @@ const projectFormSchema = z.object({
 
 type ProjectRegisterFormValues = z.infer<typeof projectFormSchema>;
 
-export { projectFormSchema };
-export type { ProjectRegisterFormValues };
+const projectDraftImageSchema = z.object({
+  name: z.string(),
+  type: z.string(),
+  size: z.number(),
+});
+
+const projectDraftValuesSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  tags: z.array(projectTagSchema),
+  url: z.string(),
+  image: projectDraftImageSchema.nullable(),
+  imagePath: z.string().nullable(),
+});
+
+type ProjectDraftValues = z.infer<typeof projectDraftValuesSchema>;
+
+export { projectDraftValuesSchema, projectFormSchema };
+export type { ProjectDraftValues, ProjectRegisterFormValues };

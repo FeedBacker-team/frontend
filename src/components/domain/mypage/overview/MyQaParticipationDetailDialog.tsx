@@ -57,6 +57,7 @@ function MyQaParticipationDetailDialog({
     endDate,
     contentType,
     daysLeft,
+    completeDate,
     rewardAcorn,
     participatedAt,
     submittedAt,
@@ -121,6 +122,8 @@ function MyQaParticipationDetailDialog({
                     >
                       D-{daysLeft}
                     </Badge>
+                  ) : completeDate ? (
+                    <Badge variant="green">{completeDate} 완료</Badge>
                   ) : endDate ? (
                     <Badge variant="green">{endDate} 종료</Badge>
                   ) : null}

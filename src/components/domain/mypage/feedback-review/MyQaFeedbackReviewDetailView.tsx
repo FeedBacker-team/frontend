@@ -103,8 +103,6 @@ function MyQaFeedbackReviewDetailView({
     status,
     submittedAt,
     responseDeadlineHoursLeft,
-    contentType,
-    reviewImages,
     feedbackQuestions,
   } = detail;
 
@@ -155,23 +153,6 @@ function MyQaFeedbackReviewDetailView({
             </p>
           </div>
         </section>
-
-        {contentType === '이미지형' &&
-          reviewImages &&
-          reviewImages.length > 0 && (
-            <section className="flex flex-col gap-6 rounded-2xl border border-gray-300 bg-white p-7">
-              <div className="flex gap-6">
-                {reviewImages.map((image, index) => (
-                  <div key={image} className="flex flex-col items-center gap-2">
-                    <span className="flex size-6 items-center justify-center rounded-full bg-gray-200 text-c1 text-text-sub">
-                      {index + 1}
-                    </span>
-                    <div className="size-45 shrink-0 rounded-lg bg-gray-200" />
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
 
         {feedbackQuestions.map((question) => (
           <section

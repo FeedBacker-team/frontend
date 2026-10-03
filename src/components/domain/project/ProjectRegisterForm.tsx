@@ -1,6 +1,13 @@
 'use client';
 
-import { useRef, useState, type ChangeEvent, type ReactNode } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type ReactNode,
+} from 'react';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
@@ -11,6 +18,7 @@ import { Input } from '@/components/common/Input';
 import { toast } from '@/components/common/Sonner';
 import { Tag } from '@/components/common/Tag';
 import { Textarea } from '@/components/common/Textarea';
+import { ProjectDraftExitDialog } from '@/components/domain/project/ProjectDraftExitDialog';
 import { ApiError } from '@/apis/baseClient';
 import { ProjectError } from '@/apis/projects';
 import { ALLOWED_IMAGE_TYPES } from '@/constants/file';
@@ -23,7 +31,16 @@ import {
 import { useUploadImages } from '@/hooks/useImages';
 import { useCreateProject, useUpdateProject } from '@/hooks/useProjects';
 import {
+  hasProjectDraftValues,
+  loadProjectDraft,
+  PROJECT_DRAFT_TTL_MS,
+  removeProjectDraft,
+  saveProjectDraft,
+  type ProjectDraft,
+} from '@/lib/project/projectDraft';
+import {
   projectFormSchema,
+  type ProjectDraftValues,
   type ProjectRegisterFormValues,
 } from '@/lib/schemas/project';
 import { cn } from '@/lib/utils';
@@ -33,6 +50,10 @@ import type {
   ProjectImageValue,
   ProjectTag,
 } from '@/types/project';
+
+// TODO: 실제 인증 연동 시 메모리 auth store의 currentUserId로 교체한다.
+const MOCK_CURRENT_USER_ID = '00000000-0000-4000-8000-000000000001';
+const DRAFT_AUTOSAVE_DELAY_MS = 400;
 
 const INITIAL_VALUES: ProjectFormValues = {
   title: '',
@@ -141,8 +162,24 @@ function ProjectRegisterForm({
   const { mutate: uploadImages, isPending: isUploadingImage } =
     useUploadImages();
 
+  const isDraftEnabled = !isEdit;
+  const [initialDraftState] = useState<{
+    draft: ProjectDraft | null;
+    expiresAt: number;
+  }>(() => {
+    const draft = isDraftEnabled
+      ? loadProjectDraft(MOCK_CURRENT_USER_ID)
+      : null;
+    return {
+      draft,
+      expiresAt: draft ? draft.expiresAt : Date.now() + PROJECT_DRAFT_TTL_MS,
+    };
+  });
+  const initialDraft = initialDraftState.draft;
+  const draftValues = initialDraft?.values ?? null;
+
   const [imageFile, setImageFile] = useState<ProjectImageValue | null>(
-    initialValues.image
+    draftValues?.image ?? initialValues.image
   );
   const [imageError, setImageError] = useState<{
     file: ProjectImageValue;
@@ -150,9 +187,13 @@ function ProjectRegisterForm({
   } | null>(null);
   const [imageRequiredError, setImageRequiredError] = useState(false);
   const [uploadedImagePath, setUploadedImagePath] = useState<string | null>(
-    initialValues.imagePath
+    draftValues?.imagePath ?? initialValues.imagePath
   );
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const [isDraftExitDialogOpen, setIsDraftExitDialogOpen] = useState(false);
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
+  const draftExpiresAtRef = useRef(initialDraftState.expiresAt);
+  const isDraftExpiredRef = useRef(false);
 
   const {
     register,
@@ -164,15 +205,219 @@ function ProjectRegisterForm({
   } = useForm<ProjectRegisterFormValues>({
     resolver: zodResolver(projectFormSchema),
     defaultValues: {
-      title: initialValues.title,
-      description: initialValues.description,
-      tags: initialValues.tags,
-      url: initialValues.url,
+      title: draftValues?.title ?? initialValues.title,
+      description: draftValues?.description ?? initialValues.description,
+      tags: draftValues
+        ? draftValues.tags.filter((tag) =>
+            PROJECT_TAGS.some((projectTag) => projectTag.value === tag)
+          )
+        : initialValues.tags,
+      url: draftValues?.url ?? initialValues.url,
     },
   });
 
-  const tags = useWatch({ control, name: 'tags' });
+  const watchedValues = useWatch({ control });
+  const tags = watchedValues.tags ?? [];
   const showImageError = imageRequiredError || !!imageError;
+
+  const getCurrentDraftValues = useCallback(
+    (): ProjectDraftValues => ({
+      title: getValues('title'),
+      description: getValues('description'),
+      tags: getValues('tags'),
+      url: getValues('url'),
+      image: imageFile,
+      imagePath: uploadedImagePath,
+    }),
+    [getValues, imageFile, uploadedImagePath]
+  );
+
+  const persistDraft = useCallback(() => {
+    if (!isDraftEnabled || isDraftExpiredRef.current) {
+      return;
+    }
+
+    const currentDraftValues = getCurrentDraftValues();
+
+    if (!hasProjectDraftValues(currentDraftValues)) {
+      removeProjectDraft(MOCK_CURRENT_USER_ID);
+      return;
+    }
+
+    saveProjectDraft({
+      userId: MOCK_CURRENT_USER_ID,
+      values: currentDraftValues,
+      expiresAt: draftExpiresAtRef.current,
+    });
+  }, [getCurrentDraftValues, isDraftEnabled]);
+
+  const moveTo = useCallback(
+    (href: string) => {
+      if (!isDraftEnabled || !hasProjectDraftValues(getCurrentDraftValues())) {
+        router.push(href);
+        return;
+      }
+
+      setPendingHref(href);
+      setIsDraftExitDialogOpen(true);
+    },
+    [getCurrentDraftValues, isDraftEnabled, router]
+  );
+
+  useEffect(() => {
+    if (!isDraftEnabled) {
+      return;
+    }
+
+    const remainingTime = draftExpiresAtRef.current - Date.now();
+    const expirationTimer = window.setTimeout(
+      () => {
+        isDraftExpiredRef.current = true;
+        removeProjectDraft(MOCK_CURRENT_USER_ID);
+      },
+      Math.max(0, remainingTime)
+    );
+
+    return () => window.clearTimeout(expirationTimer);
+  }, [isDraftEnabled]);
+
+  useEffect(() => {
+    if (!isDraftEnabled) {
+      return;
+    }
+
+    const autosaveTimer = window.setTimeout(
+      persistDraft,
+      DRAFT_AUTOSAVE_DELAY_MS
+    );
+
+    return () => window.clearTimeout(autosaveTimer);
+  }, [
+    isDraftEnabled,
+    persistDraft,
+    watchedValues,
+    imageFile,
+    uploadedImagePath,
+  ]);
+
+  useEffect(() => {
+    if (!isDraftEnabled) {
+      return;
+    }
+
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (!hasProjectDraftValues(getCurrentDraftValues())) {
+        return;
+      }
+
+      persistDraft();
+      event.preventDefault();
+      event.returnValue = '';
+    };
+
+    const handlePageHide = () => {
+      persistDraft();
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('pagehide', handlePageHide);
+    window.addEventListener('popstate', persistDraft);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('pagehide', handlePageHide);
+      window.removeEventListener('popstate', persistDraft);
+    };
+  }, [getCurrentDraftValues, isDraftEnabled, persistDraft]);
+
+  useEffect(() => {
+    if (!isDraftEnabled) {
+      return;
+    }
+
+    const handleInternalLinkClick = (event: MouseEvent) => {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      ) {
+        return;
+      }
+
+      const target = event.target;
+
+      if (!(target instanceof Element)) {
+        return;
+      }
+
+      const anchor = target.closest('a[href]');
+
+      if (
+        !(anchor instanceof HTMLAnchorElement) ||
+        anchor.hasAttribute('download') ||
+        (anchor.target && anchor.target !== '_self')
+      ) {
+        return;
+      }
+
+      const destinationUrl = new URL(anchor.href, window.location.href);
+
+      if (destinationUrl.origin !== window.location.origin) {
+        return;
+      }
+
+      const destination = `${destinationUrl.pathname}${destinationUrl.search}${destinationUrl.hash}`;
+      const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+
+      if (
+        destination === current ||
+        !hasProjectDraftValues(getCurrentDraftValues())
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      setPendingHref(destination);
+      setIsDraftExitDialogOpen(true);
+    };
+
+    document.addEventListener('click', handleInternalLinkClick, true);
+
+    return () => {
+      document.removeEventListener('click', handleInternalLinkClick, true);
+    };
+  }, [getCurrentDraftValues, isDraftEnabled]);
+
+  const handleSaveDraft = () => {
+    if (!hasProjectDraftValues(getCurrentDraftValues())) {
+      toast.error('임시저장할 내용이 없어요');
+      return;
+    }
+
+    persistDraft();
+    toast.success('임시저장되었습니다');
+    router.push('/');
+  };
+
+  const handleDraftSaveAndExit = () => {
+    const href = pendingHref;
+
+    persistDraft();
+    setIsDraftExitDialogOpen(false);
+    setPendingHref(null);
+
+    if (href) {
+      router.push(href);
+    }
+  };
+
+  const handleDraftContinue = () => {
+    setIsDraftExitDialogOpen(false);
+    setPendingHref(null);
+  };
 
   const handleToggleTag = (value: string) => {
     const selectedTag = value as ProjectTag;
@@ -276,6 +521,8 @@ function ProjectRegisterForm({
       },
       {
         onSuccess: (data) => {
+          isDraftExpiredRef.current = true;
+          removeProjectDraft(MOCK_CURRENT_USER_ID);
           toast.success('프로젝트를 등록했습니다');
           router.push(`/projects/${data.project_id}`);
         },
@@ -427,7 +674,7 @@ function ProjectRegisterForm({
           variant="outline"
           size="medium"
           className="h-12 rounded-xl px-6"
-          onClick={() => router.push('/')}
+          onClick={() => moveTo('/')}
         >
           취소
         </Button>
@@ -438,6 +685,7 @@ function ProjectRegisterForm({
               variant="secondary"
               size="medium"
               className="h-12 rounded-xl px-5"
+              onClick={handleSaveDraft}
             >
               임시저장
             </Button>
@@ -452,6 +700,13 @@ function ProjectRegisterForm({
           </Button>
         </div>
       </div>
+
+      <ProjectDraftExitDialog
+        open={isDraftExitDialogOpen}
+        onOpenChange={setIsDraftExitDialogOpen}
+        onContinue={handleDraftContinue}
+        onSaveAndExit={handleDraftSaveAndExit}
+      />
     </form>
   );
 }

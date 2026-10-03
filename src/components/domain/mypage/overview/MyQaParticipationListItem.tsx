@@ -20,11 +20,13 @@ function MyQaParticipationListItem({
 }: MyQaParticipationListItemProps) {
   const {
     title,
+    thumbnailUrl,
     status,
     startDate,
     endDate,
     contentType,
     daysLeft,
+    completeDate,
     rewardAcorn,
   } = participation;
 
@@ -48,7 +50,18 @@ function MyQaParticipationListItem({
         onClick && 'cursor-pointer text-left'
       )}
     >
-      <div className="size-27 shrink-0 rounded-lg bg-gray-200" />
+      <div className="relative size-27 shrink-0 overflow-hidden rounded-lg bg-gray-200">
+        {thumbnailUrl ? (
+          <Image
+            src={thumbnailUrl}
+            alt=""
+            fill
+            unoptimized
+            className="object-cover"
+            sizes="108px"
+          />
+        ) : null}
+      </div>
       <div className="flex min-w-0 flex-1 flex-col gap-3">
         <Badge
           variant={MY_QA_PARTICIPATION_STATUS_BADGE_VARIANT[status]}
@@ -65,9 +78,7 @@ function MyQaParticipationListItem({
           </div>
           <div className="flex shrink-0 items-center gap-2">
             <Badge>{contentType}</Badge>
-            {daysLeft === null ? (
-              <Badge variant="green">{endDate} 종료</Badge>
-            ) : (
+            {daysLeft !== null ? (
               <Badge
                 variant={
                   daysLeft <= QA_URGENT_DAYS_LEFT_THRESHOLD ? 'rust' : 'green'
@@ -75,6 +86,10 @@ function MyQaParticipationListItem({
               >
                 D-{daysLeft}
               </Badge>
+            ) : completeDate ? (
+              <Badge variant="green">{completeDate} 완료</Badge>
+            ) : (
+              <Badge variant="green">{endDate} 종료</Badge>
             )}
             <Badge
               variant="yellow"
