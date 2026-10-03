@@ -10,19 +10,23 @@ import {
   type ImageViewerItem,
 } from '@/components/domain/shared/ImageViewer';
 import type { QaRecruitmentDetailResponse } from '@/types/qa';
+import type { ProjectDetail } from '@/types/project';
 
 type QaFeedbackTargetCardProps = {
   qa: QaRecruitmentDetailResponse;
+  project: ProjectDetail;
 };
 
 function formatDate(value: string) {
   return value.slice(0, 10);
 }
 
-function QaFeedbackTargetCard({ qa }: QaFeedbackTargetCardProps) {
+function QaFeedbackTargetCard({ qa, project }: QaFeedbackTargetCardProps) {
   const isLinkType = qa.targetType === 'SERVICE_LINK';
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
-  const testImages = [...qa.images].sort((a, b) => a.order - b.order);
+  const testImages = qa.images
+    .filter((image) => image.type === 'POST')
+    .sort((a, b) => a.order - b.order);
   const viewerImages: ImageViewerItem[] = testImages.map((image, index) => ({
     id: `${image.type}-${image.order}`,
     src: image.url,
@@ -32,7 +36,18 @@ function QaFeedbackTargetCard({ qa }: QaFeedbackTargetCardProps) {
   return (
     <section className="flex flex-col gap-7 rounded-2xl bg-bg-default p-9">
       <header className="flex items-center gap-3 rounded-xl bg-bg-light p-4">
-        <div aria-hidden className="size-14 shrink-0 rounded-lg bg-[#d9d9d9]" />
+        <div className="relative size-14 shrink-0 overflow-hidden rounded-lg bg-[#d9d9d9]">
+          {project.thumbnailUrl ? (
+            <Image
+              src={project.thumbnailUrl}
+              alt=""
+              fill
+              unoptimized
+              sizes="56px"
+              className="object-cover"
+            />
+          ) : null}
+        </div>
         <div className="flex min-w-0 flex-col gap-1">
           <h1 className="truncate text-h2 text-text-default">{qa.title}</h1>
           <p className="text-c1 text-text-info">

@@ -40,6 +40,7 @@ function mapToMyQaRecruitItem(recruitment: MyQaRecruitment): MyQaRecruitItem {
   return {
     id: recruitment.id,
     title: recruitment.title,
+    thumbnailUrl: recruitment.thumbnailInfo?.url ?? null,
     tags: recruitment.tags.map((tag) => PROJECT_TAG_LABEL[tag]),
     startDate: toDateOnly(recruitment.startAt),
     endDate: toDateOnly(recruitment.endAt),
@@ -116,10 +117,14 @@ function mapToMyQaRecruitDetail(
   return {
     id: feedbackPostId,
     title: detail.title,
+    thumbnailUrl:
+      detail.images.find((image) => image.type === 'POST_THUMBNAIL')?.url ??
+      null,
     tags: detail.tags.map((tag) => PROJECT_TAG_LABEL[tag]),
     startDate: toDateOnly(detail.startAt),
     endDate: toDateOnly(detail.endAt),
     contentType: toContentType(detail.targetType),
+    status: detail.status,
     daysLeft:
       detail.status === 'RECRUITING' ? computeDaysLeft(detail.endAt) : null,
     rewardAcorn: detail.rewardAcorn,

@@ -1,6 +1,6 @@
-import { MyQaResultBarList } from '@/components/domain/mypage/MyQaResultBarList';
-import { MyQaResultPieChart } from '@/components/domain/mypage/MyQaResultPieChart';
-import { MyQaResultTextAnswerPager } from '@/components/domain/mypage/MyQaResultTextAnswerPager';
+import { MyQaResultBarList } from '@/components/domain/mypage/result/MyQaResultBarList';
+import { MyQaResultPieChart } from '@/components/domain/mypage/result/MyQaResultPieChart';
+import { MyQaResultTextAnswerPager } from '@/components/domain/mypage/result/MyQaResultTextAnswerPager';
 import type { QaResultQuestion } from '@/types/mypage';
 
 type MyQaResultQuestionStatsViewProps = {

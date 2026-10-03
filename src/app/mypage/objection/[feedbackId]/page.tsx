@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { MyObjectionForm } from '@/components/domain/mypage/MyObjectionForm';
+import { MyObjectionForm } from '@/components/domain/mypage/objection/MyObjectionForm';
 
 export const metadata: Metadata = {
   title: '이의제기 접수',

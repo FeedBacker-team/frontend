@@ -1,3 +1,5 @@
+import type { QaRecruitmentStatus } from '@/types/qa';
+
 type MyProjectItem = {
   id: string;
   title: string;
@@ -15,6 +17,7 @@ type QaContentType = '이미지형' | '링크형';
 type MyQaRecruitItem = {
   id: string;
   title: string;
+  thumbnailUrl: string | null;
   tags: string[];
   startDate: string;
   endDate: string;
@@ -142,6 +145,7 @@ type MyQaFeedbackReviewItem = {
 type MyQaFeedbackReviewFilter = 'ALL' | MyQaFeedbackReviewStatus;
 
 type MyQaRecruitDetail = MyQaRecruitItem & {
+  status: QaRecruitmentStatus;
   authorNickname: string;
   usedAcorn: number;
   feedbackReviews: MyQaFeedbackReviewItem[];

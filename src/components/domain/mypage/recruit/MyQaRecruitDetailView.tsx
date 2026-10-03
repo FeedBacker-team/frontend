@@ -5,8 +5,8 @@ import Image from 'next/image';
 import { Badge } from '@/components/common/Badge';
 import { Button } from '@/components/common/Button';
 import { chipVariants } from '@/components/common/chip-variants';
-import { MyQaEarlyCloseControls } from '@/components/domain/mypage/MyQaEarlyCloseControls';
-import { MyQaFeedbackReviewList } from '@/components/domain/mypage/MyQaFeedbackReviewList';
+import { MyQaEarlyCloseControls } from '@/components/domain/mypage/recruit/MyQaEarlyCloseControls';
+import { MyQaFeedbackReviewList } from '@/components/domain/mypage/recruit/MyQaFeedbackReviewList';
 import { QA_URGENT_DAYS_LEFT_THRESHOLD } from '@/constants/mypage';
 import { useMyQaRecruitDetail } from '@/hooks/useQaRecruitments';
 import { QaApiError } from '@/types/qa';
@@ -88,6 +88,7 @@ function MyQaRecruitDetailView({
     startDate,
     endDate,
     contentType,
+    status,
     daysLeft,
     rewardAcorn,
     capacity,
@@ -211,6 +212,7 @@ function MyQaRecruitDetailView({
         </div>
         <MyQaEarlyCloseControls
           feedbackPostId={feedbackPostId}
+          status={status}
           daysLeft={daysLeft}
           pendingReviewCount={pendingReviewCount}
         />

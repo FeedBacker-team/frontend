@@ -14,6 +14,7 @@ import type {
   QaRecruitmentDetailResponse,
   QaRecruitmentListParams,
   QaRecruitmentListResponse,
+  QaResultResponse,
   QaSort,
   SubmitQaFeedbackRequest,
   SubmitQaFeedbackResponse,
@@ -34,6 +35,8 @@ const QA_PATHS = {
     `/api/feedback-posts/${encodeURIComponent(feedbackPostId)}/complete`,
   feedbackProgress: (feedbackPostId: string) =>
     `/api/feedback-posts/${encodeURIComponent(feedbackPostId)}/feedbacks`,
+  result: (feedbackPostId: string) =>
+    `/api/feedback-posts/${encodeURIComponent(feedbackPostId)}/result`,
   feedbacks: '/api/feedbacks',
   myRecruitments: '/api/feedback-posts/mine',
   myParticipations: '/api/feedbacks/mine',
@@ -305,6 +308,20 @@ async function getFeedbackProgressList(
   );
 }
 
+async function getQaResult(
+  feedbackPostId: string,
+  signal?: AbortSignal
+): Promise<QaResultResponse> {
+  return apiRequest<QaResultResponse>(QA_PATHS.result(feedbackPostId), {
+    method: 'GET',
+    signal,
+    fallbackMessage: (status) =>
+      status === 404
+        ? '피드백 모집글을 찾을 수 없습니다.'
+        : 'QA 결과를 불러오지 못했습니다',
+  });
+}
+
 async function getQaRecruitmentDetail(
   feedbackPostId: string,
   signal?: AbortSignal
@@ -470,6 +487,7 @@ export {
   getQaFeedbackForm,
   getQaRecruitmentDetail,
   getQaRecruitments,
+  getQaResult,
   participateInQa,
   submitQaFeedback,
 };

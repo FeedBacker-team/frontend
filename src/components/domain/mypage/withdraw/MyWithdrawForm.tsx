@@ -9,7 +9,7 @@ import { Button } from '@/components/common/Button';
 import { Radio, RadioGroup } from '@/components/common/RadioGroup';
 import { Textarea } from '@/components/common/Textarea';
 import { WITHDRAW_NOTICES, WITHDRAW_REASONS } from '@/constants/mypage';
-import { MyWithdrawCompleteDialog } from '@/components/domain/mypage/MyWithdrawCompleteDialog';
+import { MyWithdrawCompleteDialog } from '@/components/domain/mypage/withdraw/MyWithdrawCompleteDialog';
 import { withdrawSchema, type WithdrawFormValues } from '@/lib/schemas/mypage';
 
 function MyWithdrawForm() {

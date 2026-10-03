@@ -4,10 +4,10 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { toast } from '@/components/common/Sonner';
-import { MyProjectListItem } from '@/components/domain/mypage/MyProjectListItem';
-import { MyQaParticipationDetailDialog } from '@/components/domain/mypage/MyQaParticipationDetailDialog';
-import { MyQaParticipationListItem } from '@/components/domain/mypage/MyQaParticipationListItem';
-import { MyQaRecruitListItem } from '@/components/domain/mypage/MyQaRecruitListItem';
+import { MyProjectListItem } from '@/components/domain/mypage/overview/MyProjectListItem';
+import { MyQaParticipationDetailDialog } from '@/components/domain/mypage/overview/MyQaParticipationDetailDialog';
+import { MyQaParticipationListItem } from '@/components/domain/mypage/overview/MyQaParticipationListItem';
+import { MyQaRecruitListItem } from '@/components/domain/mypage/overview/MyQaRecruitListItem';
 import { MY_PAGE_TAB_LABEL, MY_PAGE_TAB_ORDER } from '@/constants/mypage';
 import { useFeedbackParticipationDetail } from '@/hooks/useFeedback';
 import { useMyProjects } from '@/hooks/useProjects';

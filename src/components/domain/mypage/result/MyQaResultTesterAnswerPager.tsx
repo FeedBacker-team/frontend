@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { Badge } from '@/components/common/Badge';
 import { Pagination } from '@/components/common/Pagination';
-import { MyQaFeedbackQuestionView } from '@/components/domain/mypage/MyQaFeedbackQuestionView';
+import { MyQaFeedbackQuestionView } from '@/components/domain/mypage/feedback-review/MyQaFeedbackQuestionView';
 import {
   MY_QA_PARTICIPATION_STATUS_BADGE_VARIANT,
   MY_QA_PARTICIPATION_STATUS_LABEL,

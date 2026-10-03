@@ -11,8 +11,8 @@ import { Button } from '@/components/common/Button';
 import { Input } from '@/components/common/Input';
 import { Radio, RadioGroup } from '@/components/common/RadioGroup';
 import { toast } from '@/components/common/Sonner';
-import { MyQaFeedbackRejectConfirmDialog } from '@/components/domain/mypage/MyQaFeedbackRejectConfirmDialog';
-import { MyQaFeedbackReviewCompleteDialog } from '@/components/domain/mypage/MyQaFeedbackReviewCompleteDialog';
+import { MyQaFeedbackRejectConfirmDialog } from '@/components/domain/mypage/feedback-review/MyQaFeedbackRejectConfirmDialog';
+import { MyQaFeedbackReviewCompleteDialog } from '@/components/domain/mypage/feedback-review/MyQaFeedbackReviewCompleteDialog';
 import {
   FEEDBACK_REJECT_DETAIL_MAX_LENGTH,
   FEEDBACK_REJECT_DETAIL_MIN_LENGTH,

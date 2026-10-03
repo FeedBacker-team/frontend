@@ -12,7 +12,7 @@ import { Button } from '@/components/common/Button';
 import { Input } from '@/components/common/Input';
 import { Radio, RadioGroup } from '@/components/common/RadioGroup';
 import { toast } from '@/components/common/Sonner';
-import { MyObjectionCompleteDialog } from '@/components/domain/mypage/MyObjectionCompleteDialog';
+import { MyObjectionCompleteDialog } from '@/components/domain/mypage/objection/MyObjectionCompleteDialog';
 import {
   MY_QA_PARTICIPATION_STATUS_BADGE_VARIANT,
   MY_QA_PARTICIPATION_STATUS_LABEL,

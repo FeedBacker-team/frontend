@@ -37,11 +37,13 @@ import {
   useQaRecruitmentDetail,
   useSubmitQaFeedback,
 } from '@/hooks/useQaRecruitments';
+import { useProjectDetail } from '@/hooks/useProjects';
 import type {
   QaFeedbackFormResponse,
   QaFeedbackFormValues,
   QaRecruitmentDetailResponse,
 } from '@/types/qa';
+import type { ProjectDetail } from '@/types/project';
 
 // TODO: 실제 인증 연동 시 메모리 auth store의 currentUserId로 교체한다.
 const MOCK_CURRENT_USER_ID = '00000000-0000-4000-8000-000000000001';
@@ -54,12 +56,14 @@ type QaFeedbackFormProps = {
 type QaFeedbackFormContentProps = {
   feedbackPostId: string;
   qa: QaRecruitmentDetailResponse;
+  project: ProjectDetail;
   formResponse: QaFeedbackFormResponse;
 };
 
 function QaFeedbackFormContent({
   feedbackPostId,
   qa,
+  project,
   formResponse,
 }: QaFeedbackFormContentProps) {
   const router = useRouter();
@@ -300,7 +304,7 @@ function QaFeedbackFormContent({
               className="flex flex-col gap-5"
               onSubmit={handleFormSubmit}
             >
-              <QaFeedbackTargetCard qa={qa} />
+              <QaFeedbackTargetCard qa={qa} project={project} />
 
               <div className="flex flex-col gap-5">
                 {questions.map((question) => (
@@ -361,8 +365,12 @@ function QaFeedbackForm({ feedbackPostId }: QaFeedbackFormProps) {
   const router = useRouter();
   const detailQuery = useQaRecruitmentDetail(feedbackPostId);
   const formQuery = useQaFeedbackForm(feedbackPostId);
-  const isPending = detailQuery.isPending || formQuery.isPending;
-  const error = detailQuery.error ?? formQuery.error;
+  const projectQuery = useProjectDetail(detailQuery.data?.projectId);
+  const isPending =
+    detailQuery.isPending ||
+    formQuery.isPending ||
+    (!!detailQuery.data && projectQuery.isPending);
+  const error = detailQuery.error ?? formQuery.error ?? projectQuery.error;
 
   if (isPending) {
     return (
@@ -376,7 +384,7 @@ function QaFeedbackForm({ feedbackPostId }: QaFeedbackFormProps) {
     );
   }
 
-  if (error || !detailQuery.data || !formQuery.data) {
+  if (error || !detailQuery.data || !formQuery.data || !projectQuery.data) {
     return (
       <section className="flex min-h-100 flex-col items-center justify-center gap-5 rounded-2xl bg-bg-default p-10 text-center">
         <div className="flex flex-col gap-2">
@@ -405,6 +413,7 @@ function QaFeedbackForm({ feedbackPostId }: QaFeedbackFormProps) {
               void Promise.all([
                 detailQuery.refetch(),
                 formQuery.refetch(),
+                projectQuery.refetch(),
               ]);
             }}
           >
@@ -419,6 +428,7 @@ function QaFeedbackForm({ feedbackPostId }: QaFeedbackFormProps) {
     <QaFeedbackFormContent
       feedbackPostId={feedbackPostId}
       qa={detailQuery.data}
+      project={projectQuery.data}
       formResponse={formQuery.data}
     />
   );

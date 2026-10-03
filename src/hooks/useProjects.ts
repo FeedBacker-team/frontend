@@ -9,9 +9,10 @@ import {
   updateProject,
 } from '@/apis/projects';
 import type { MyProjectResponse, ProjectUpdateRequest } from '@/apis/projects';
+import { PROJECT_TAG_LABEL } from '@/constants/project';
 import { useAuthStore } from '@/stores/authStore';
 import type { MyProjectItem } from '@/types/mypage';
-import type { ProjectListParams } from '@/types/project';
+import type { ProjectListParams, ProjectTag } from '@/types/project';
 
 const projectKeys = {
   all: ['projects'] as const,
@@ -31,7 +32,7 @@ function mapToMyProjectItem(response: MyProjectResponse): MyProjectItem {
     id: response.project_id,
     title: response.title,
     description: response.description,
-    tags: response.tags,
+    tags: response.tags.map((tag) => PROJECT_TAG_LABEL[tag as ProjectTag]),
     thumbnailUrl: response.thumbnail_image,
     publishedAt: formatDate(response.created_at),
     viewCount: response.view_count,

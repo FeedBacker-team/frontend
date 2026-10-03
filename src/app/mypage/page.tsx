@@ -1,6 +1,6 @@
-import { MyGrowthSummary } from '@/components/domain/mypage/MyGrowthSummary';
-import { MyPageTabs } from '@/components/domain/mypage/MyPageTabs';
-import { MyProfileCard } from '@/components/domain/mypage/MyProfileCard';
+import { MyGrowthSummary } from '@/components/domain/mypage/overview/MyGrowthSummary';
+import { MyPageTabs } from '@/components/domain/mypage/overview/MyPageTabs';
+import { MyProfileCard } from '@/components/domain/mypage/overview/MyProfileCard';
 import { isMyPageTab } from '@/constants/mypage';
 
 export default async function MyPage(props: PageProps<'/mypage'>) {

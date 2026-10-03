@@ -7,8 +7,8 @@ import { FeedbackError } from '@/apis/feedbacks';
 import { Badge } from '@/components/common/Badge';
 import { Button } from '@/components/common/Button';
 import { toast } from '@/components/common/Sonner';
-import { MyQaFeedbackQuestionView } from '@/components/domain/mypage/MyQaFeedbackQuestionView';
-import { MyQaFeedbackReviewCompleteDialog } from '@/components/domain/mypage/MyQaFeedbackReviewCompleteDialog';
+import { MyQaFeedbackQuestionView } from '@/components/domain/mypage/feedback-review/MyQaFeedbackQuestionView';
+import { MyQaFeedbackReviewCompleteDialog } from '@/components/domain/mypage/feedback-review/MyQaFeedbackReviewCompleteDialog';
 import {
   MY_QA_PARTICIPATION_STATUS_BADGE_VARIANT,
   MY_QA_PARTICIPATION_STATUS_LABEL,
@@ -68,8 +68,10 @@ function MyQaFeedbackReviewDetailView({
   const router = useRouter();
   const [isAcceptCompleteOpen, setIsAcceptCompleteOpen] = useState(false);
   const detailQuery = useFeedbackDetail(feedbackPostId, feedbackId);
-  const { mutate: acceptFeedback, isPending: isAccepting } =
-    useAcceptFeedback(feedbackPostId, feedbackId);
+  const { mutate: acceptFeedback, isPending: isAccepting } = useAcceptFeedback(
+    feedbackPostId,
+    feedbackId
+  );
 
   if (detailQuery.isPending) {
     return <MyQaFeedbackReviewDetailLoading />;
@@ -110,7 +112,9 @@ function MyQaFeedbackReviewDetailView({
     acceptFeedback(undefined, {
       onSuccess: () => setIsAcceptCompleteOpen(true),
       onError: (error) =>
-        toast.error(getFeedbackErrorMessage(error, '피드백 수락에 실패했습니다')),
+        toast.error(
+          getFeedbackErrorMessage(error, '피드백 수락에 실패했습니다')
+        ),
     });
   };
 
@@ -142,20 +146,22 @@ function MyQaFeedbackReviewDetailView({
           </div>
         </section>
 
-        {contentType === '이미지형' && reviewImages && reviewImages.length > 0 && (
-          <section className="flex flex-col gap-6 rounded-2xl border border-gray-300 bg-white p-7">
-            <div className="flex gap-6">
-              {reviewImages.map((image, index) => (
-                <div key={image} className="flex flex-col items-center gap-2">
-                  <span className="flex size-6 items-center justify-center rounded-full bg-gray-200 text-c1 text-text-sub">
-                    {index + 1}
-                  </span>
-                  <div className="size-45 shrink-0 rounded-lg bg-gray-200" />
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+        {contentType === '이미지형' &&
+          reviewImages &&
+          reviewImages.length > 0 && (
+            <section className="flex flex-col gap-6 rounded-2xl border border-gray-300 bg-white p-7">
+              <div className="flex gap-6">
+                {reviewImages.map((image, index) => (
+                  <div key={image} className="flex flex-col items-center gap-2">
+                    <span className="flex size-6 items-center justify-center rounded-full bg-gray-200 text-c1 text-text-sub">
+                      {index + 1}
+                    </span>
+                    <div className="size-45 shrink-0 rounded-lg bg-gray-200" />
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
         {feedbackQuestions.map((question) => (
           <section
