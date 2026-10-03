@@ -19,9 +19,11 @@ function mapProjectDetailResponse(
     serviceUrl: response.service_link,
     ownerId: response.owner_id,
     ownerNickname: response.owner_nickname,
-    ownerProfileImageUrl: response.profile_image_path
-      ? resolveImageUrl(response.profile_image_path, response.thumbnail_image)
-      : null,
+    ownerProfileImageUrl: response.profile_image_url
+      ? response.profile_image_url
+      : response.profile_image_path
+        ? resolveImageUrl(response.profile_image_path, response.thumbnail_image)
+        : null,
     viewCount: response.view_count,
     createdAt: response.created_at,
     updatedAt: response.updated_at,
