@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 
 import { Badge } from '@/components/common/Badge';
@@ -31,7 +32,15 @@ function MyQaResultTesterAnswerPager({
       />
 
       <div className="flex items-center gap-3 rounded-2xl border border-gray-300 p-5">
-        <div className="size-10 shrink-0 rounded-full bg-gray-200" />
+        <Image
+          src={current.reviewerProfileImageUrl ?? '/icons/basic-avatars.svg'}
+          alt=""
+          aria-hidden
+          width={40}
+          height={40}
+          unoptimized
+          className="size-10 shrink-0 rounded-full bg-gray-200 object-cover"
+        />
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <p className="text-b1 text-text-default">

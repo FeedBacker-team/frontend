@@ -214,6 +214,7 @@ type QaResultQuestion =
 type MyQaResultTesterAnswer = {
   id: string;
   reviewerNickname: string;
+  reviewerProfileImageUrl: string | null;
   submittedAt: string;
   feedbackQuestions: QaFeedbackQuestion[];
 };

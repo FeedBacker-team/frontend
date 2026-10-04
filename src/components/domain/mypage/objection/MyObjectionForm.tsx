@@ -107,6 +107,7 @@ function MyObjectionForm({ feedbackId }: MyObjectionFormProps) {
     participatedAt,
     submittedAt,
     rejectReason,
+    thumbnailUrl,
   } = detail;
 
   const onSubmit = (values: ObjectionFormValues) => {
@@ -139,7 +140,18 @@ function MyObjectionForm({ feedbackId }: MyObjectionFormProps) {
 
         <section className="flex flex-col gap-6 rounded-2xl border border-gray-300 bg-white p-7">
           <div className="flex items-center gap-4">
-            <div className="size-17 shrink-0 rounded-lg bg-gray-200" />
+            <div className="relative size-17 shrink-0 overflow-hidden rounded-lg bg-gray-200">
+              {thumbnailUrl ? (
+                <Image
+                  src={thumbnailUrl}
+                  alt=""
+                  fill
+                  unoptimized
+                  sizes="68px"
+                  className="object-cover"
+                />
+              ) : null}
+            </div>
             <div className="flex min-w-0 flex-1 flex-col gap-2">
               <Badge
                 variant={MY_QA_PARTICIPATION_STATUS_BADGE_VARIANT[status]}

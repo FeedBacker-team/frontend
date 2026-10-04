@@ -238,6 +238,7 @@ function mapToMyQaResultDetail(
       (item): MyQaResultTesterAnswer => ({
         id: item.feedbackId,
         reviewerNickname: item.testerName ?? UNKNOWN_REVIEWER_NICKNAME,
+        reviewerProfileImageUrl: normalizeImageUrl(item.testerProfileImage),
         submittedAt: toDateTimeDisplay(item.submitAt),
         feedbackQuestions: buildTesterFeedbackQuestions(
           item.questionAnswer,

@@ -266,6 +266,7 @@ type QaResultSubjectiveAnswerResponse = {
 type QaResultFeedbackResponse = {
   feedbackId: string;
   testerName: string | null;
+  testerProfileImage: string | null;
   submitAt: string;
   status: MyQaParticipationStatus;
   questionAnswer: {
