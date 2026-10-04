@@ -8,6 +8,7 @@ import type {
   MyQaFeedbackReviewDetail,
   MyQaFeedbackReviewStatus,
   MyQaParticipationDetail,
+  MyQaParticipationStatus as MypageParticipationStatus,
   QaContentType,
   QaFeedbackQuestion,
   QaRejectReason,
@@ -17,14 +18,50 @@ import type { MyQaParticipationStatus } from '@/types/qa';
 /** 응답에 닉네임이 없을 때(null) 쓰는 대체 표시값 */
 const UNKNOWN_REVIEWER_NICKNAME = '테스터';
 
+/**
+ * 메이커가 보는 리뷰 상태는 이의제기 단계를 구분하지 않는다(수락/거절/대기만 존재).
+ * 이의제기 관련 상태(OBJECTED 등)는 거절 처리된 건이므로 REJECTED로 묶는다.
+ */
 function mapFeedbackStatusToReviewStatus(
   status: MyQaParticipationStatus
 ): MyQaFeedbackReviewStatus {
-  if (status === 'ACCEPTED' || status === 'REJECTED') {
-    return status;
+  if (status === 'ACCEPTED') {
+    return 'ACCEPTED';
+  }
+
+  if (
+    status === 'REJECTED' ||
+    status === 'OBJECTED' ||
+    status === 'OBJECTION_ACCEPTED' ||
+    status === 'OBJECTION_REJECTED'
+  ) {
+    return 'REJECTED';
   }
 
   return 'PENDING_REVIEW';
+}
+
+/**
+ * 테스터 본인이 보는 참여 상세용 상태 매핑. 이의제기 접수 직후 백엔드 상태(OBJECTED)가
+ * 아직 반영되기 전이면 filedObjection으로 "검토 중"을 낙관적으로 표시한다.
+ */
+function mapFeedbackStatusToParticipationStatus(
+  status: MyQaParticipationStatus,
+  filedObjection: FiledObjection | undefined
+): MypageParticipationStatus {
+  switch (status) {
+    case 'ACCEPTED':
+      return 'ACCEPTED';
+    case 'OBJECTED':
+      return 'DISPUTE_REVIEWING';
+    case 'OBJECTION_ACCEPTED':
+    case 'OBJECTION_REJECTED':
+      return 'DISPUTE_RESOLVED';
+    case 'REJECTED':
+      return filedObjection ? 'DISPUTE_REVIEWING' : 'REJECTED';
+    default:
+      return 'PENDING_REVIEW';
+  }
 }
 
 function mapTargetTypeToContentType(
@@ -35,6 +72,15 @@ function mapTargetTypeToContentType(
 
 function toDateTimeDisplay(value: string) {
   return format(new Date(value), 'yyyy-MM-dd HH:mm');
+}
+
+function toDateOnly(value: string) {
+  return value.slice(0, 10);
+}
+
+function computeParticipationDaysLeft(endAt: string) {
+  const diffMs = new Date(endAt).getTime() - Date.now();
+  return diffMs > 0 ? Math.ceil(diffMs / (1000 * 60 * 60 * 24)) : null;
 }
 
 function computeResponseDeadlineHoursLeft(responseDeadlineAt: string) {
@@ -121,8 +167,8 @@ function mapFeedbackDetailToReviewDetail(
   return {
     id: feedbackId,
     feedbackPostId,
-    reviewerNickname: response.nickname ?? UNKNOWN_REVIEWER_NICKNAME,
-    reviewerProfileImageUrl: normalizeImageUrl(response.profileImage),
+    reviewerNickname: response.testerName ?? UNKNOWN_REVIEWER_NICKNAME,
+    reviewerProfileImageUrl: normalizeImageUrl(response.testerProfileImageUrl),
     status,
     submittedAt: toDateTimeDisplay(response.submitAt),
     ...(status === 'PENDING_REVIEW'
@@ -159,35 +205,31 @@ function getRejectReason(
  * 테스터 본인이 제출한 피드백을 보는 화면(이의제기 작성, 참여 상세 모달)용 매핑.
  * 이 화면들은 feedbackPostId를 모르는 경로(/mypage/objection/[feedbackId])에서도
  * 쓰이므로 choiceMaxSelections 대조 없이 항상 다중선택 UI로 보여준다.
- * QA 모집 기간(startDate/endDate)도 이 API로는 알 수 없어 빈 값으로 둔다.
  */
 function mapFeedbackDetailToParticipationDetail(
   feedbackId: string,
   response: FeedbackDetailResponse,
   filedObjection: FiledObjection | undefined
 ): MyQaParticipationDetail {
-  const baseStatus = mapFeedbackStatusToReviewStatus(response.feedbackStatus);
-  const status =
-    baseStatus === 'REJECTED' && filedObjection
-      ? 'DISPUTE_REVIEWING'
-      : baseStatus;
+  const status = mapFeedbackStatusToParticipationStatus(
+    response.feedbackStatus,
+    filedObjection
+  );
 
   return {
     id: feedbackId,
     title: response.feedbackPostTitle,
-    thumbnailUrl: null,
+    thumbnailUrl: normalizeImageUrl(response.thumbnail?.url),
     status,
-    startDate: '',
-    endDate: '',
+    startDate: toDateOnly(response.startAt),
+    endDate: toDateOnly(response.endAt),
     contentType: mapTargetTypeToContentType(response.targetType),
-    daysLeft: null,
+    daysLeft: computeParticipationDaysLeft(response.endAt),
     completeDate: null,
     rewardAcorn: response.rewardAcorn,
     participatedAt: toDateTimeDisplay(response.participateAt),
     submittedAt: toDateTimeDisplay(response.submitAt),
-    feedbackQuestions: buildFeedbackQuestions(
-      response.questionAnswerResponses
-    ),
+    feedbackQuestions: buildFeedbackQuestions(response.questionAnswerResponses),
     rejectReason: getRejectReason(response),
     ...(filedObjection ? { objection: filedObjection } : {}),
   };

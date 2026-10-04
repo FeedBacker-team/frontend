@@ -68,8 +68,10 @@ function MyQaResultView({ feedbackPostId }: MyQaResultViewProps) {
 
   const {
     title,
+    thumbnailUrl,
     tags,
     authorNickname,
+    authorProfileImageUrl,
     startDate,
     endDate,
     contentType,
@@ -95,8 +97,10 @@ function MyQaResultView({ feedbackPostId }: MyQaResultViewProps) {
 
         <MyQaResultSummaryCard
           title={title}
+          thumbnailUrl={thumbnailUrl}
           tags={tags}
           authorNickname={authorNickname}
+          authorProfileImageUrl={authorProfileImageUrl}
           startDate={startDate}
           endDate={endDate}
           contentType={contentType}

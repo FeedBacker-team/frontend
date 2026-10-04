@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 
 import { PROJECT_TAG_LABEL } from '@/constants/project';
 import { UNKNOWN_REVIEWER_NICKNAME } from '@/lib/feedback';
+import { normalizeImageUrl } from '@/lib/image';
 import type {
   MyQaResultDetail,
   MyQaResultTesterAnswer,
@@ -105,6 +106,9 @@ function buildTesterFeedbackQuestions(
       type: 'TEXT',
       question: question.questionText,
       answer: question.answerText ?? '',
+      ...(question.images.length > 0
+        ? { images: question.images.map((image) => image.url) }
+        : {}),
     }));
 
   return [...choiceQuestions, ...subjectiveQuestions].sort(
@@ -192,7 +196,8 @@ function mapToMyQaResultDetail(
   feedbackPostId: string,
   result: QaResultResponse,
   form: QaFeedbackFormResponse,
-  profile: { nickname: string; acorn: number }
+  profile: { nickname: string; acorn: number; profile_image_url: string | null },
+  fallbackThumbnailUrl: string | null = null
 ): MyQaResultDetail {
   const contentType = toContentType(result.type);
   const acceptedResults = result.feedbackResult.filter(
@@ -205,12 +210,17 @@ function mapToMyQaResultDetail(
     .filter((image) => image.type === 'POST')
     .sort((a, b) => a.order - b.order)
     .map((image) => image.url);
+  const thumbnailUrl =
+    result.images.find((image) => image.type === 'POST_THUMBNAIL')?.url ??
+    fallbackThumbnailUrl;
 
   return {
     id: feedbackPostId,
     title: result.feedbackPostTitle,
+    thumbnailUrl,
     tags: result.tags.map((tag) => PROJECT_TAG_LABEL[tag]),
     authorNickname: result.writerName ?? profile.nickname,
+    authorProfileImageUrl: normalizeImageUrl(profile.profile_image_url),
     startDate: toDateOnly(result.startAt),
     endDate: toDateOnly(result.endAt),
     contentType,

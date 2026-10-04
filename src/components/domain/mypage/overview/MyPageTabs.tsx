@@ -225,6 +225,7 @@ function MyPageTabs({ initialTab }: MyPageTabsProps) {
         }}
         detail={participationDetailQuery.data}
         isLoading={participationDetailQuery.isPending}
+        isError={participationDetailQuery.isError}
       />
     </section>
   );

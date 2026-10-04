@@ -92,6 +92,10 @@ type FeedbackProgressApiResponse = {
   responseDeadlineAt: string;
 };
 
+type FeedbackProgressListApiResponse = {
+  feedbackProgress: FeedbackProgressApiResponse[];
+};
+
 type QaRecruitmentDetailApiResponse = Omit<
   QaRecruitmentDetailResponse,
   'status' | 'questionConfig'
@@ -296,7 +300,7 @@ async function getFeedbackProgressList(
     return [];
   }
 
-  return apiRequest<FeedbackProgressApiResponse[]>(
+  const response = await apiRequest<FeedbackProgressListApiResponse>(
     QA_PATHS.feedbackProgress(feedbackPostId),
     {
       method: 'GET',
@@ -309,6 +313,8 @@ async function getFeedbackProgressList(
             : '제출된 피드백 목록을 불러오지 못했습니다',
     }
   );
+
+  return response.feedbackProgress;
 }
 
 async function getQaResult(

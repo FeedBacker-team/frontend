@@ -96,7 +96,8 @@ function useMyQaRecruitDetail(feedbackPostId: string) {
           feedbackPostId,
           detailQuery.data,
           reviewListQuery.data,
-          profileQuery.data.nickname
+          profileQuery.data.nickname,
+          profileQuery.data.profile_image_url
         )
       : undefined;
 
@@ -106,11 +107,14 @@ function useMyQaRecruitDetail(feedbackPostId: string) {
       detailQuery.isPending ||
       reviewListQuery.isPending ||
       profileQuery.isPending,
-    isError: detailQuery.isError || reviewListQuery.isError,
-    error: detailQuery.error ?? reviewListQuery.error ?? null,
+    isError:
+      detailQuery.isError || reviewListQuery.isError || profileQuery.isError,
+    error:
+      detailQuery.error ?? reviewListQuery.error ?? profileQuery.error ?? null,
     refetch: () => {
       void detailQuery.refetch();
       void reviewListQuery.refetch();
+      void profileQuery.refetch();
     },
   };
 }
@@ -127,6 +131,12 @@ function useMyQaResultDetail(feedbackPostId: string) {
   });
   const formQuery = useQaFeedbackForm(feedbackPostId);
   const profileQuery = useProfile();
+  // 결과 조회 API가 프로젝트 섬네일(POST_THUMBNAIL)을 내려주지 않는 경우를 대비해
+  // 모집글 상세 API에서도 섬네일을 보강해 가져온다.
+  const detailQuery = useQaRecruitmentDetail(feedbackPostId);
+  const detailThumbnailUrl =
+    detailQuery.data?.images.find((image) => image.type === 'POST_THUMBNAIL')
+      ?.url ?? null;
 
   const data =
     resultQuery.data && formQuery.data && profileQuery.data
@@ -134,7 +144,8 @@ function useMyQaResultDetail(feedbackPostId: string) {
           feedbackPostId,
           resultQuery.data,
           formQuery.data,
-          profileQuery.data
+          profileQuery.data,
+          detailThumbnailUrl
         )
       : undefined;
 

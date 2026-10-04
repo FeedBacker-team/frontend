@@ -20,6 +20,7 @@ type MyQaParticipationDetailDialogProps = {
   onOpenChange: (open: boolean) => void;
   detail: MyQaParticipationDetail | null | undefined;
   isLoading?: boolean;
+  isError?: boolean;
 };
 
 function MyQaParticipationDetailDialog({
@@ -27,6 +28,7 @@ function MyQaParticipationDetailDialog({
   onOpenChange,
   detail,
   isLoading = false,
+  isError = false,
 }: MyQaParticipationDetailDialogProps) {
   if (isLoading) {
     return (
@@ -45,13 +47,31 @@ function MyQaParticipationDetailDialog({
     );
   }
 
-  if (!detail) {
-    return null;
+  if (isError || !detail) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="w-275 max-w-[calc(100vw-2rem)]">
+          <div className="flex h-100 flex-col items-center justify-center gap-4">
+            <p className="text-b2 text-text-sub">
+              피드백 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.
+            </p>
+            <button
+              type="button"
+              onClick={() => onOpenChange(false)}
+              className="text-c1 text-text-default underline"
+            >
+              닫기
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
   }
 
   const {
     id,
     title,
+    thumbnailUrl,
     status,
     startDate,
     endDate,
@@ -91,7 +111,18 @@ function MyQaParticipationDetailDialog({
 
         <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto pr-6">
           <div className="flex items-center gap-4">
-            <div className="size-17 shrink-0 rounded-lg bg-gray-200" />
+            <div className="relative size-17 shrink-0 overflow-hidden rounded-lg bg-gray-200">
+              {thumbnailUrl ? (
+                <Image
+                  src={thumbnailUrl}
+                  alt=""
+                  fill
+                  unoptimized
+                  sizes="68px"
+                  className="object-cover"
+                />
+              ) : null}
+            </div>
             <div className="flex min-w-0 flex-1 flex-col gap-2">
               <Badge
                 variant={MY_QA_PARTICIPATION_STATUS_BADGE_VARIANT[status]}

@@ -183,6 +183,7 @@ const MOCK_MY_QA_FEEDBACK_REVIEWS: MyQaFeedbackReviewItem[] =
 const MOCK_MY_QA_PARTICIPATIONS: MyQaParticipationItem[] = [
   {
     id: '1',
+    feedbackPostId: '1',
     title: 'QA 제목',
     thumbnailUrl: null,
     status: 'DISPUTE_REVIEWING',
@@ -195,6 +196,7 @@ const MOCK_MY_QA_PARTICIPATIONS: MyQaParticipationItem[] = [
   },
   {
     id: '2',
+    feedbackPostId: '2',
     title: 'QA 제목',
     thumbnailUrl: null,
     status: 'DISPUTE_RESOLVED',
@@ -207,6 +209,7 @@ const MOCK_MY_QA_PARTICIPATIONS: MyQaParticipationItem[] = [
   },
   {
     id: '3',
+    feedbackPostId: '3',
     title: 'QA 제목',
     thumbnailUrl: null,
     status: 'BEFORE_SUBMIT',
@@ -219,6 +222,7 @@ const MOCK_MY_QA_PARTICIPATIONS: MyQaParticipationItem[] = [
   },
   {
     id: '4',
+    feedbackPostId: '4',
     title: 'QA 제목',
     thumbnailUrl: null,
     status: 'PENDING_REVIEW',
@@ -231,6 +235,7 @@ const MOCK_MY_QA_PARTICIPATIONS: MyQaParticipationItem[] = [
   },
   {
     id: '5',
+    feedbackPostId: '5',
     title: 'QA 제목',
     thumbnailUrl: null,
     status: 'ACCEPTED',
@@ -243,6 +248,7 @@ const MOCK_MY_QA_PARTICIPATIONS: MyQaParticipationItem[] = [
   },
   {
     id: '6',
+    feedbackPostId: '6',
     title: 'QA 제목',
     thumbnailUrl: null,
     status: 'REJECTED',
@@ -255,6 +261,7 @@ const MOCK_MY_QA_PARTICIPATIONS: MyQaParticipationItem[] = [
   },
   {
     id: '7',
+    feedbackPostId: '7',
     title: 'QA 제목',
     thumbnailUrl: null,
     status: 'NOT_SUBMITTED',

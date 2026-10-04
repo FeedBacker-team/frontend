@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     locale: 'ko_KR',
     images: [
       {
-        url: '/og_image.png', // 카카오톡 링크 공유 시 표시되는 이미지
+        url: '/og_image.png', // 카카오톡 링크 공유 시 표시되는 이미지 1200*630px 사이즈권장
         width: 1200,
         height: 630,
         alt: 'Feedbacker',

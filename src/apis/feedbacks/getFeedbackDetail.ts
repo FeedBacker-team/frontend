@@ -31,12 +31,13 @@ type FeedbackDetailResponse = {
   feedbackStatus: MyQaParticipationStatus;
   targetType: QaTargetType;
   rewardAcorn: number;
-  /** TODO: 백엔드 배포 후 실제 필드명(캐멀/스네이크 케이스)과 URL/경로 형식 확인 필요 */
-  nickname?: string | null;
-  /** TODO: 백엔드 배포 후 실제 필드명과 URL/경로 형식 확인 필요 */
-  profileImage?: string | null;
+  testerName?: string | null;
+  testerProfileImageUrl?: string | null;
   rejectType: string | null;
   rejectDetail: string | null;
+  thumbnail: ImageResponse | null;
+  startAt: string;
+  endAt: string;
   participateAt: string;
   submitAt: string;
   responseDeadlineAt: string;

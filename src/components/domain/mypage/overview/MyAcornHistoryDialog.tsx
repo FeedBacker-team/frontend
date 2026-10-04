@@ -63,7 +63,7 @@ function MyAcornHistoryDialog({
           />
         </button>
 
-        <div className="flex items-center justify-between gap-4 border-b border-gray-300 pb-4">
+        <div className="flex items-center justify-between gap-4 border-b border-gray-300 pr-8 pb-4">
           <h2 className="text-h1 text-text-default">도토리 사용 내역</h2>
           <p className="flex items-center gap-2 text-t3 text-text-default">
             <Image

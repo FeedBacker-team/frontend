@@ -166,10 +166,17 @@ type MyQaParticipationStatus =
   | 'ACCEPTED'
   | 'REJECTED'
   | 'CANCELED'
-  | 'EXPIRED';
+  | 'EXPIRED'
+  /** 이의제기됨 (어드민 검토 대기 상태) */
+  | 'OBJECTED'
+  /** 이의제기 인용됨 (검토 완료, 거절 번복) */
+  | 'OBJECTION_ACCEPTED'
+  /** 이의제기 기각됨 (검토 완료, 거절 확정) */
+  | 'OBJECTION_REJECTED';
 
 type MyQaParticipation = {
   id: string;
+  feedbackPostId: string;
   title: string;
   status: MyQaParticipationStatus;
   rewardAcorn: number;

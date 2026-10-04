@@ -120,7 +120,8 @@ function mapToMyQaRecruitDetail(
   feedbackPostId: string,
   detail: QaRecruitmentDetailResponse,
   feedbackReviews: MyQaFeedbackReviewItem[],
-  authorNickname: string
+  authorNickname: string,
+  authorProfileImageUrl: string | null
 ): MyQaRecruitDetail {
   const acceptedCount = feedbackReviews.filter(
     (review) => review.status === 'ACCEPTED'
@@ -146,6 +147,7 @@ function mapToMyQaRecruitDetail(
     ),
     capacity: detail.slotCapacity,
     authorNickname,
+    authorProfileImageUrl: normalizeImageUrl(authorProfileImageUrl),
     usedAcorn: detail.rewardAcorn * acceptedCount,
     feedbackReviews,
   };
@@ -155,10 +157,6 @@ function mapParticipationStatus(
   status: MyQaParticipation['status'],
   hasFiledObjection: boolean
 ): MypageParticipationStatus {
-  if (status === 'REJECTED' && hasFiledObjection) {
-    return 'DISPUTE_REVIEWING';
-  }
-
   switch (status) {
     case 'WRITING':
       return 'BEFORE_SUBMIT';
@@ -166,8 +164,15 @@ function mapParticipationStatus(
       return 'PENDING_REVIEW';
     case 'ACCEPTED':
       return 'ACCEPTED';
+    case 'OBJECTED':
+      return 'DISPUTE_REVIEWING';
+    case 'OBJECTION_ACCEPTED':
+    case 'OBJECTION_REJECTED':
+      return 'DISPUTE_RESOLVED';
     case 'REJECTED':
-      return 'REJECTED';
+      // 방금 이의제기를 접수했지만 백엔드 상태(OBJECTED)가 아직 반영되기 전인
+      // 짧은 틈을 메우기 위한 낙관적 표시. 새로고침하면 실제 상태로 대체된다.
+      return hasFiledObjection ? 'DISPUTE_REVIEWING' : 'REJECTED';
     case 'CANCELED':
     case 'EXPIRED':
     default:
@@ -176,9 +181,8 @@ function mapParticipationStatus(
 }
 
 /**
- * 이의제기 접수/검토 상태는 백엔드 데이터 모델에 없어 조회할 수 없다(ERD 기준).
- * 그래서 이의제기를 접수하면 현재 세션의 objectionStore에만 표시해, 접수 직후
- * 목록에서 "이의제기 검토 중"으로 보이게 하는 클라이언트 전용 연출이다.
+ * 이의제기 접수 직후에는 백엔드 상태가 OBJECTED로 바뀌기 전일 수 있어,
+ * objectionStore의 접수 기록으로 "이의제기 검토 중"을 낙관적으로 보여준다.
  */
 function mapToMyQaParticipationItem(
   participation: MyQaParticipation,
@@ -186,6 +190,7 @@ function mapToMyQaParticipationItem(
 ): MyQaParticipationItem {
   return {
     id: participation.id,
+    feedbackPostId: participation.feedbackPostId,
     title: participation.title,
     thumbnailUrl: normalizeImageUrl(participation.thumbnail),
     status: mapParticipationStatus(participation.status, hasFiledObjection),

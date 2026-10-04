@@ -444,6 +444,9 @@ function QaRecruitmentStatusCard({
       case 'SUBMITTED':
       case 'ACCEPTED':
       case 'REJECTED':
+      case 'OBJECTED':
+      case 'OBJECTION_ACCEPTED':
+      case 'OBJECTION_REJECTED':
         return '참여 완료';
       case 'WRITING':
         return '참여 중';

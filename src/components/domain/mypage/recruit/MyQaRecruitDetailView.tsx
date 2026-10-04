@@ -83,8 +83,10 @@ function MyQaRecruitDetailView({
 
   const {
     title,
+    thumbnailUrl,
     tags,
     authorNickname,
+    authorProfileImageUrl,
     startDate,
     endDate,
     contentType,
@@ -117,7 +119,18 @@ function MyQaRecruitDetailView({
         </div>
 
         <section className="flex items-center gap-6 rounded-2xl border border-gray-300 bg-white p-7">
-          <div className="size-35 shrink-0 rounded-lg bg-gray-200" />
+          <div className="relative size-35 shrink-0 overflow-hidden rounded-lg bg-gray-200">
+            {thumbnailUrl ? (
+              <Image
+                src={thumbnailUrl}
+                alt=""
+                fill
+                unoptimized
+                sizes="140px"
+                className="object-cover"
+              />
+            ) : null}
+          </div>
           <div className="flex min-w-0 flex-1 flex-col gap-3">
             <ul className="flex flex-wrap gap-2">
               {tags.map((tag) => (
@@ -132,7 +145,15 @@ function MyQaRecruitDetailView({
             </ul>
             <h2 className="text-h2 text-text-default">{title}</h2>
             <div className="flex items-center gap-2 text-c1 text-text-sub">
-              <span className="size-5 shrink-0 rounded-full bg-gray-200" />
+              <Image
+                src={authorProfileImageUrl ?? '/icons/basic-avatars.svg'}
+                alt=""
+                aria-hidden
+                width={20}
+                height={20}
+                unoptimized
+                className="size-5 shrink-0 rounded-full object-cover"
+              />
               {authorNickname}
               <span aria-hidden>·</span>
               {startDate} ~ {endDate}

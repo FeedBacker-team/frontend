@@ -40,6 +40,7 @@ type MyQaParticipationStatus =
 
 type MyQaParticipationItem = {
   id: string;
+  feedbackPostId: string;
   title: string;
   thumbnailUrl: string | null;
   status: MyQaParticipationStatus;
@@ -104,7 +105,12 @@ type MyQaObjection = {
   };
 };
 
-type MyQaParticipationDetail = MyQaParticipationItem & {
+/**
+ * 이의제기 작성 화면(/mypage/objection/[feedbackId])은 feedbackPostId를 모르는 채로
+ * 이 타입을 쓰므로, 목록 전용 필드인 feedbackPostId는 상세에서는 선택값으로 둔다.
+ */
+type MyQaParticipationDetail = Omit<MyQaParticipationItem, 'feedbackPostId'> & {
+  feedbackPostId?: string;
   participatedAt: string;
   submittedAt: string;
   feedbackQuestions: QaFeedbackQuestion[];
@@ -160,6 +166,7 @@ type MyQaFeedbackReviewFilter = 'ALL' | MyQaFeedbackReviewStatus;
 type MyQaRecruitDetail = MyQaRecruitItem & {
   status: QaRecruitmentStatus;
   authorNickname: string;
+  authorProfileImageUrl: string | null;
   usedAcorn: number;
   feedbackReviews: MyQaFeedbackReviewItem[];
 };
@@ -214,8 +221,10 @@ type MyQaResultTesterAnswer = {
 type MyQaResultDetail = {
   id: string;
   title: string;
+  thumbnailUrl: string | null;
   tags: string[];
   authorNickname: string;
+  authorProfileImageUrl: string | null;
   startDate: string;
   endDate: string;
   contentType: QaContentType;

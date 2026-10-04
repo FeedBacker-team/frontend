@@ -10,8 +10,10 @@ import type { MyQaResultDetail } from '@/types/mypage';
 type MyQaResultSummaryCardProps = Pick<
   MyQaResultDetail,
   | 'title'
+  | 'thumbnailUrl'
   | 'tags'
   | 'authorNickname'
+  | 'authorProfileImageUrl'
   | 'startDate'
   | 'endDate'
   | 'contentType'
@@ -22,8 +24,10 @@ type MyQaResultSummaryCardProps = Pick<
 
 function MyQaResultSummaryCard({
   title,
+  thumbnailUrl,
   tags,
   authorNickname,
+  authorProfileImageUrl,
   startDate,
   endDate,
   contentType,
@@ -34,7 +38,18 @@ function MyQaResultSummaryCard({
   return (
     <section className="flex flex-col gap-6 rounded-2xl border border-gray-300 bg-white p-7">
       <div className="flex gap-6">
-        <div className="size-35 shrink-0 rounded-lg bg-gray-200" />
+        <div className="relative size-35 shrink-0 overflow-hidden rounded-lg bg-gray-200">
+          {thumbnailUrl ? (
+            <Image
+              src={thumbnailUrl}
+              alt=""
+              fill
+              unoptimized
+              sizes="140px"
+              className="object-cover"
+            />
+          ) : null}
+        </div>
         <div className="flex min-w-0 flex-1 flex-col gap-3">
           <ul className="flex flex-wrap gap-2">
             {tags.map((tag) => (
@@ -49,7 +64,15 @@ function MyQaResultSummaryCard({
           </ul>
           <h2 className="text-h2 text-text-default">{title}</h2>
           <div className="flex items-center gap-2 text-c1 text-text-sub">
-            <span className="size-5 shrink-0 rounded-full bg-gray-200" />
+            <Image
+              src={authorProfileImageUrl ?? '/icons/basic-avatars.svg'}
+              alt=""
+              aria-hidden
+              width={20}
+              height={20}
+              unoptimized
+              className="size-5 shrink-0 rounded-full object-cover"
+            />
             {authorNickname}
             <span aria-hidden>·</span>
             {startDate} ~ {endDate}
@@ -85,7 +108,16 @@ function MyQaResultSummaryCard({
               <span className="flex size-6 items-center justify-center rounded-full bg-gray-200 text-c1 text-text-sub">
                 {index + 1}
               </span>
-              <div className="size-45 shrink-0 rounded-lg bg-gray-200" />
+              <div className="relative size-45 shrink-0 overflow-hidden rounded-lg bg-gray-200">
+                <Image
+                  src={image}
+                  alt=""
+                  fill
+                  unoptimized
+                  sizes="180px"
+                  className="object-cover"
+                />
+              </div>
             </div>
           ))}
         </div>
