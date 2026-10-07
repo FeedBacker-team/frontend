@@ -21,6 +21,7 @@ type RankedListProps = {
   isLoading?: boolean;
   isError?: boolean;
   skeletonCount?: number;
+  emptyIconSrc?: string;
   emptyTitle?: string;
   emptyDescription?: string;
   errorMessage?: string;
@@ -40,16 +41,21 @@ function RankedListRowSkeleton() {
 }
 
 type RankedListEmptyProps = {
+  iconSrc: string;
   title: string;
   description?: string;
 };
 
-function RankedListEmpty({ title, description }: RankedListEmptyProps) {
+function RankedListEmpty({
+  iconSrc,
+  title,
+  description,
+}: RankedListEmptyProps) {
   return (
     <li className="flex flex-col items-center justify-center text-center">
       <span className="flex size-12 items-center justify-center rounded-lg bg-bg-default shadow-[0_4px_12px_rgba(17,17,17,0.14)]">
         <Image
-          src="/icons/flag.svg"
+          src={iconSrc}
           alt=""
           aria-hidden
           width={32}
@@ -73,6 +79,7 @@ function RankedList({
   isLoading = false,
   isError = false,
   skeletonCount = 5,
+  emptyIconSrc = '/icons/flag.svg',
   emptyTitle,
   emptyDescription,
   errorMessage = '프로젝트를 불러오지 못했어요',
@@ -118,7 +125,11 @@ function RankedList({
     );
   } else if (items.length === 0 && emptyTitle) {
     content = (
-      <RankedListEmpty title={emptyTitle} description={emptyDescription} />
+      <RankedListEmpty
+        iconSrc={emptyIconSrc}
+        title={emptyTitle}
+        description={emptyDescription}
+      />
     );
   } else {
     content = items.map((item) => (

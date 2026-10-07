@@ -60,6 +60,7 @@
 | `isLoading` | `boolean` | `false` | 행 대신 스켈레톤 표시 |
 | `isError` | `boolean` | `false` | 목록 대신 오류 상태 표시 |
 | `skeletonCount` | `number` | `5` | 로딩 중 표시할 행 수 |
+| `emptyIconSrc` | `string` | `/icons/flag.svg` | 데이터가 없을 때 표시할 아이콘 경로 |
 | `emptyTitle` | `string` | — | 데이터가 없을 때 표시할 제목 |
 | `emptyDescription` | `string` | — | 데이터가 없을 때 표시할 설명 |
 | `errorMessage` | `string` | `프로젝트를 불러오지 못했어요` | 오류 상태 문구 |
