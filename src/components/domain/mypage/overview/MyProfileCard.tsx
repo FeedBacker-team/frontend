@@ -90,7 +90,7 @@ function MyProfileCard() {
           open={isEditOpen}
           onOpenChange={setIsEditOpen}
           defaultValues={{
-            nickname: profile.nickname,
+            nickname: profile.nickname ?? '',
             role: profile.role,
             intro_link: introLink,
             interests: tags,

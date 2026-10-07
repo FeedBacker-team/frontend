@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import type { FeedbackDetailResponse } from '@/apis/feedbacks';
 import { FEEDBACK_REJECT_REASONS } from '@/constants/mypage';
 import { normalizeImageUrl } from '@/lib/image';
+import { getQaDaysRemaining } from '@/lib/qa/deadline';
 import type { FiledObjection } from '@/stores/objectionStore';
 import type {
   MyQaFeedbackReviewDetail,
@@ -79,8 +80,8 @@ function toDateOnly(value: string) {
 }
 
 function computeParticipationDaysLeft(endAt: string) {
-  const diffMs = new Date(endAt).getTime() - Date.now();
-  return diffMs > 0 ? Math.ceil(diffMs / (1000 * 60 * 60 * 24)) : null;
+  const isRecruiting = new Date(endAt).getTime() > Date.now();
+  return isRecruiting ? getQaDaysRemaining(endAt) : null;
 }
 
 function computeResponseDeadlineHoursLeft(responseDeadlineAt: string) {

@@ -1,3 +1,4 @@
+import { RequireCompletedProfile } from '@/components/domain/auth/RequireCompletedProfile';
 import { QaFeedbackForm } from '@/components/domain/qa/feedback/QaFeedbackForm';
 
 type QaFeedbackPageProps = {
@@ -9,5 +10,9 @@ export default async function QaFeedbackPage({
 }: QaFeedbackPageProps) {
   const { qaId } = await params;
 
-  return <QaFeedbackForm feedbackPostId={qaId} />;
+  return (
+    <RequireCompletedProfile fallbackHref={`/qa/${qaId}`}>
+      <QaFeedbackForm feedbackPostId={qaId} />
+    </RequireCompletedProfile>
+  );
 }

@@ -96,7 +96,7 @@ function useMyQaRecruitDetail(feedbackPostId: string) {
           feedbackPostId,
           detailQuery.data,
           reviewListQuery.data,
-          profileQuery.data.nickname,
+          profileQuery.data.nickname?.trim() || '프로필 미완성',
           profileQuery.data.profile_image_url
         )
       : undefined;

@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 
+import { RequireCompletedProfile } from '@/components/domain/auth/RequireCompletedProfile';
 import { QaRecruitNewView } from '@/components/domain/qa/recruit/QaRecruitNewView';
 import type { QaTargetType } from '@/types/qa';
 
@@ -29,5 +30,9 @@ export default async function QaRecruitNewPage({
     redirect('/qa');
   }
 
-  return <QaRecruitNewView projectId={projectId} target={target} />;
+  return (
+    <RequireCompletedProfile fallbackHref="/qa">
+      <QaRecruitNewView projectId={projectId} target={target} />
+    </RequireCompletedProfile>
+  );
 }

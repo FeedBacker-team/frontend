@@ -65,6 +65,11 @@ function QaRewardRankings() {
     <RankedList
       title="도토리 가득! 혜택이 큰 QA"
       items={items}
+      isError={isError}
+      emptyIconSrc="/icons/megaphone.svg"
+      emptyTitle="아직 진행할 QA가 없어요."
+      emptyDescription="곧 멋진 QA들로 채워질 예정이에요!"
+      errorMessage="QA를 불러오지 못했어요"
     />
   );
 }

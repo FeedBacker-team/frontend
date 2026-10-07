@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import { Toaster } from '@/components/common/Sonner';
 import { TooltipProvider } from '@/components/common/Tooltip';
+import { ActionGuardProvider } from '@/components/domain/auth/ActionGuardProvider';
 import { AuthInitializer } from '@/components/domain/auth/AuthInitializer';
 import { AppShell } from '@/components/layout/AppShell';
 import { QueryProvider } from '@/lib/QueryProvider';
@@ -40,8 +41,10 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
         <QueryProvider>
           <AuthInitializer />
           <TooltipProvider>
-            <AppShell>{children}</AppShell>
-            <Toaster />
+            <ActionGuardProvider>
+              <AppShell>{children}</AppShell>
+              <Toaster />
+            </ActionGuardProvider>
           </TooltipProvider>
         </QueryProvider>
       </body>

@@ -11,7 +11,11 @@ import { useTags } from '@/hooks/useTags';
 import { completeAuthProfile } from '@/lib/auth/session';
 import { useAuthStore } from '@/stores/authStore';
 
-function ProfileCompleteForm() {
+type ProfileCompleteFormProps = {
+  returnTo?: string;
+};
+
+function ProfileCompleteForm({ returnTo = '/' }: ProfileCompleteFormProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const authStatus = useAuthStore((state) => state.status);
@@ -27,14 +31,14 @@ function ProfileCompleteForm() {
     }
 
     if (authStatus === 'authenticated' && isProfileCompleted) {
-      router.replace('/');
+      router.replace(returnTo);
     }
-  }, [authStatus, isProfileCompleted, router]);
+  }, [authStatus, isProfileCompleted, returnTo, router]);
 
   const handleSuccess = () => {
     completeAuthProfile();
     void queryClient.invalidateQueries({ queryKey: profileKeys.me() });
-    router.replace('/');
+    router.replace(returnTo);
   };
 
   if (
@@ -71,3 +75,4 @@ function ProfileCompleteForm() {
 }
 
 export { ProfileCompleteForm };
+export type { ProfileCompleteFormProps };

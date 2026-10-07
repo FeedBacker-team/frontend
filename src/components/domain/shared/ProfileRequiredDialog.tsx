@@ -13,7 +13,9 @@ import { cn } from '@/lib/utils';
 
 type ProfileRequiredDialogProps = {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onOpenChange?: (open: boolean) => void;
+  onClose?: () => void;
+  onCompleteProfile?: () => void;
 };
 
 function MaskIcon({
@@ -40,15 +42,33 @@ function MaskIcon({
 
 function ProfileRequiredDialog({
   open,
+  onClose,
+  onCompleteProfile,
   onOpenChange,
 }: ProfileRequiredDialogProps) {
-  function handleCompleteProfile() {
-    onOpenChange(false);
-    // TODO: 마이페이지 프로필 수정 페이지 생기면 router.push('/mypage/profile/edit') 등 연동
-  }
+  const handleClose = () => {
+    onClose?.();
+    onOpenChange?.(false);
+  };
+
+  const handleCompleteProfile = () => {
+    if (onCompleteProfile) {
+      onCompleteProfile();
+      return;
+    }
+
+    handleClose();
+  };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) {
+          handleClose();
+        }
+      }}
+    >
       <DialogContent className="w-100">
         <DialogHeader
           icon={<MaskIcon src="/icons/mypage.svg" className="bg-rust-600" />}
@@ -62,7 +82,7 @@ function ProfileRequiredDialog({
           }
         />
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={handleClose}>
             닫기
           </Button>
           <Button onClick={handleCompleteProfile}>프로필 완성하기</Button>

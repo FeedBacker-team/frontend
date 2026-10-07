@@ -13,7 +13,10 @@ import { FileUpload, FileUploadItem } from '@/components/common/FileUpload';
 import { Input, inputVariants } from '@/components/common/Input';
 import { Textarea } from '@/components/common/Textarea';
 import { ALLOWED_IMAGE_TYPES } from '@/constants/file';
-import { QA_RECRUIT_TITLE_MAX_LENGTH } from '@/constants/qa';
+import {
+  QA_RECRUIT_DESCRIPTION_MAX_LENGTH,
+  QA_RECRUIT_TITLE_MAX_LENGTH,
+} from '@/constants/qa';
 import { cn } from '@/lib/utils';
 import { validateImageFiles } from '@/lib/validateImageFile';
 import type {
@@ -242,6 +245,7 @@ function QaRecruitBasicStep({ project, target }: QaRecruitBasicStepProps) {
     formState: { errors },
   } = useFormContext<QaRecruitFormValues>();
   const title = useWatch({ control, name: 'title' }) ?? '';
+  const description = useWatch({ control, name: 'description' }) ?? '';
   const today = startOfDay(new Date());
   const maxEndAt = addDays(today, 28);
 
@@ -294,11 +298,14 @@ function QaRecruitBasicStep({ project, target }: QaRecruitBasicStepProps) {
         <Textarea
           id="qa-recruit-description"
           required
+          maxLength={QA_RECRUIT_DESCRIPTION_MAX_LENGTH}
           size="medium"
           className="min-h-50"
           aria-invalid={!!errors.description}
           aria-describedby={
-            errors.description ? 'qa-recruit-description-error' : undefined
+            errors.description
+              ? 'qa-recruit-description-hint qa-recruit-description-error'
+              : 'qa-recruit-description-hint'
           }
           state={errors.description ? 'error' : 'default'}
           placeholder={
@@ -306,6 +313,17 @@ function QaRecruitBasicStep({ project, target }: QaRecruitBasicStepProps) {
           }
           {...register('description')}
         />
+        <div
+          id="qa-recruit-description-hint"
+          className="flex items-center justify-between"
+        >
+          <span className="text-c1 text-text-info">
+            최대 {QA_RECRUIT_DESCRIPTION_MAX_LENGTH}자까지 입력 가능해요.
+          </span>
+          <span className="text-h4 text-text-sub">
+            {description.length} / {QA_RECRUIT_DESCRIPTION_MAX_LENGTH}자
+          </span>
+        </div>
         <FieldErrorMessage
           id="qa-recruit-description-error"
           message={errors.description?.message}
