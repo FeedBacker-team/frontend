@@ -16,6 +16,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/common/Tooltip';
+import { useActionGuard } from '@/components/domain/auth/ActionGuardProvider';
 import { QaEarlyCloseConfirmDialog } from '@/components/domain/qa/detail/QaEarlyCloseConfirmDialog';
 import { QaParticipationAbandonDialog } from '@/components/domain/qa/detail/QaParticipationAbandonDialog';
 import { QaParticipationActiveCard } from '@/components/domain/qa/detail/QaParticipationActiveCard';
@@ -398,6 +399,7 @@ function QaRecruitmentStatusCard({
   isOwner,
 }: QaRecruitmentStatusCardProps) {
   const router = useRouter();
+  const { runProtectedAction } = useActionGuard();
   const [isEarlyCloseDialogOpen, setIsEarlyCloseDialogOpen] = useState(false);
   const [isParticipationDialogOpen, setIsParticipationDialogOpen] =
     useState(false);
@@ -471,7 +473,9 @@ function QaRecruitmentStatusCard({
       size="medium"
       className="w-full"
       disabled={!canParticipate}
-      onClick={() => setIsParticipationDialogOpen(true)}
+      onClick={() =>
+        runProtectedAction(() => setIsParticipationDialogOpen(true))
+      }
     >
       {participationButtonLabel}
     </Button>

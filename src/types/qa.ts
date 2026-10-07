@@ -4,7 +4,10 @@ type QaRecruitmentStatus = 'RECRUITING' | 'CLOSED' | 'COMPLETED';
 
 type QaTargetType = 'SERVICE_LINK' | 'IMAGE';
 
-type QaRecruitDialogState = 'IN_PROGRESS' | 'RECRUIT_STEP';
+type QaRecruitDialogState =
+  | 'IN_PROGRESS'
+  | 'PROJECT_REQUIRED'
+  | 'RECRUIT_STEP';
 
 type QaRecruitStep = 'PROJECT_SELECT' | 'TEST_METHOD';
 
