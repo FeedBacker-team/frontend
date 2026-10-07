@@ -13,6 +13,7 @@ import {
   OBJECTION_REASONS,
   QA_URGENT_DAYS_LEFT_THRESHOLD,
 } from '@/constants/mypage';
+import { formatQaDeadlineLabel } from '@/lib/qa/deadline';
 import type { MyQaParticipationDetail } from '@/types/mypage';
 
 type MyQaParticipationDetailDialogProps = {
@@ -151,7 +152,7 @@ function MyQaParticipationDetailDialog({
                           : 'green'
                       }
                     >
-                      D-{daysLeft}
+                      {formatQaDeadlineLabel(daysLeft)}
                     </Badge>
                   ) : completeDate ? (
                     <Badge variant="green">{completeDate} 완료</Badge>

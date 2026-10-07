@@ -7,6 +7,7 @@ import {
   MY_QA_PARTICIPATION_STATUS_LABEL,
   QA_URGENT_DAYS_LEFT_THRESHOLD,
 } from '@/constants/mypage';
+import { formatQaDeadlineLabel } from '@/lib/qa/deadline';
 import { cn } from '@/lib/utils';
 import type { MyQaParticipationItem } from '@/types/mypage';
 
@@ -97,7 +98,7 @@ function MyQaParticipationListItem({
                   daysLeft <= QA_URGENT_DAYS_LEFT_THRESHOLD ? 'rust' : 'green'
                 }
               >
-                D-{daysLeft}
+                {formatQaDeadlineLabel(daysLeft)}
               </Badge>
             ) : completeDate ? (
               <Badge variant="green">{completeDate} 완료</Badge>

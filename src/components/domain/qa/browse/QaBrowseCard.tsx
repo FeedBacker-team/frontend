@@ -1,6 +1,7 @@
 import Image from 'next/image';
 
 import { chipVariants } from '@/components/common/Chip';
+import { formatQaDeadlineLabel } from '@/lib/qa/deadline';
 import type { QaTargetType } from '@/types/qa';
 import { cn } from '@/lib/utils';
 
@@ -41,7 +42,6 @@ function QaBrowseCard({
   className,
 }: QaBrowseCardProps) {
   const rewardAcorns = requiredAcorns / capacity;
-  const deadlineLabel = daysRemaining === 0 ? 'D-Day' : `D-${daysRemaining}`;
 
   return (
     <article
@@ -98,7 +98,7 @@ function QaBrowseCard({
                   : 'bg-green-50 text-green-600'
               )}
             >
-              {deadlineLabel}
+              {formatQaDeadlineLabel(daysRemaining)}
             </span>
             <span className="flex items-center gap-1 rounded-lg bg-yellow-100 px-2 py-1 text-c1 text-yellow-800">
               <Image

@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { differenceInCalendarDays } from 'date-fns';
 import Link from 'next/link';
 
 import { toast } from '@/components/common/Sonner';
@@ -11,6 +10,7 @@ import { BrowseCardSkeleton } from '@/components/domain/shared/BrowseCardSkeleto
 import { BrowseSection } from '@/components/domain/shared/BrowseSection';
 import { PROJECT_TAG_LABEL, PROJECT_TAGS } from '@/constants/project';
 import { useQaRecruitments } from '@/hooks/useQaRecruitments';
+import { getQaDaysRemaining } from '@/lib/qa/deadline';
 import type { QaSort } from '@/types/qa';
 import type { ProjectTag } from '@/types/project';
 
@@ -133,10 +133,7 @@ function QaBrowse() {
                       capacity={qa.capacity}
                       participantCount={qa.participantCount}
                       requiredAcorns={qa.requiredAcorns}
-                      daysRemaining={Math.max(
-                        0,
-                        differenceInCalendarDays(new Date(qa.endAt), today)
-                      )}
+                      daysRemaining={getQaDaysRemaining(qa.endAt, today)}
                     />
                   </Link>
                 </li>

@@ -24,6 +24,7 @@ import {
   useFeedbackParticipationDetail,
   useSubmitObjection,
 } from '@/hooks/useFeedback';
+import { formatQaDeadlineLabel } from '@/lib/qa/deadline';
 import {
   objectionSchema,
   type ObjectionFormValues,
@@ -180,7 +181,7 @@ function MyObjectionForm({ feedbackId }: MyObjectionFormProps) {
                           : 'green'
                       }
                     >
-                      D-{daysLeft}
+                      {formatQaDeadlineLabel(daysLeft)}
                     </Badge>
                   ) : endDate ? (
                     <Badge>{endDate} 종료</Badge>

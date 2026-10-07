@@ -33,6 +33,10 @@ import {
   useParticipateInQa,
   useQaRecruitmentDetail,
 } from '@/hooks/useQaRecruitments';
+import {
+  formatQaDeadlineLabel,
+  getQaDaysRemaining,
+} from '@/lib/qa/deadline';
 import type {
   QaRecruitmentDetailResponse,
   QuestionConfigResponse,
@@ -52,17 +56,6 @@ type QaDetailProps = {
 
 function formatDate(value: string) {
   return value.slice(0, 10);
-}
-
-function getDaysRemaining(endAt: string) {
-  const endDate = new Date(endAt);
-  const today = new Date();
-  const millisecondsPerDay = 1000 * 60 * 60 * 24;
-
-  return Math.max(
-    0,
-    Math.ceil((endDate.getTime() - today.getTime()) / millisecondsPerDay)
-  );
 }
 
 function QaDetailLoading() {
@@ -295,7 +288,7 @@ type QaDetailCardProps = {
 };
 
 function QaDetailCard({ qa, project }: QaDetailCardProps) {
-  const daysRemaining = getDaysRemaining(qa.endAt);
+  const daysRemaining = getQaDaysRemaining(qa.endAt);
   const ownerProfileImageSrc =
     project.ownerProfileImageUrl || '/icons/basic-avatars.svg';
   const postThumbnailUrl =
@@ -351,7 +344,7 @@ function QaDetailCard({ qa, project }: QaDetailCardProps) {
           <div className="flex items-center gap-2">
             <Badge>{TARGET_TYPE_LABEL[qa.targetType]}</Badge>
             <Badge variant={daysRemaining <= 2 ? 'rust' : 'green'}>
-              {daysRemaining === 0 ? 'D-Day' : `D-${daysRemaining}`}
+              {formatQaDeadlineLabel(daysRemaining)}
             </Badge>
             <Badge
               variant="yellow"
