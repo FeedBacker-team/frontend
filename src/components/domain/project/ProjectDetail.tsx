@@ -90,7 +90,7 @@ function ProjectDetail({
               <span>조회 {viewCount}</span>
             </p>
           </div>
-          <div className="flex w-125 items-center gap-2">
+          <div className="flex w-full items-center gap-2">
             <div className="min-w-0 flex-1">
               <Input
                 readOnly
