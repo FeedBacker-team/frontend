@@ -78,10 +78,18 @@ function MyQaStatus({
     return <MyQaStatusSkeleton />;
   }
 
+  const displayNickname = nickname.trim();
+
   return (
     <section className="flex flex-col gap-3 rounded-xl bg-bg-default px-5 py-4">
       <h2 className="text-h4 text-text-default">
-        <span className="text-rust-600">{nickname}</span> 님의 QA 현황
+        {displayNickname ? (
+          <>
+            <span className="text-rust-600">{displayNickname}</span>님의 QA 현황
+          </>
+        ) : (
+          '나의 QA 현황'
+        )}
       </h2>
 
       <div className="flex flex-col gap-2">

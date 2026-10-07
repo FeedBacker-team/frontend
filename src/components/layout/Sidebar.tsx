@@ -162,12 +162,13 @@ function Sidebar() {
     : null;
   const profileImageSrc =
     profile?.profile_image_url || '/icons/basic-avatars.svg';
+  const profileNickname = profile?.nickname?.trim();
   const isAuthInitializing = authStatus === 'initializing';
   const isProfileLoading =
     isLoggedIn && isProfileCompleted && !profile && !isProfileError;
   const showAuthenticatedTreeSlot = isLoggedIn && isProfileCompleted;
-  const profileLabel = profile
-    ? profile.nickname
+  const profileLabel = profileNickname
+    ? profileNickname
     : isProfileError
       ? '프로필 조회 실패'
       : '프로필 미완성';
@@ -277,7 +278,7 @@ function Sidebar() {
           <div className="flex flex-col items-center gap-3 border-t border-gray-400 px-4 pt-4">
             <Image
               src={profileImageSrc}
-              alt={profile ? `${profile.nickname} 프로필` : ''}
+              alt={profileNickname ? `${profileNickname} 프로필` : ''}
               width={32}
               height={32}
               unoptimized
@@ -315,7 +316,7 @@ function Sidebar() {
               <div className="flex items-center gap-3">
                 <Image
                   src={profileImageSrc}
-                  alt={profile ? `${profile.nickname} 프로필` : ''}
+                  alt={profileNickname ? `${profileNickname} 프로필` : ''}
                   width={32}
                   height={32}
                   unoptimized
