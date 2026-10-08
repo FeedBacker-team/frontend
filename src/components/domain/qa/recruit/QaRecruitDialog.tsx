@@ -12,6 +12,7 @@ import {
   DialogHeader,
 } from '@/components/common/Dialog';
 import { Radio, RadioGroup } from '@/components/common/RadioGroup';
+import { markdownToPlainText } from '@/lib/markdown/plainText';
 import { cn } from '@/lib/utils';
 import type {
   QaRecruitableProject,
@@ -78,7 +79,7 @@ function ProjectStep({
           value={project.projectId}
           disabled={project.hasActiveQa}
           label={project.title}
-          description={project.description}
+          description={markdownToPlainText(project.description)}
           contentClassName="flex-1 overflow-hidden"
           labelClassName="w-full truncate"
           descriptionClassName="w-full truncate"
@@ -100,6 +101,8 @@ function TestMethodStep({
   targetType,
   onSelectTargetType,
 }: TestMethodStepProps) {
+  const plainDescription = markdownToPlainText(project.description);
+
   return (
     <div className="flex min-w-0 flex-col gap-3">
       <article className="flex min-w-0 items-center gap-3 overflow-hidden rounded-[12px] bg-bg-light px-5 py-4">
@@ -123,10 +126,10 @@ function TestMethodStep({
             {project.title}
           </h3>
           <p
-            title={project.description}
+            title={plainDescription}
             className="text-b3 w-full truncate text-text-sub"
           >
-            {project.description}
+            {plainDescription}
           </p>
         </div>
       </article>
