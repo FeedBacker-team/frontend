@@ -654,13 +654,14 @@ const [checked, setChecked] = useState(false);
 
 ### Props
 
-| prop        | type                                  | default     | 설명                                                                   |
-| ----------- | ------------------------------------- | ----------- | ---------------------------------------------------------------------- |
-| `state`     | `'default' \| 'error' \| 'completed'` | `'default'` | 테두리 색으로 상태 표시                                                |
-| `size`      | `'small' \| 'medium' \| 'large'`      | `'medium'`  | 패딩·글자 크기만 적용 (높이는 `min-h-27`로 고정, `className`으로 변경) |
-| `disabled`  | `boolean`                             | `false`     |                                                                        |
-| `className` | `string`                              | —           |                                                                        |
-| …           | `textarea` attrs                      | —           | `value`, `onChange`, `rows` 등                                         |
+| prop                        | type                                  | default     | 설명                                                                   |
+| --------------------------- | ------------------------------------- | ----------- | ---------------------------------------------------------------------- |
+| `state`                     | `'default' \| 'error' \| 'completed'` | `'default'` | 테두리 색으로 상태 표시                                                |
+| `size`                      | `'small' \| 'medium' \| 'large'`      | `'medium'`  | 패딩·글자 크기만 적용 (높이는 `min-h-27`로 고정, `className`으로 변경) |
+| `convertEmojiShortcodes`    | `boolean`                             | `false`     | 완성된 `:emoji_name:`을 입력 중 유니코드 이모지로 변환                 |
+| `disabled`                  | `boolean`                             | `false`     |                                                                        |
+| `className`                 | `string`                              | —           |                                                                        |
+| …                           | `textarea` attrs                      | —           | `value`, `onChange`, `rows` 등                                         |
 
 ### 사용 예
 
@@ -671,6 +672,92 @@ import { Textarea } from '@/components/common/Textarea';
 
 // 상태
 <Textarea state="error" placeholder="에러" />
+
+// 이모지 shortcode 변환
+<Textarea convertEmojiShortcodes placeholder=":blue_heart: → 💙" />
+```
+
+---
+
+## MarkdownTextarea
+
+`Textarea`에 제한된 마크다운 툴바와 `작성 | 미리보기` 전환을 더한 입력 컴포넌트입니다. 프로젝트와 QA의 설명처럼 서식이 필요한 긴 글에 사용합니다. 입력값은 HTML이 아니라 마크다운 원문 문자열이며, 마크다운 기호도 `maxLength` 글자 수에 포함됩니다.
+
+툴바는 H2, H3, 굵게, 기울임, 글머리 목록, 번호 목록, 인용문, 구분선을 지원합니다. 링크·이미지·표·코드 입력 버튼은 제공하지 않습니다. `미리보기`는 상세 화면과 동일한 `MarkdownContent`로 렌더링하며, 미리보기 중에도 textarea를 DOM에서 유지해 폼 값과 검증 상태가 보존됩니다.
+
+### Props
+
+`TextareaProps`를 그대로 사용합니다. 별도의 필수 prop은 없습니다.
+
+| prop                     | type                                  | default     | 설명                                                   |
+| ------------------------ | ------------------------------------- | ----------- | ------------------------------------------------------ |
+| `state`                  | `'default' \| 'error' \| 'completed'` | `'default'` | 에디터 바깥 테두리 상태                                |
+| `size`                   | `'small' \| 'medium' \| 'large'`      | `'medium'`  | textarea의 패딩·글자 크기                              |
+| `convertEmojiShortcodes` | `boolean`                             | `false`     | 완성된 이모지 shortcode를 입력 중 유니코드로 변환      |
+| `maxLength`              | `number`                              | —           | 마크다운 원문 기준 최대 글자 수                        |
+| `disabled`               | `boolean`                             | `false`     | textarea와 서식 버튼 비활성화                          |
+| `className`              | `string`                              | —           | textarea와 미리보기 영역에 적용할 추가 클래스          |
+| …                        | `textarea` attrs                      | —           | `id`, `name`, `defaultValue`, `onChange` 등            |
+
+### 사용 예
+
+```tsx
+import { MarkdownTextarea } from '@/components/common/MarkdownTextarea';
+
+<MarkdownTextarea
+  id="project-description"
+  maxLength={2000}
+  convertEmojiShortcodes
+  placeholder="프로젝트를 소개해 주세요."
+/>
+
+// react-hook-form의 register 결과도 그대로 전달할 수 있습니다.
+<MarkdownTextarea
+  id="qa-description"
+  maxLength={2000}
+  {...register('description')}
+/>
+```
+
+---
+
+## MarkdownContent
+
+저장된 마크다운 원문을 서비스 스타일의 React 요소로 렌더링합니다. `MarkdownTextarea`의 미리보기와 프로젝트·QA 상세가 공통으로 사용합니다. 기본 글자 색상은 `text-text-default`이며, 글자 크기와 굵기는 부모 스타일을 상속하거나 `className`으로 지정합니다.
+
+### Props
+
+| prop        | type     | default | 설명                             |
+| ----------- | -------- | ------- | -------------------------------- |
+| `children`  | `string` | —       | 렌더링할 마크다운 원문           |
+| `className` | `string` | —       | 바깥 `div`에 적용할 추가 클래스  |
+
+### 지원 문법
+
+| 문법          | 작성 예                       | 렌더링                              |
+| ------------- | ----------------------------- | ----------------------------------- |
+| 제목 2        | `## 제목`                     | `text-h2` 제목                      |
+| 제목 3        | `### 소제목`                  | `text-h3` 제목                      |
+| 굵게          | `**중요**`                    | 굵은 텍스트                         |
+| 기울임        | `*강조*`                      | 기울임 텍스트                       |
+| 글머리 목록   | `- 항목`                      | 순서 없는 목록                      |
+| 번호 목록     | `1. 항목`                     | 순서 있는 목록                      |
+| 인용문        | `> 안내`                      | 왼쪽 구분선이 있는 안내문           |
+| 구분선        | `---`                         | 가로 구분선                         |
+| 일반 줄바꿈   | Enter                         | `remark-breaks`를 통한 `<br>`       |
+| 이모지 별칭   | `:blue_heart:`                | `emojifyShortcodes`를 통한 💙       |
+
+링크는 클릭할 수 없는 일반 텍스트로, 이미지 문법은 외부 이미지를 불러오지 않고 대체 텍스트만 표시합니다. H1·H4~H6는 제목 스타일 없이 내용만 남기고, 표와 코드는 별도 서식을 적용하지 않습니다. 작성한 HTML은 `skipHtml`로 실행하지 않으며, 허용하지 않은 요소는 `unwrapDisallowed`로 요소만 제거하고 내부 텍스트를 유지합니다.
+
+### 사용 예
+
+```tsx
+import { MarkdownContent } from '@/components/common/MarkdownContent';
+
+<MarkdownContent>{description}</MarkdownContent>
+
+// 화면에 맞는 본문 스타일 지정
+<MarkdownContent className="text-b2">{project.description}</MarkdownContent>
 ```
 
 ---
@@ -786,23 +873,25 @@ const totalPages = 5;
 
 ## 컴포넌트 목록
 
-| 컴포넌트       | 상태 | 담당   |
-| -------------- | ---- | ------ |
-| Button         | ✅   | 이찬우 |
-| Badge          | ✅   | 이찬우 |
-| Tooltip        | ✅   | 이찬우 |
-| Dropdown       | ✅   | 이찬우 |
-| Sonner         | ✅   | 이찬우 |
-| ToastLarge     | ✅   | 김지은 |
-| Radio          | ✅   | 이찬우 |
-| CheckBox       | ✅   | 김지은 |
-| Dialog         | ✅   | 이찬우 |
-| Calendar       | ✅   | 김지은 |
-| Chip           | ✅   | 김지은 |
-| Input          | ✅   | 김지은 |
-| Tag            | ✅   | 김지은 |
-| Toggle         | ✅   | 김지은 |
-| Textarea       | ✅   | 김지은 |
-| FileUpload     | ✅   | 김지은 |
-| FileUploadItem | ✅   | 김지은 |
-| Pagination     | ✅   | 김지은 |
+| 컴포넌트         | 상태 | 담당   |
+| ---------------- | ---- | ------ |
+| Button           | ✅   | 이찬우 |
+| Badge            | ✅   | 이찬우 |
+| Tooltip          | ✅   | 이찬우 |
+| Dropdown         | ✅   | 이찬우 |
+| Sonner           | ✅   | 이찬우 |
+| ToastLarge       | ✅   | 김지은 |
+| Radio            | ✅   | 이찬우 |
+| CheckBox         | ✅   | 김지은 |
+| Dialog           | ✅   | 이찬우 |
+| Calendar         | ✅   | 김지은 |
+| Chip             | ✅   | 김지은 |
+| Input            | ✅   | 김지은 |
+| Tag              | ✅   | 김지은 |
+| Toggle           | ✅   | 김지은 |
+| Textarea         | ✅   | 김지은 |
+| MarkdownTextarea | ✅   | 김지은 |
+| MarkdownContent  | ✅   | 김지은 |
+| FileUpload       | ✅   | 김지은 |
+| FileUploadItem   | ✅   | 김지은 |
+| Pagination       | ✅   | 김지은 |
