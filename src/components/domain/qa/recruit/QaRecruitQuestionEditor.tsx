@@ -14,6 +14,7 @@ import {
   DropdownValue,
 } from '@/components/common/Dropdown';
 import { Input } from '@/components/common/Input';
+import { Textarea } from '@/components/common/Textarea';
 import { Toggle } from '@/components/common/Toggle';
 import { cn } from '@/lib/utils';
 import type {
@@ -364,9 +365,11 @@ function QaRecruitQuestionEditor({
           {index + 1}번
         </span>
         <div className="flex min-w-0 flex-col gap-1">
-          <Input
+          <Textarea
             aria-label={`${index + 1}번 질문 문구`}
             size="medium"
+            rows={1}
+            className="field-sizing-content min-h-11"
             state={questionTextError ? 'error' : 'default'}
             aria-invalid={!!questionTextError}
             aria-describedby={

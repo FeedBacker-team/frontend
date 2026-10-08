@@ -9,6 +9,7 @@ import { Badge } from '@/components/common/Badge';
 import { Button } from '@/components/common/Button';
 import { Chip } from '@/components/common/Chip';
 import { Input } from '@/components/common/Input';
+import { MarkdownContent } from '@/components/common/MarkdownContent';
 import { toast } from '@/components/common/Sonner';
 import { ToastLarge } from '@/components/common/ToastLarge';
 import {
@@ -37,6 +38,7 @@ import {
   formatQaDeadlineLabel,
   getQaDaysRemaining,
 } from '@/lib/qa/deadline';
+import { markdownToPlainText } from '@/lib/markdown/plainText';
 import type {
   QaRecruitmentDetailResponse,
   QuestionConfigResponse,
@@ -93,6 +95,8 @@ type QaProjectBannerProps = {
 };
 
 function QaProjectBanner({ project }: QaProjectBannerProps) {
+  const plainDescription = markdownToPlainText(project.description);
+
   return (
     <section className="flex items-center justify-between gap-4 overflow-hidden rounded-2xl border border-rust-600 bg-rust-50 px-7 py-6">
       <div className="flex min-w-0 flex-1 flex-col gap-1 overflow-hidden">
@@ -101,10 +105,10 @@ function QaProjectBanner({ project }: QaProjectBannerProps) {
           {project.title}
         </h2>
         <p
-          title={project.description}
+          title={plainDescription}
           className="text-b2 w-full truncate text-text-sub"
         >
-          {project.description}
+          {plainDescription}
         </p>
       </div>
       <Button
@@ -371,9 +375,9 @@ function QaDetailCard({ qa, project }: QaDetailCardProps) {
 
       <section className="flex flex-col gap-3">
         <h2 className="text-h4 text-text-info">QA 설명</h2>
-        <p className="text-h3 whitespace-pre-line text-text-default">
+        <MarkdownContent className="text-b2">
           {qa.description}
-        </p>
+        </MarkdownContent>
       </section>
 
       <QaTargetPreview qa={qa} />

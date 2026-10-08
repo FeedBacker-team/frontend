@@ -10,6 +10,7 @@ import {
   DialogFooter,
   DialogHeader,
 } from '@/components/common/Dialog';
+import { markdownToPlainText } from '@/lib/markdown/plainText';
 import type { ActiveQaSummary, QaRecruitableProject } from '@/types/qa';
 
 type QaRecruitInProgressDialogProps = {
@@ -31,6 +32,8 @@ function QaRecruitInProgressDialog({
   onClose,
   onViewProgress,
 }: QaRecruitInProgressDialogProps) {
+  const plainDescription = markdownToPlainText(project.description);
+
   return (
     <Dialog
       open={open}
@@ -85,10 +88,10 @@ function QaRecruitInProgressDialog({
                 </p>
               ) : (
                 <p
-                  title={project.description}
+                  title={plainDescription}
                   className="text-c1 w-full truncate text-text-sub"
                 >
-                  {project.description}
+                  {plainDescription}
                 </p>
               )}
             </div>

@@ -11,12 +11,13 @@ import { Button } from '@/components/common/Button';
 import { Calendar } from '@/components/common/Calendar';
 import { FileUpload, FileUploadItem } from '@/components/common/FileUpload';
 import { Input, inputVariants } from '@/components/common/Input';
-import { Textarea } from '@/components/common/Textarea';
+import { MarkdownTextarea } from '@/components/common/MarkdownTextarea';
 import { ALLOWED_IMAGE_TYPES } from '@/constants/file';
 import {
   QA_RECRUIT_DESCRIPTION_MAX_LENGTH,
   QA_RECRUIT_TITLE_MAX_LENGTH,
 } from '@/constants/qa';
+import { markdownToPlainText } from '@/lib/markdown/plainText';
 import { cn } from '@/lib/utils';
 import { validateImageFiles } from '@/lib/validateImageFile';
 import type {
@@ -95,7 +96,9 @@ function ProjectSummary({ project }: ProjectSummaryProps) {
       </div>
       <div className="flex min-w-0 flex-1 flex-col">
         <h2 className="text-h4 truncate text-text-default">{project.title}</h2>
-        <p className="text-b3 truncate text-text-sub">{project.description}</p>
+        <p className="text-b3 truncate text-text-sub">
+          {markdownToPlainText(project.description)}
+        </p>
       </div>
     </article>
   );
@@ -295,12 +298,13 @@ function QaRecruitBasicStep({ project, target }: QaRecruitBasicStepProps) {
         description="테스터가 하단 문항들에 답변하기 전 알아야 할 진행 방식, 테스트 환경 등을 안내해 주세요."
         htmlFor="qa-recruit-description"
       >
-        <Textarea
+        <MarkdownTextarea
           id="qa-recruit-description"
           required
+          convertEmojiShortcodes
           maxLength={QA_RECRUIT_DESCRIPTION_MAX_LENGTH}
           size="medium"
-          className="min-h-50"
+          className="field-sizing-content min-h-50"
           aria-invalid={!!errors.description}
           aria-describedby={
             errors.description
