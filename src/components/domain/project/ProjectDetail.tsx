@@ -1,18 +1,16 @@
 'use client';
 
-import type { ReactNode } from 'react';
-
 import Image from 'next/image';
 
 import { Button } from '@/components/common/Button';
 import { chipVariants } from '@/components/common/Chip';
 import { Input } from '@/components/common/Input';
+import { MarkdownContent } from '@/components/common/MarkdownContent';
 import { ProjectActionBar } from '@/components/domain/project/ProjectActionBar';
 import {
   ProjectQaBanner,
   type ProjectQaBannerProps,
 } from '@/components/domain/project/ProjectQaBanner';
-import { emojifyShortcodes } from '@/lib/emoji';
 import Link from 'next/link';
 
 type ProjectDetailProps = {
@@ -25,7 +23,7 @@ type ProjectDetailProps = {
   publishedAt: string;
   viewCount: number;
   url: string;
-  description: ReactNode;
+  description: string;
   isOwner?: boolean;
   recruitingQa?: ProjectQaBannerProps;
 };
@@ -128,11 +126,7 @@ function ProjectDetail({
 
       <section className="flex flex-col gap-3">
         <h2 className="text-b2 text-text-info">프로젝트 설명</h2>
-        <div className="text-h4 whitespace-pre-wrap text-text-default">
-          {typeof description === 'string'
-            ? emojifyShortcodes(description)
-            : description}
-        </div>
+        <MarkdownContent className="text-b2">{description}</MarkdownContent>
       </section>
 
       {isOwner ? (
@@ -141,7 +135,7 @@ function ProjectDetail({
           recruitableProject={{
             projectId,
             title,
-            description: typeof description === 'string' ? description : '',
+            description,
             thumbnailUrl: thumbnailUrl ?? null,
             hasActiveQa: Boolean(recruitingQa),
             activeQa: null,
