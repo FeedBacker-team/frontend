@@ -587,6 +587,7 @@ function ProjectRegisterForm({
       >
         <Textarea
           id="project-description"
+          convertEmojiShortcodes
           aria-invalid={!!errors.description}
           aria-describedby={
             errors.description

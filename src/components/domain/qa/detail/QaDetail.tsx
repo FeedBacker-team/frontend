@@ -37,6 +37,7 @@ import {
   formatQaDeadlineLabel,
   getQaDaysRemaining,
 } from '@/lib/qa/deadline';
+import { emojifyShortcodes } from '@/lib/emoji';
 import type {
   QaRecruitmentDetailResponse,
   QuestionConfigResponse,
@@ -372,7 +373,7 @@ function QaDetailCard({ qa, project }: QaDetailCardProps) {
       <section className="flex flex-col gap-3">
         <h2 className="text-h4 text-text-info">QA 설명</h2>
         <p className="text-h3 whitespace-pre-line text-text-default">
-          {qa.description}
+          {emojifyShortcodes(qa.description)}
         </p>
       </section>
 

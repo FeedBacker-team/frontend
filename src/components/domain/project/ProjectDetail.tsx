@@ -12,6 +12,7 @@ import {
   ProjectQaBanner,
   type ProjectQaBannerProps,
 } from '@/components/domain/project/ProjectQaBanner';
+import { emojifyShortcodes } from '@/lib/emoji';
 import Link from 'next/link';
 
 type ProjectDetailProps = {
@@ -128,7 +129,9 @@ function ProjectDetail({
       <section className="flex flex-col gap-3">
         <h2 className="text-b2 text-text-info">프로젝트 설명</h2>
         <div className="text-h4 whitespace-pre-wrap text-text-default">
-          {description}
+          {typeof description === 'string'
+            ? emojifyShortcodes(description)
+            : description}
         </div>
       </section>
 

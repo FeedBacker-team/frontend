@@ -298,6 +298,7 @@ function QaRecruitBasicStep({ project, target }: QaRecruitBasicStepProps) {
         <Textarea
           id="qa-recruit-description"
           required
+          convertEmojiShortcodes
           maxLength={QA_RECRUIT_DESCRIPTION_MAX_LENGTH}
           size="medium"
           className="min-h-50"
