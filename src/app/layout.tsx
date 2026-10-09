@@ -9,28 +9,39 @@ import { QueryProvider } from '@/lib/QueryProvider';
 
 import './globals.css';
 
+const SITE_URL = 'https://feedbacker.co.kr';
+const SITE_TITLE = 'Feedbacker | 메이커들과 함께하는 QA 품앗이 플랫폼';
+const SITE_DESCRIPTION =
+  '프로젝트를 등록해 QA 참여자를 모집하고, 다른 메이커의 서비스를 테스트하며 피드백과 도토리를 주고받아 보세요.';
+const OG_IMAGE_URL = '/og/feedbacker-og.png';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Feedbacker',
-    template: '%s | Feedbacker', // 페이지별 title을 설정할때 사용되는 템플릿
+    default: SITE_TITLE,
+    template: '%s | Feedbacker',
   },
-  description:
-    '만든 서비스를 홍보하고, 실제 사용자에게 피드백과 테스트를 받는 플랫폼입니다.',
-  metadataBase: new URL('http://localhost:3000'), // 추후 배포 시 도메인 주소로 변경 필요
+  description: SITE_DESCRIPTION,
   openGraph: {
-    title: 'Feedbacker',
-    description:
-      '만든 서비스를 홍보하고, 실제 사용자에게 피드백과 테스트를 받는 플랫폼입니다.',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    siteName: 'Feedbacker',
     type: 'website',
     locale: 'ko_KR',
     images: [
       {
-        url: '/og_image.png', // 카카오톡 링크 공유 시 표시되는 이미지 1200*630px 사이즈권장
-        width: 1200,
-        height: 630,
-        alt: 'Feedbacker',
+        url: OG_IMAGE_URL,
+        width: 2400,
+        height: 1200,
+        alt: 'Feedbacker - 메이커들과 함께하는 QA 품앗이 플랫폼',
       },
     ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [OG_IMAGE_URL],
   },
 };
 
