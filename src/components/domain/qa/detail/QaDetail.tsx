@@ -39,6 +39,7 @@ import {
   getQaDaysRemaining,
 } from '@/lib/qa/deadline';
 import { markdownToPlainText } from '@/lib/markdown/plainText';
+import { useAuthStore } from '@/stores/authStore';
 import type {
   QaRecruitmentDetailResponse,
   QuestionConfigResponse,
@@ -54,6 +55,8 @@ const QA_PARTICIPATION_DURATION_MS = 24 * 60 * 60 * 1000;
 type QaDetailProps = {
   feedbackPostId: string;
   showCreatedToast?: boolean;
+  initialQa?: QaRecruitmentDetailResponse;
+  initialProject?: ProjectDetail;
 };
 
 function formatDate(value: string) {
@@ -391,6 +394,15 @@ type QaRecruitmentStatusCardProps = {
   isOwner: boolean;
 };
 
+function QaRecruitmentStatusCardSkeleton() {
+  return (
+    <div
+      aria-label="QA 참여 상태 확인 중"
+      className="h-80 animate-pulse rounded-2xl bg-gray-100"
+    />
+  );
+}
+
 function QaRecruitmentStatusCard({
   qa,
   isOwner,
@@ -677,11 +689,20 @@ function QaRecruitmentStatusCard({
   );
 }
 
-function QaDetail({ feedbackPostId, showCreatedToast = false }: QaDetailProps) {
+function QaDetail({
+  feedbackPostId,
+  showCreatedToast = false,
+  initialQa,
+  initialProject,
+}: QaDetailProps) {
   const [isCreatedToastOpen, setIsCreatedToastOpen] =
     useState(showCreatedToast);
-  const qaQuery = useQaRecruitmentDetail(feedbackPostId);
-  const projectQuery = useProjectDetail(qaQuery.data?.projectId);
+  const authStatus = useAuthStore((state) => state.status);
+  const qaQuery = useQaRecruitmentDetail(feedbackPostId, initialQa);
+  const projectQuery = useProjectDetail(
+    qaQuery.data?.projectId,
+    initialProject
+  );
 
   useEffect(() => {
     if (!showCreatedToast) {
@@ -724,6 +745,10 @@ function QaDetail({ feedbackPostId, showCreatedToast = false }: QaDetailProps) {
   }
 
   const isOwner = projectQuery.data.isOwner;
+  const isViewerStatePending =
+    authStatus === 'initializing' ||
+    (Boolean(initialQa) && qaQuery.isFetching) ||
+    (Boolean(initialProject) && projectQuery.isFetching);
 
   return (
     <>
@@ -732,7 +757,11 @@ function QaDetail({ feedbackPostId, showCreatedToast = false }: QaDetailProps) {
           <QaDetailCard qa={qaQuery.data} project={projectQuery.data} />
         </main>
         <aside className="w-80 shrink-0">
-          <QaRecruitmentStatusCard qa={qaQuery.data} isOwner={isOwner} />
+          {isViewerStatePending ? (
+            <QaRecruitmentStatusCardSkeleton />
+          ) : (
+            <QaRecruitmentStatusCard qa={qaQuery.data} isOwner={isOwner} />
+          )}
         </aside>
       </div>
 
