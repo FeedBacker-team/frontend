@@ -12,7 +12,11 @@ import type { MyProjectResponse, ProjectUpdateRequest } from '@/apis/projects';
 import { PROJECT_TAG_LABEL } from '@/constants/project';
 import { useAuthStore } from '@/stores/authStore';
 import type { MyProjectItem } from '@/types/mypage';
-import type { ProjectListParams, ProjectTag } from '@/types/project';
+import type {
+  ProjectDetail,
+  ProjectListParams,
+  ProjectTag,
+} from '@/types/project';
 
 const projectKeys = {
   all: ['projects'] as const,
@@ -48,7 +52,10 @@ function useProjects(params: ProjectListParams = {}) {
   });
 }
 
-function useProjectDetail(projectId: string | undefined) {
+function useProjectDetail(
+  projectId: string | undefined,
+  initialData?: ProjectDetail
+) {
   const authStatus = useAuthStore((state) => state.status);
 
   return useQuery({
@@ -60,6 +67,8 @@ function useProjectDetail(projectId: string | undefined) {
 
       return getProjectDetail(projectId, signal);
     },
+    initialData,
+    initialDataUpdatedAt: initialData ? 0 : undefined,
     // 새로고침 직후에는 인증 세션이 초기화되기 전이라 is_owner가
     // 잘못된 값(false)으로 캐싱될 수 있어, 초기화가 끝난 뒤에 요청한다.
     enabled: Boolean(projectId) && authStatus !== 'initializing',

@@ -10,7 +10,7 @@ type ProfileInterest = string;
 type ProfileResponse = {
   user_id: string;
   profile_image_url: string | null;
-  nickname: string;
+  nickname: string | null;
   role: ProfileRole;
   intro_link: string | null;
   interests: ProfileInterest[];

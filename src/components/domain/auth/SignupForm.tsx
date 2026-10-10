@@ -348,10 +348,10 @@ function SignupForm() {
                   aria-invalid={!!errors.verificationCode}
                   aria-describedby={
                     emailVerified
-                      ? 'signup-verification-success'
+                      ? 'signup-verification-help signup-verification-success'
                       : errors.verificationCode
-                        ? 'signup-verification-error'
-                        : undefined
+                        ? 'signup-verification-help signup-verification-error'
+                        : 'signup-verification-help'
                   }
                   state={verificationState}
                   className={cn(
@@ -382,6 +382,9 @@ function SignupForm() {
                 확인
               </Button>
             </div>
+            <p id="signup-verification-help" className="text-c2 text-text-info">
+              인증번호가 도착하지 않았다면 스팸함을 확인해 주세요.
+            </p>
             {emailVerified ? (
               <FieldSuccess
                 id="signup-verification-success"

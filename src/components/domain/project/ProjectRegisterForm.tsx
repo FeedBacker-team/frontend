@@ -15,9 +15,9 @@ import { useForm, useWatch } from 'react-hook-form';
 import { Button } from '@/components/common/Button';
 import { FileUpload, FileUploadItem } from '@/components/common/FileUpload';
 import { Input } from '@/components/common/Input';
+import { MarkdownTextarea } from '@/components/common/MarkdownTextarea';
 import { toast } from '@/components/common/Sonner';
 import { Tag } from '@/components/common/Tag';
-import { Textarea } from '@/components/common/Textarea';
 import { ProjectDraftExitDialog } from '@/components/domain/project/ProjectDraftExitDialog';
 import { ApiError } from '@/apis/baseClient';
 import { ProjectError } from '@/apis/projects';
@@ -217,6 +217,8 @@ function ProjectRegisterForm({
   });
 
   const watchedValues = useWatch({ control });
+  const title = watchedValues.title ?? '';
+  const description = watchedValues.description ?? '';
   const tags = watchedValues.tags ?? [];
   const showImageError = imageRequiredError || !!imageError;
 
@@ -550,13 +552,28 @@ function ProjectRegisterForm({
         <Input
           id="project-title"
           aria-invalid={!!errors.title}
-          aria-describedby={errors.title ? 'project-title-error' : undefined}
+          aria-describedby={
+            errors.title
+              ? 'project-title-hint project-title-error'
+              : 'project-title-hint'
+          }
           maxLength={PROJECT_TITLE_MAX_LENGTH}
           state={errors.title ? 'error' : 'default'}
           className={cn('h-12', controlClass(!!errors.title))}
           placeholder="예) AI 기반 B2B 웹 분석 플랫폼, AI-Biz"
           {...register('title')}
         />
+        <div
+          id="project-title-hint"
+          className="flex items-center justify-between"
+        >
+          <span className="text-c1 text-text-info">
+            최대 {PROJECT_TITLE_MAX_LENGTH}자까지 입력 가능해요.
+          </span>
+          <span className="text-h4 text-text-sub">
+            {title.length} / {PROJECT_TITLE_MAX_LENGTH}자
+          </span>
+        </div>
         {errors.title?.message ? (
           <FieldError id="project-title-error" message={errors.title.message} />
         ) : null}
@@ -568,11 +585,14 @@ function ProjectRegisterForm({
         htmlFor="project-description"
         description="어떤 서비스인가요? 주요 기능과 특징을 자유롭게 적어주세요."
       >
-        <Textarea
+        <MarkdownTextarea
           id="project-description"
+          convertEmojiShortcodes
           aria-invalid={!!errors.description}
           aria-describedby={
-            errors.description ? 'project-description-error' : undefined
+            errors.description
+              ? 'project-description-hint project-description-error'
+              : 'project-description-hint'
           }
           maxLength={PROJECT_DESCRIPTION_MAX_LENGTH}
           state={errors.description ? 'error' : 'default'}
@@ -585,6 +605,17 @@ function ProjectRegisterForm({
           }
           {...register('description')}
         />
+        <div
+          id="project-description-hint"
+          className="flex items-center justify-between"
+        >
+          <span className="text-c1 text-text-info">
+            최대 {PROJECT_DESCRIPTION_MAX_LENGTH}자까지 입력 가능해요.
+          </span>
+          <span className="text-h4 text-text-sub">
+            {description.length} / {PROJECT_DESCRIPTION_MAX_LENGTH}자
+          </span>
+        </div>
         {errors.description?.message ? (
           <FieldError
             id="project-description-error"

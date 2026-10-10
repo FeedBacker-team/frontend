@@ -196,7 +196,11 @@ function mapToMyQaResultDetail(
   feedbackPostId: string,
   result: QaResultResponse,
   form: QaFeedbackFormResponse,
-  profile: { nickname: string; acorn: number; profile_image_url: string | null },
+  profile: {
+    nickname: string | null;
+    acorn: number;
+    profile_image_url: string | null;
+  },
   fallbackThumbnailUrl: string | null = null
 ): MyQaResultDetail {
   const contentType = toContentType(result.type);
@@ -219,7 +223,10 @@ function mapToMyQaResultDetail(
     title: result.feedbackPostTitle,
     thumbnailUrl,
     tags: result.tags.map((tag) => PROJECT_TAG_LABEL[tag]),
-    authorNickname: result.writerName ?? profile.nickname,
+    authorNickname:
+      result.writerName?.trim() ||
+      profile.nickname?.trim() ||
+      '프로필 미완성',
     authorProfileImageUrl: normalizeImageUrl(profile.profile_image_url),
     startDate: toDateOnly(result.startAt),
     endDate: toDateOnly(result.endAt),

@@ -9,6 +9,7 @@ import {
 } from '@/components/domain/shared/RankedList';
 import { RANKING_PROJECT_PAGE_SIZE } from '@/constants/project';
 import { useProjects } from '@/hooks/useProjects';
+import { markdownToPlainText } from '@/lib/markdown/plainText';
 import type { ProjectCard } from '@/types/project';
 
 function toRankedItem(project: ProjectCard): RankedListItem {
@@ -16,7 +17,7 @@ function toRankedItem(project: ProjectCard): RankedListItem {
     id: String(project.project_id),
     href: `/projects/${project.project_id}`,
     title: project.title,
-    description: project.description,
+    description: markdownToPlainText(project.description),
     thumbnailUrl: project.thumbnail_url ?? undefined,
   };
 }

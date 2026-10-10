@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { ProjectError } from '@/apis/projects';
 import { Button } from '@/components/common/Button';
 import { toast } from '@/components/common/Sonner';
+import { useActionGuard } from '@/components/domain/auth/ActionGuardProvider';
 import { ProjectDeleteConfirmDialog } from '@/components/domain/project/ProjectDeleteConfirmDialog';
 import {
   QaRecruitDialog,
@@ -28,6 +29,7 @@ function ProjectActionBar({
   recruitableProject,
 }: ProjectActionBarProps) {
   const router = useRouter();
+  const { runProtectedAction } = useActionGuard();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isRecruitDialogOpen, setIsRecruitDialogOpen] = useState(false);
   const { mutate: deleteProject, isPending: isDeleting } = useDeleteProject();
@@ -91,7 +93,9 @@ function ProjectActionBar({
               className="size-5 bg-gray-50 mask-[url(/icons/megaphone.svg)] mask-center mask-contain mask-no-repeat"
             />
           }
-          onClick={() => setIsRecruitDialogOpen(true)}
+          onClick={() =>
+            runProtectedAction(() => setIsRecruitDialogOpen(true))
+          }
         >
           QA 모집 글 작성하기
         </Button>

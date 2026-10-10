@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { chipVariants } from '@/components/common/Chip';
+import { markdownToPlainText } from '@/lib/markdown/plainText';
 import { cn } from '@/lib/utils';
 
 type ProjectBrowseCardProps = {
@@ -51,7 +52,9 @@ function ProjectBrowseCard({
         <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 flex-col gap-1">
             <h3 className="text-h3 truncate text-text-default">{title}</h3>
-            <p className="text-b2 truncate text-text-sub">{description}</p>
+            <p className="text-b2 truncate text-text-sub">
+              {markdownToPlainText(description)}
+            </p>
           </div>
           <p className="text-c1 shrink-0 whitespace-nowrap text-text-info">
             {publishedAt} · 조회 {viewCount}

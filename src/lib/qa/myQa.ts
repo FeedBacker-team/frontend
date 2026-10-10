@@ -4,6 +4,7 @@ import {
   UNKNOWN_REVIEWER_NICKNAME,
 } from '@/lib/feedback';
 import { normalizeImageUrl } from '@/lib/image';
+import { getQaDaysRemaining } from '@/lib/qa/deadline';
 import type {
   MyQaFeedbackReviewItem,
   MyQaParticipationItem,
@@ -33,8 +34,7 @@ function computeDaysLeft(endAt: string | undefined) {
     return null;
   }
 
-  const diffMs = new Date(endAt).getTime() - Date.now();
-  return Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+  return getQaDaysRemaining(endAt);
 }
 
 /** 모집 기간이 이미 지났으면(종료) null, 아니면 D-day 계산값을 돌려준다 */
@@ -43,8 +43,8 @@ function computeParticipationDaysLeft(endAt: string | undefined) {
     return null;
   }
 
-  const diffMs = new Date(endAt).getTime() - Date.now();
-  return diffMs > 0 ? Math.ceil(diffMs / (1000 * 60 * 60 * 24)) : null;
+  const isRecruiting = new Date(endAt).getTime() > Date.now();
+  return isRecruiting ? getQaDaysRemaining(endAt) : null;
 }
 
 function mapToMyQaRecruitItem(recruitment: MyQaRecruitment): MyQaRecruitItem {

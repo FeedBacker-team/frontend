@@ -9,6 +9,7 @@ import { MyQaEarlyCloseControls } from '@/components/domain/mypage/recruit/MyQaE
 import { MyQaFeedbackReviewList } from '@/components/domain/mypage/recruit/MyQaFeedbackReviewList';
 import { QA_URGENT_DAYS_LEFT_THRESHOLD } from '@/constants/mypage';
 import { useMyQaRecruitDetail } from '@/hooks/useQaRecruitments';
+import { formatQaDeadlineLabel } from '@/lib/qa/deadline';
 import { QaApiError } from '@/types/qa';
 import type { MyQaFeedbackReviewFilter } from '@/types/mypage';
 
@@ -168,7 +169,7 @@ function MyQaRecruitDetailView({
                     daysLeft <= QA_URGENT_DAYS_LEFT_THRESHOLD ? 'rust' : 'green'
                   }
                 >
-                  D-{daysLeft}
+                  {formatQaDeadlineLabel(daysLeft)}
                 </Badge>
               )}
               <Badge

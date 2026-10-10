@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/common/Button';
 import { toast } from '@/components/common/Sonner';
+import { useActionGuard } from '@/components/domain/auth/ActionGuardProvider';
 import { ProjectBrowseCard } from '@/components/domain/home/ProjectBrowseCard';
 import { BrowseCardSkeleton } from '@/components/domain/shared/BrowseCardSkeleton';
 import { BrowseSection } from '@/components/domain/shared/BrowseSection';
-import { LoginRequiredDialog } from '@/components/domain/shared/LoginRequiredDialog';
 import {
   BROWSE_PROJECT_PAGE_SIZE,
   PROJECT_SORT_OPTIONS,
@@ -16,14 +16,11 @@ import {
   PROJECT_TAGS,
 } from '@/constants/project';
 import { useProjects } from '@/hooks/useProjects';
-import { useAuthStore } from '@/stores/authStore';
 import type { ProjectSort, ProjectTag } from '@/types/project';
 
 function HomeProjectBrowse() {
   const router = useRouter();
-  const authStatus = useAuthStore((state) => state.status);
-  const isAuthenticated = authStatus === 'authenticated';
-  const [isLoginRequiredOpen, setIsLoginRequiredOpen] = useState(false);
+  const { runProtectedAction } = useActionGuard();
   const [keywordInput, setKeywordInput] = useState('');
   const [keyword, setKeyword] = useState('');
   const [selectedTags, setSelectedTags] = useState<ProjectTag[]>([]);
@@ -86,12 +83,7 @@ function HomeProjectBrowse() {
   };
 
   const handleRegisterProject = () => {
-    if (!isAuthenticated) {
-      setIsLoginRequiredOpen(true);
-      return;
-    }
-
-    router.push('/projects/new');
+    runProtectedAction(() => router.push('/projects/new'));
   };
 
   return (
@@ -165,10 +157,6 @@ function HomeProjectBrowse() {
         </ul>
       </BrowseSection>
 
-      <LoginRequiredDialog
-        open={isLoginRequiredOpen}
-        onOpenChange={setIsLoginRequiredOpen}
-      />
     </>
   );
 }

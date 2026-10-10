@@ -1,12 +1,11 @@
 'use client';
 
-import type { ReactNode } from 'react';
-
 import Image from 'next/image';
 
 import { Button } from '@/components/common/Button';
 import { chipVariants } from '@/components/common/Chip';
 import { Input } from '@/components/common/Input';
+import { MarkdownContent } from '@/components/common/MarkdownContent';
 import { ProjectActionBar } from '@/components/domain/project/ProjectActionBar';
 import {
   ProjectQaBanner,
@@ -24,7 +23,7 @@ type ProjectDetailProps = {
   publishedAt: string;
   viewCount: number;
   url: string;
-  description: ReactNode;
+  description: string;
   isOwner?: boolean;
   recruitingQa?: ProjectQaBannerProps;
 };
@@ -90,7 +89,7 @@ function ProjectDetail({
               <span>조회 {viewCount}</span>
             </p>
           </div>
-          <div className="flex w-125 items-center gap-2">
+          <div className="flex w-full items-center gap-2">
             <div className="min-w-0 flex-1">
               <Input
                 readOnly
@@ -127,9 +126,7 @@ function ProjectDetail({
 
       <section className="flex flex-col gap-3">
         <h2 className="text-b2 text-text-info">프로젝트 설명</h2>
-        <div className="text-h4 whitespace-pre-wrap text-text-default">
-          {description}
-        </div>
+        <MarkdownContent className="text-b2">{description}</MarkdownContent>
       </section>
 
       {isOwner ? (
@@ -138,7 +135,7 @@ function ProjectDetail({
           recruitableProject={{
             projectId,
             title,
-            description: typeof description === 'string' ? description : '',
+            description,
             thumbnailUrl: thumbnailUrl ?? null,
             hasActiveQa: Boolean(recruitingQa),
             activeQa: null,

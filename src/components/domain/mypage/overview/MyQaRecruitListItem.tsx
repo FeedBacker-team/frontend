@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Badge } from '@/components/common/Badge';
 import { chipVariants } from '@/components/common/Chip';
 import { QA_URGENT_DAYS_LEFT_THRESHOLD } from '@/constants/mypage';
+import { formatQaDeadlineLabel } from '@/lib/qa/deadline';
 import type { MyQaRecruitItem } from '@/types/mypage';
 
 type MyQaRecruitListItemProps = {
@@ -64,7 +65,7 @@ function MyQaRecruitListItem({ recruit }: MyQaRecruitListItemProps) {
                     daysLeft <= QA_URGENT_DAYS_LEFT_THRESHOLD ? 'rust' : 'green'
                   }
                 >
-                  D-{daysLeft}
+                  {formatQaDeadlineLabel(daysLeft)}
                 </Badge>
               )}
               <Badge

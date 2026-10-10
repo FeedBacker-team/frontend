@@ -23,11 +23,13 @@ import {
 import { buildQaRecruitmentRequest } from '@/lib/qa/recruit';
 import { mapToMyQaResultDetail } from '@/lib/qa/result';
 import { profileKeys, useProfile } from '@/hooks/useProfile';
+import { useAuthStore } from '@/stores/authStore';
 import type {
   QaFeedbackFormValues,
   QaFeedbackQuestion,
   QaRecruitFormValues,
   QaRecruitmentCard,
+  QaRecruitmentDetailResponse,
   QaRecruitmentListParams,
 } from '@/types/qa';
 
@@ -64,11 +66,19 @@ function useQaRecruitments(params: QaRecruitmentListParams = {}) {
   });
 }
 
-function useQaRecruitmentDetail(feedbackPostId: string) {
+function useQaRecruitmentDetail(
+  feedbackPostId: string,
+  initialData?: QaRecruitmentDetailResponse
+) {
+  const authStatus = useAuthStore((state) => state.status);
+
   return useQuery({
     queryKey: qaRecruitmentKeys.detail(feedbackPostId),
     queryFn: ({ signal }) =>
       getQaRecruitmentDetail(feedbackPostId, signal),
+    initialData,
+    initialDataUpdatedAt: initialData ? 0 : undefined,
+    enabled: Boolean(feedbackPostId) && authStatus !== 'initializing',
   });
 }
 
@@ -96,7 +106,7 @@ function useMyQaRecruitDetail(feedbackPostId: string) {
           feedbackPostId,
           detailQuery.data,
           reviewListQuery.data,
-          profileQuery.data.nickname,
+          profileQuery.data.nickname?.trim() || '프로필 미완성',
           profileQuery.data.profile_image_url
         )
       : undefined;
