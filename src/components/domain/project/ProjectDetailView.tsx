@@ -5,9 +5,11 @@ import { HomeRankedProjects } from '@/components/domain/home/HomeRankedProjects'
 import { ProjectDetail } from '@/components/domain/project/ProjectDetail';
 import { PROJECT_TAG_LABEL } from '@/constants/project';
 import { useProjectDetail } from '@/hooks/useProjects';
+import type { ProjectDetail as ProjectDetailData } from '@/types/project';
 
 type ProjectDetailViewProps = {
   projectId: string;
+  initialProject?: ProjectDetailData;
 };
 
 function formatDate(value: string) {
@@ -47,8 +49,11 @@ function ProjectDetailError({ message, onRetry }: ProjectDetailErrorProps) {
   );
 }
 
-function ProjectDetailView({ projectId }: ProjectDetailViewProps) {
-  const projectQuery = useProjectDetail(projectId);
+function ProjectDetailView({
+  projectId,
+  initialProject,
+}: ProjectDetailViewProps) {
+  const projectQuery = useProjectDetail(projectId, initialProject);
 
   if (projectQuery.isPending) {
     return <ProjectDetailLoading />;
