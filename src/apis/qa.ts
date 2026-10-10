@@ -1,28 +1,22 @@
 import {
   MOCK_QA_FEEDBACK_FORMS,
   MOCK_QA_RECRUITMENT_DETAILS,
-  MOCK_QA_RECRUITMENTS,
 } from '@/mocks/qa';
 import { apiRequest } from '@/apis/client';
+import { getQaRecruitments } from '@/apis/qaRecruitments';
 import type {
   CreateQaRecruitmentRequest,
   CreateQaRecruitmentResponse,
   MyQaParticipation,
   MyQaRecruitment,
   QaFeedbackFormResponse,
-  QaRecruitmentCard,
   QaRecruitmentDetailResponse,
-  QaRecruitmentListParams,
-  QaRecruitmentListResponse,
   QaResultResponse,
-  QaSort,
   SubmitQaFeedbackRequest,
   SubmitQaFeedbackResponse,
 } from '@/types/qa';
 import { QaApiError } from '@/types/qa';
-import type { ProjectTag } from '@/types/project';
 
-const DEFAULT_QA_PAGE_SIZE = 5;
 const QA_PATHS = {
   recruitments: '/api/feedback-posts',
   detail: (feedbackPostId: string) =>
@@ -43,38 +37,6 @@ const QA_PATHS = {
   myRecruitments: '/api/feedback-posts/mine',
   myParticipations: '/api/feedbacks/mine',
 } as const;
-
-type NormalizedQaRecruitmentListParams = {
-  keyword?: string;
-  tags?: QaRecruitmentListParams['tags'];
-  sort: QaSort;
-  page: number;
-  size: number;
-};
-
-type QaRecruitmentCardResponse = {
-  feedback_post_id: string;
-  project_id: string;
-  project_title: string;
-  title: string;
-  thumbnail_url: string | null;
-  tags: ProjectTag[];
-  status: QaRecruitmentCard['status'];
-  target_type: QaRecruitmentCard['targetType'];
-  start_at: string;
-  end_at: string;
-  slot_capacity: number;
-  remain_slot_count: number;
-  reward_acorn: number;
-};
-
-type QaRecruitmentListApiResponse = {
-  total_count: number;
-  page: number;
-  size: number;
-  has_next: boolean;
-  feedback_posts: QaRecruitmentCardResponse[];
-};
 
 type QaQuestionConfigApiResponse = {
   totalCount: number;
@@ -104,42 +66,6 @@ type QaRecruitmentDetailApiResponse = Omit<
   questionConfig: QaQuestionConfigApiResponse;
 };
 
-function mapQaRecruitmentCard(
-  response: QaRecruitmentCardResponse
-): QaRecruitmentCard {
-  return {
-    feedbackPostId: response.feedback_post_id,
-    projectId: response.project_id,
-    projectTitle: response.project_title,
-    title: response.title,
-    thumbnailUrl: response.thumbnail_url,
-    tags: response.tags,
-    status: response.status,
-    targetType: response.target_type,
-    startAt: response.start_at,
-    endAt: response.end_at,
-    capacity: response.slot_capacity,
-    participantCount: Math.max(
-      0,
-      response.slot_capacity - response.remain_slot_count
-    ),
-    requiredAcorns: response.reward_acorn * response.slot_capacity,
-    createdAt: response.start_at,
-  };
-}
-
-function mapQaRecruitmentListResponse(
-  response: QaRecruitmentListApiResponse
-): QaRecruitmentListResponse {
-  return {
-    totalCount: response.total_count,
-    page: response.page,
-    size: response.size,
-    hasNext: response.has_next,
-    feedbackPosts: response.feedback_posts.map(mapQaRecruitmentCard),
-  };
-}
-
 function mapQaRecruitmentDetailResponse(
   response: QaRecruitmentDetailApiResponse
 ): QaRecruitmentDetailResponse {
@@ -155,110 +81,6 @@ function mapQaRecruitmentDetailResponse(
       estimatedTime: questionConfig.estimatedMinutes,
     },
   };
-}
-
-function normalizeQaRecruitmentListParams(
-  params: QaRecruitmentListParams
-): NormalizedQaRecruitmentListParams {
-  return {
-    keyword: params.keyword?.trim() || undefined,
-    tags: params.tags?.length ? params.tags : undefined,
-    sort: params.sort ?? 'LATEST',
-    page: params.page ?? 0,
-    size: params.size ?? DEFAULT_QA_PAGE_SIZE,
-  };
-}
-
-function buildQaRecruitmentListQuery(
-  params: NormalizedQaRecruitmentListParams
-) {
-  const searchParams = new URLSearchParams();
-
-  if (params.keyword) {
-    searchParams.set('keyword', params.keyword);
-  }
-
-  if (params.tags?.length) {
-    searchParams.set('tags', params.tags.join(','));
-  }
-
-  searchParams.set('status', 'RECRUITING');
-  searchParams.set('sort', params.sort);
-  searchParams.set('page', String(params.page));
-  searchParams.set('size', String(params.size));
-
-  return searchParams.toString();
-}
-
-function sortMockQaRecruitments(
-  qas: QaRecruitmentCard[],
-  sort: QaSort
-) {
-  const sorted = [...qas];
-
-  if (sort === 'DEADLINE') {
-    return sorted.sort((a, b) => a.endAt.localeCompare(b.endAt));
-  }
-
-  return sorted.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-}
-
-function getMockQaRecruitmentList(
-  params: NormalizedQaRecruitmentListParams
-): QaRecruitmentListResponse {
-  const keyword = params.keyword?.toLowerCase();
-  const filtered = MOCK_QA_RECRUITMENTS.filter(
-    (qa) => qa.status === 'RECRUITING'
-  )
-    .filter(
-      (qa) =>
-        !keyword ||
-        qa.title.toLowerCase().includes(keyword) ||
-        qa.projectTitle.toLowerCase().includes(keyword)
-    )
-    .filter(
-      (qa) =>
-        !params.tags?.length ||
-        params.tags.every((tag) => qa.tags.includes(tag))
-    );
-  const sorted = sortMockQaRecruitments(filtered, params.sort);
-  const start = params.page * params.size;
-  const end = start + params.size;
-
-  return {
-    totalCount: sorted.length,
-    page: params.page,
-    size: params.size,
-    hasNext: end < sorted.length,
-    feedbackPosts: sorted.slice(start, end),
-  };
-}
-
-async function getQaRecruitments(
-  params: QaRecruitmentListParams = {},
-  signal?: AbortSignal
-): Promise<QaRecruitmentListResponse> {
-  const normalized = normalizeQaRecruitmentListParams(params);
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
-
-  if (!apiBaseUrl) {
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    return getMockQaRecruitmentList(normalized);
-  }
-
-  const query = buildQaRecruitmentListQuery(normalized);
-  const baseUrl = apiBaseUrl.replace(/\/$/, '');
-  const response = await fetch(`${baseUrl}${QA_PATHS.recruitments}?${query}`, {
-    signal,
-  });
-
-  if (!response.ok) {
-    throw new Error('QA 모집 목록을 불러오지 못했습니다');
-  }
-
-  const data: QaRecruitmentListApiResponse = await response.json();
-
-  return mapQaRecruitmentListResponse(data);
 }
 
 async function getMyQaRecruitments(
