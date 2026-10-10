@@ -5,12 +5,17 @@ import { getPublicProjectDetail } from '@/apis/project';
 import { getPublicQaRecruitmentDetail } from '@/apis/qaRecruitments';
 import { QaDetail } from '@/components/domain/qa/detail/QaDetail';
 import { normalizeImageUrl } from '@/lib/image';
+import { isUuid } from '@/lib/schemas/id';
 import {
   createDetailMetadata,
   createMissingContentMetadata,
 } from '@/lib/seo/metadata';
 
 async function getQa(qaId: string) {
+  if (!isUuid(qaId)) {
+    return null;
+  }
+
   try {
     return await getPublicQaRecruitmentDetail(qaId);
   } catch {
@@ -19,6 +24,10 @@ async function getQa(qaId: string) {
 }
 
 async function getProject(projectId: string) {
+  if (!isUuid(projectId)) {
+    return null;
+  }
+
   try {
     return await getPublicProjectDetail(projectId);
   } catch {
