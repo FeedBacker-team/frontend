@@ -1,7 +1,10 @@
 import { baseApiRequest } from '@/apis/baseClient';
-import { ProjectError } from '@/apis/projects';
+import { ProjectError } from '@/apis/projects/error';
 import { DEFAULT_PROJECT_PAGE_SIZE } from '@/constants/project';
+import { resolveImageUrl } from '@/lib/image';
 import {
+  type ProjectDetail,
+  type ProjectDetailResponse,
   type ProjectListParams,
   type ProjectListResponse,
   type ProjectSort,
@@ -63,4 +66,62 @@ async function getProjects(
   });
 }
 
-export { getProjects };
+async function getPublicProjectDetail(
+  projectId: string
+): Promise<ProjectDetail | null> {
+  try {
+    const response = await baseApiRequest<ProjectDetailResponse>(
+      `${PROJECTS_PATH}/${encodeURIComponent(projectId)}`,
+      {
+        method: 'GET',
+        next: { revalidate: 300 },
+        errorFactory: (message, status) => new ProjectError(message, status),
+        fallbackMessage: '프로젝트를 불러오지 못했습니다',
+      }
+    );
+
+    return {
+      projectId: response.project_id,
+      title: response.title,
+      description: response.description,
+      thumbnailUrl: response.thumbnail_image,
+      tags: response.tags,
+      serviceUrl: response.service_link,
+      ownerId: response.owner_id,
+      ownerNickname: response.owner_nickname,
+      ownerProfileImageUrl: response.profile_image_url
+        ? response.profile_image_url
+        : response.profile_image_path
+          ? resolveImageUrl(
+              response.profile_image_path,
+              response.thumbnail_image
+            )
+          : null,
+      viewCount: response.view_count,
+      createdAt: response.created_at,
+      updatedAt: response.updated_at,
+      isOwner: false,
+      hasActiveQa: response.has_active_qa,
+      activeQa: response.active_qa
+        ? {
+            feedbackPostId: response.active_qa.feedback_post_id,
+            title: response.active_qa.title,
+            status: response.active_qa.status,
+            targetType: response.active_qa.target_type,
+            slotCapacity: response.active_qa.slot_capacity,
+            remainingSlots: response.active_qa.remaining_slots,
+            rewardAcorn: response.active_qa.reward_acorn,
+            endAt: response.active_qa.end_at,
+          }
+        : null,
+    };
+  } catch (error) {
+    if (error instanceof ProjectError && error.status === 404) {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
+export { getProjects, getPublicProjectDetail };
