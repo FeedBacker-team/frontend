@@ -10,10 +10,10 @@ import { MyQaObjectionStatusSection } from '@/components/domain/mypage/objection
 import {
   MY_QA_PARTICIPATION_STATUS_BADGE_VARIANT,
   MY_QA_PARTICIPATION_STATUS_LABEL,
-  OBJECTION_REASONS,
   QA_URGENT_DAYS_LEFT_THRESHOLD,
 } from '@/constants/mypage';
 import { formatQaDeadlineLabel } from '@/lib/qa/deadline';
+import { cn } from '@/lib/utils';
 import type { MyQaParticipationDetail } from '@/types/mypage';
 
 type MyQaParticipationDetailDialogProps = {
@@ -86,10 +86,6 @@ function MyQaParticipationDetailDialog({
     rejectReason,
     objection,
   } = detail;
-
-  const objectionReasonLabel = objection
-    ? OBJECTION_REASONS.find((item) => item.value === objection.reason)?.label
-    : undefined;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -180,11 +176,11 @@ function MyQaParticipationDetailDialog({
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col items-center gap-2 rounded-lg bg-gray-50 py-5">
+            <div className="flex flex-col bg-light items-center gap-2 rounded-lg bg-gray-50 py-5">
               <p className="text-c1 text-text-sub">QA 참여 일시</p>
               <p className="text-h4 text-text-default">{participatedAt}</p>
             </div>
-            <div className="flex flex-col items-center gap-2 rounded-lg bg-gray-50 py-5">
+            <div className="flex flex-col bg-light items-center gap-2 rounded-lg bg-gray-50 py-5">
               <p className="text-c1 text-text-sub">피드백 제출 일시</p>
               <p className="text-h4 text-text-default">{submittedAt}</p>
             </div>
@@ -197,11 +193,16 @@ function MyQaParticipationDetailDialog({
           {rejectReason && (
             <div className="flex flex-col gap-3">
               <h3 className="text-h4 text-text-default">거절 사유</h3>
-              <div className="flex flex-col gap-1 rounded-lg border border-rust-600 bg-rust-50 p-4">
+              <div
+                className={cn(
+                  'flex flex-col gap-1 rounded-lg border p-4',
+                  objection ? 'border-gray-300' : 'border-rust-600 bg-rust-50'
+                )}
+              >
                 <p className="text-b2 font-bold text-text-default">
                   {rejectReason.title}
                 </p>
-                <p className="text-b2 text-text-sub whitespace-pre-wrap">
+                <p className="text-b2 text-text-sub whitespace-pre-wrap wrap-break-word">
                   {rejectReason.description}
                 </p>
               </div>
@@ -249,10 +250,7 @@ function MyQaParticipationDetailDialog({
             <div className="flex flex-col gap-3">
               <h3 className="text-h4 text-text-default">이의제기 내용</h3>
               <div className="flex flex-col gap-1 rounded-lg border border-gray-300 p-4">
-                <p className="text-b2 font-bold text-text-default">
-                  {objectionReasonLabel}
-                </p>
-                <p className="text-b2 text-text-sub whitespace-pre-wrap">
+                <p className="text-b2 text-text-sub whitespace-pre-wrap wrap-break-word">
                   {objection.detailReason}
                 </p>
               </div>

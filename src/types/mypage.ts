@@ -36,6 +36,9 @@ type MyQaParticipationStatus =
   | 'PENDING_REVIEW'
   | 'ACCEPTED'
   | 'REJECTED'
+  /** 참여자가 스스로 QA 참여를 포기함 */
+  | 'GIVEN_UP'
+  /** 제출 기한이 지나도록 피드백을 제출하지 않음 */
   | 'NOT_SUBMITTED';
 
 type MyQaParticipationItem = {
@@ -93,9 +96,6 @@ type QaRejectReason = {
 type ObjectionResolutionResult = 'ACCEPTED' | 'REJECTED';
 
 type MyQaObjection = {
-  /** 이의제기 접수일 (YYYY-MM-DD) */
-  submittedAt: string;
-  reason: ObjectionReasonValue;
   detailReason: string;
   /** status가 DISPUTE_RESOLVED일 때만 존재 */
   resolution?: {
@@ -141,7 +141,7 @@ type ObjectionReasonValue =
 
 /** 이의제기 사유 백엔드 enum */
 type ObjectType =
-  | 'FAITHFUUL_ANSWER'
+  | 'FAITHFUL_ANSWER'
   | 'REJECT_REASON_MISMATCH'
   | 'QA_PROJECT_ISSUE'
   | 'OTHER';

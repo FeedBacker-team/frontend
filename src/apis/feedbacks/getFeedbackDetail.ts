@@ -36,6 +36,9 @@ type FeedbackDetailResponse = {
   testerProfileImageUrl?: string | null;
   rejectType: string | null;
   rejectDetail: string | null;
+  objectReason: string | null;
+  /** 운영팀 검토 의견. 이의제기 검토가 완료되기 전에는 null */
+  objectResult: string | null;
   thumbnail: ImageResponse | null;
   startAt: string;
   endAt: string;

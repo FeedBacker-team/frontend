@@ -188,6 +188,7 @@ function mapParticipationStatus(
       // 짧은 틈을 메우기 위한 낙관적 표시. 새로고침하면 실제 상태로 대체된다.
       return hasFiledObjection ? 'DISPUTE_REVIEWING' : 'REJECTED';
     case 'CANCELED':
+      return 'GIVEN_UP';
     case 'EXPIRED':
     default:
       return 'NOT_SUBMITTED';

@@ -69,7 +69,10 @@ function MyObjectionForm({ feedbackId }: MyObjectionFormProps) {
   useEffect(() => {
     if (detailQuery.isError) {
       toast.error(
-        getFeedbackErrorMessage(detailQuery.error, '피드백 정보를 불러오지 못했습니다')
+        getFeedbackErrorMessage(
+          detailQuery.error,
+          '피드백 정보를 불러오지 못했습니다'
+        )
       );
     }
   }, [detailQuery.isError, detailQuery.error]);
@@ -207,11 +210,11 @@ function MyObjectionForm({ feedbackId }: MyObjectionFormProps) {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col items-center gap-2 rounded-lg bg-gray-50 py-5">
+            <div className="flex flex-col bg-light items-center gap-2 rounded-lg bg-gray-50 py-5">
               <p className="text-c1 text-text-sub">QA 참여 일시</p>
               <p className="text-h4 text-text-default">{participatedAt}</p>
             </div>
-            <div className="flex flex-col items-center gap-2 rounded-lg bg-gray-50 py-5">
+            <div className="flex flex-col bg-light items-center gap-2 rounded-lg bg-gray-50 py-5">
               <p className="text-c1 text-text-sub">피드백 제출 일시</p>
               <p className="text-h4 text-text-default">{submittedAt}</p>
             </div>
@@ -225,7 +228,7 @@ function MyObjectionForm({ feedbackId }: MyObjectionFormProps) {
               <p className="text-b2 font-bold text-text-default">
                 {rejectReason.title}
               </p>
-              <p className="text-b2 text-text-sub whitespace-pre-wrap">
+              <p className="text-b2 text-text-sub whitespace-pre-wrap wrap-break-word">
                 {rejectReason.description}
               </p>
             </div>

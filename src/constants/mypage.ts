@@ -86,6 +86,7 @@ const MY_QA_PARTICIPATION_STATUS_LABEL: Record<
   PENDING_REVIEW: '검토 대기 중',
   ACCEPTED: '수락',
   REJECTED: '거절',
+  GIVEN_UP: '참여 포기',
   NOT_SUBMITTED: '미제출',
 };
 
@@ -99,6 +100,7 @@ const MY_QA_PARTICIPATION_STATUS_BADGE_VARIANT: Record<
   PENDING_REVIEW: 'rust',
   ACCEPTED: 'green',
   REJECTED: 'default',
+  GIVEN_UP: 'default',
   NOT_SUBMITTED: 'default',
 };
 
@@ -523,7 +525,7 @@ const OBJECTION_REASONS: { value: ObjectionReasonValue; label: string }[] = [
 ];
 
 const OBJECTION_REASON_TO_OBJECT_TYPE: Record<ObjectionReasonValue, ObjectType> = {
-  SINCERELY_WRITTEN: 'FAITHFUUL_ANSWER',
+  SINCERELY_WRITTEN: 'FAITHFUL_ANSWER',
   REASON_MISMATCH: 'REJECT_REASON_MISMATCH',
   PROJECT_ISSUE: 'QA_PROJECT_ISSUE',
   ETC: 'OTHER',

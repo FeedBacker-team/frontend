@@ -8,6 +8,7 @@ import type { FiledObjection } from '@/stores/objectionStore';
 import type {
   MyQaFeedbackReviewDetail,
   MyQaFeedbackReviewStatus,
+  MyQaObjection,
   MyQaParticipationDetail,
   MyQaParticipationStatus as MypageParticipationStatus,
   QaContentType,
@@ -203,6 +204,35 @@ function getRejectReason(
 }
 
 /**
+ * 이의제기 처리 현황 데이터를 만든다. 사유 카테고리나 접수일시는 백엔드 응답에
+ * 없어서(objectReason/objectResult만 내려옴) 보여줄 수 없고, 상세 사유와
+ * (검토 완료 시) 운영팀 의견만 조회 시점과 무관하게 항상 보여줄 수 있다.
+ */
+function getObjection(
+  status: MypageParticipationStatus,
+  response: FeedbackDetailResponse
+): MyQaObjection | undefined {
+  if (status !== 'DISPUTE_REVIEWING' && status !== 'DISPUTE_RESOLVED') {
+    return undefined;
+  }
+
+  return {
+    detailReason: response.objectReason ?? '',
+    ...(status === 'DISPUTE_RESOLVED'
+      ? {
+          resolution: {
+            result:
+              response.feedbackStatus === 'OBJECTION_ACCEPTED'
+                ? 'ACCEPTED'
+                : 'REJECTED',
+            opinion: response.objectResult ?? '',
+          },
+        }
+      : {}),
+  };
+}
+
+/**
  * 테스터 본인이 제출한 피드백을 보는 화면(이의제기 작성, 참여 상세 모달)용 매핑.
  * 이 화면들은 feedbackPostId를 모르는 경로(/mypage/objection/[feedbackId])에서도
  * 쓰이므로 choiceMaxSelections 대조 없이 항상 다중선택 UI로 보여준다.
@@ -216,6 +246,7 @@ function mapFeedbackDetailToParticipationDetail(
     response.feedbackStatus,
     filedObjection
   );
+  const objection = getObjection(status, response);
 
   return {
     id: feedbackId,
@@ -232,7 +263,7 @@ function mapFeedbackDetailToParticipationDetail(
     submittedAt: toDateTimeDisplay(response.submitAt),
     feedbackQuestions: buildFeedbackQuestions(response.questionAnswerResponses),
     rejectReason: getRejectReason(response),
-    ...(filedObjection ? { objection: filedObjection } : {}),
+    ...(objection ? { objection } : {}),
   };
 }
 

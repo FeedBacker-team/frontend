@@ -573,7 +573,9 @@ function QaRecruitmentStatusCard({
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-h4 text-yellow-700">사용 도토리</span>
+          <span className="text-h4 text-yellow-700">
+            {isOwner ? '사용 도토리' : '보상 도토리'}
+          </span>
           <span className="flex items-center gap-1 text-h3 text-yellow-800">
             <Image
               src="/images/acorn.svg"
@@ -583,7 +585,7 @@ function QaRecruitmentStatusCard({
               height={16}
               unoptimized
             />
-            {qa.depositAcorn}
+            {isOwner ? qa.depositAcorn : qa.rewardAcorn}
           </span>
         </div>
 
