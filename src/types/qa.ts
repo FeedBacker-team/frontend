@@ -182,7 +182,8 @@ type MyQaParticipation = {
   feedbackPostId: string;
   title: string;
   status: MyQaParticipationStatus;
-  rewardAcorn: number;
+  /** 거절된 참여는 보상이 없어 null로 내려온다 */
+  rewardAcorn: number | null;
   rejectType: string | null;
   startAt: string;
   endAt: string;

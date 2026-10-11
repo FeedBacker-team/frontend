@@ -215,7 +215,7 @@ function mapToMyQaParticipationItem(
     completeDate: participation.completeAt
       ? toDateOnly(participation.completeAt)
       : null,
-    rewardAcorn: participation.rewardAcorn,
+    rewardAcorn: participation.rewardAcorn ?? 0,
   };
 }
 

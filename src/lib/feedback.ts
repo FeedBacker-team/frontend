@@ -227,7 +227,7 @@ function mapFeedbackDetailToParticipationDetail(
     contentType: mapTargetTypeToContentType(response.targetType),
     daysLeft: computeParticipationDaysLeft(response.endAt),
     completeDate: null,
-    rewardAcorn: response.rewardAcorn,
+    rewardAcorn: response.rewardAcorn ?? 0,
     participatedAt: toDateTimeDisplay(response.participateAt),
     submittedAt: toDateTimeDisplay(response.submitAt),
     feedbackQuestions: buildFeedbackQuestions(response.questionAnswerResponses),
