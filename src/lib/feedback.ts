@@ -240,6 +240,7 @@ export {
   computeResponseDeadlineHoursLeft,
   mapFeedbackDetailToParticipationDetail,
   mapFeedbackDetailToReviewDetail,
+  mapFeedbackStatusToReviewStatus,
   UNKNOWN_REVIEWER_NICKNAME,
 };
 export type { ChoiceQuestionMeta };

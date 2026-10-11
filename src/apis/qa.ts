@@ -2,8 +2,8 @@ import {
   MOCK_QA_FEEDBACK_FORMS,
   MOCK_QA_RECRUITMENT_DETAILS,
 } from '@/mocks/qa';
-import { apiRequest } from '@/apis/client';
 import { getQaRecruitments } from '@/apis/qaRecruitments';
+import { qaRequest } from '@/apis/qa/request';
 import type {
   CreateQaRecruitmentRequest,
   CreateQaRecruitmentResponse,
@@ -91,7 +91,7 @@ async function getMyQaRecruitments(
     return [];
   }
 
-  return apiRequest<MyQaRecruitment[]>(QA_PATHS.myRecruitments, {
+  return qaRequest<MyQaRecruitment[]>(QA_PATHS.myRecruitments, {
     method: 'GET',
     signal,
     fallbackMessage: '내 QA 모집 목록을 불러오지 못했습니다',
@@ -106,7 +106,7 @@ async function getMyQaParticipations(
     return [];
   }
 
-  return apiRequest<MyQaParticipation[]>(QA_PATHS.myParticipations, {
+  return qaRequest<MyQaParticipation[]>(QA_PATHS.myParticipations, {
     method: 'GET',
     signal,
     fallbackMessage: '내 QA 참여 목록을 불러오지 못했습니다',
@@ -122,7 +122,7 @@ async function getFeedbackProgressList(
     return [];
   }
 
-  const response = await apiRequest<FeedbackProgressListApiResponse>(
+  const response = await qaRequest<FeedbackProgressListApiResponse>(
     QA_PATHS.feedbackProgress(feedbackPostId),
     {
       method: 'GET',
@@ -143,7 +143,7 @@ async function getQaResult(
   feedbackPostId: string,
   signal?: AbortSignal
 ): Promise<QaResultResponse> {
-  return apiRequest<QaResultResponse>(QA_PATHS.result(feedbackPostId), {
+  return qaRequest<QaResultResponse>(QA_PATHS.result(feedbackPostId), {
     method: 'GET',
     signal,
     fallbackMessage: (status) =>
@@ -172,7 +172,7 @@ async function getQaRecruitmentDetail(
     return detail;
   }
 
-  const response = await apiRequest<QaRecruitmentDetailApiResponse>(
+  const response = await qaRequest<QaRecruitmentDetailApiResponse>(
     QA_PATHS.detail(feedbackPostId),
     {
       method: 'GET',
@@ -204,7 +204,7 @@ async function getQaFeedbackForm(
     return form;
   }
 
-  return apiRequest<QaFeedbackFormResponse>(
+  return qaRequest<QaFeedbackFormResponse>(
     QA_PATHS.feedbackForm(feedbackPostId),
     {
       method: 'GET',
@@ -232,7 +232,7 @@ async function createQaRecruitment(
     };
   }
 
-  const data = await apiRequest<unknown>(QA_PATHS.recruitments, {
+  const data = await qaRequest<unknown>(QA_PATHS.recruitments, {
     method: 'POST',
     json: body,
     fallbackMessage: 'QA 모집 글 등록에 실패했습니다',
@@ -257,7 +257,7 @@ async function participateInQa(feedbackPostId: string): Promise<void> {
     return;
   }
 
-  return apiRequest<void>(QA_PATHS.participations(feedbackPostId), {
+  return qaRequest<void>(QA_PATHS.participations(feedbackPostId), {
     method: 'POST',
     responseType: 'void',
     fallbackMessage: 'QA 참여 신청에 실패했습니다',
@@ -270,7 +270,7 @@ async function giveUpQaParticipation(feedbackPostId: string): Promise<void> {
     return;
   }
 
-  return apiRequest<void>(QA_PATHS.giveUp(feedbackPostId), {
+  return qaRequest<void>(QA_PATHS.giveUp(feedbackPostId), {
     method: 'PATCH',
     responseType: 'void',
     fallbackMessage: 'QA 참여 포기에 실패했습니다',
@@ -283,7 +283,7 @@ async function completeQaRecruitment(feedbackPostId: string): Promise<void> {
     return;
   }
 
-  return apiRequest<void>(QA_PATHS.complete(feedbackPostId), {
+  return qaRequest<void>(QA_PATHS.complete(feedbackPostId), {
     method: 'PATCH',
     responseType: 'void',
     fallbackMessage: 'QA 모집 조기 마감에 실패했습니다',
@@ -300,7 +300,7 @@ async function submitQaFeedback(
     return { feedbackId: '770e8400-e29b-41d4-a716-446655440000' };
   }
 
-  const data = await apiRequest<unknown>(QA_PATHS.feedbacks, {
+  const data = await qaRequest<unknown>(QA_PATHS.feedbacks, {
     method: 'POST',
     json: body,
     fallbackMessage: '피드백 제출에 실패했습니다',

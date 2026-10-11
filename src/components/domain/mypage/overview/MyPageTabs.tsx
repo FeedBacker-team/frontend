@@ -203,11 +203,16 @@ function MyPageTabs({ initialTab }: MyPageTabsProps) {
                 <MyQaParticipationListItem
                   participation={participation}
                   onClick={
-                    CLICKABLE_PARTICIPATION_STATUSES.includes(
-                      participation.status
-                    )
-                      ? () => setSelectedParticipationId(participation.id)
-                      : undefined
+                    participation.status === 'BEFORE_SUBMIT'
+                      ? () =>
+                          router.push(
+                            `/qa/${participation.feedbackPostId}/feedback`
+                          )
+                      : CLICKABLE_PARTICIPATION_STATUSES.includes(
+                            participation.status
+                          )
+                        ? () => setSelectedParticipationId(participation.id)
+                        : undefined
                   }
                 />
               </li>
