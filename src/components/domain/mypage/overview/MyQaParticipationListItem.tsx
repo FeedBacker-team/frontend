@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import Link from 'next/link';
 
 import { Badge } from '@/components/common/Badge';
 import {
@@ -21,7 +20,6 @@ function MyQaParticipationListItem({
   onClick,
 }: MyQaParticipationListItemProps) {
   const {
-    feedbackPostId,
     title,
     thumbnailUrl,
     status,
@@ -74,13 +72,9 @@ function MyQaParticipationListItem({
             {MY_QA_PARTICIPATION_STATUS_LABEL[status]}
           </Badge>
           {status === 'BEFORE_SUBMIT' ? (
-            <Link
-              href={`/qa/${feedbackPostId}/feedback`}
-              onClick={(event) => event.stopPropagation()}
-              className="text-c1 shrink-0 text-rust-600 underline"
-            >
+            <span className="text-c1 shrink-0 text-rust-600 underline">
               피드백 작성하기
-            </Link>
+            </span>
           ) : null}
         </div>
         <div className="flex items-start justify-between gap-4">

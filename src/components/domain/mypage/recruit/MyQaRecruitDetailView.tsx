@@ -241,7 +241,6 @@ function MyQaRecruitDetailView({
         <MyQaEarlyCloseControls
           feedbackPostId={feedbackPostId}
           status={status}
-          daysLeft={daysLeft}
           pendingReviewCount={pendingReviewCount}
           recruitedCount={recruitedCount}
           completedCount={completedCount}

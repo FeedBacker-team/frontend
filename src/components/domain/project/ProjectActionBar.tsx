@@ -39,7 +39,7 @@ function ProjectActionBar({
       onSuccess: () => {
         setIsDeleteDialogOpen(false);
         toast.success('프로젝트를 삭제했습니다');
-        router.push('/mypage');
+        router.push('/');
       },
       onError: (error) => {
         setIsDeleteDialogOpen(false);
