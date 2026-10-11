@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 import { Toaster } from '@/components/common/Sonner';
 import { TooltipProvider } from '@/components/common/Tooltip';
@@ -15,6 +16,9 @@ import { QueryProvider } from '@/lib/QueryProvider';
 import { createRobotsMetadata } from '@/lib/seo/metadata';
 
 import './globals.css';
+
+const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+const IS_PRODUCTION_DEPLOYMENT = process.env.VERCEL_ENV === 'production';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -61,6 +65,9 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
           </TooltipProvider>
         </QueryProvider>
       </body>
+      {IS_PRODUCTION_DEPLOYMENT && GOOGLE_ANALYTICS_ID && (
+        <GoogleAnalytics gaId={GOOGLE_ANALYTICS_ID} />
+      )}
     </html>
   );
 }
