@@ -64,21 +64,11 @@ function MyQaParticipationListItem({
         ) : null}
       </div>
       <div className="flex min-w-0 flex-1 flex-col gap-3">
-        <div className="flex items-center justify-between gap-4">
-          <Badge
-            variant={MY_QA_PARTICIPATION_STATUS_BADGE_VARIANT[status]}
-            className="self-start"
-          >
-            {MY_QA_PARTICIPATION_STATUS_LABEL[status]}
-          </Badge>
-          {status === 'BEFORE_SUBMIT' ? (
-            <span className="text-c1 shrink-0 text-rust-600 underline">
-              피드백 작성하기
-            </span>
-          ) : null}
-        </div>
         <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 flex-col gap-1">
+            <Badge variant={MY_QA_PARTICIPATION_STATUS_BADGE_VARIANT[status]}>
+              {MY_QA_PARTICIPATION_STATUS_LABEL[status]}
+            </Badge>
             <h3 className="text-h4 truncate text-text-default">{title}</h3>
             <p className="text-c1 text-text-info">
               {startDate} ~ {endDate}

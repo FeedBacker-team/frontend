@@ -16,8 +16,9 @@ type ObjectionState = {
 };
 
 /**
- * 이의제기는 백엔드에 상태/내용을 저장하는 테이블이 없어(ERD 기준) 조회 API가 없다.
- * 접수 직후 "검토 중"으로 보이게 하기 위한 세션 전용 상태이며, 새로고침하면 사라진다.
+ * 이의제기 제출 직후에는 백엔드 상태(OBJECTED)가 아직 반영되기 전일 수 있어,
+ * 그 짧은 틈 동안 "검토 중"을 낙관적으로 보여주기 위한 세션 전용 상태다.
+ * 새로고침하면 사라지지만, 이후 조회 시 실제 상태로 자연스럽게 대체된다.
  */
 const useObjectionStore = create<ObjectionState>()((set) => ({
   filedByFeedbackId: {},

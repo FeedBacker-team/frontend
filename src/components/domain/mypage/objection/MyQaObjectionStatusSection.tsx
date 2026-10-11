@@ -35,8 +35,7 @@ function MyQaObjectionStatusSection({
       <h3 className="text-h4 text-text-default">이의제기 처리 현황</h3>
       <div className="flex flex-col gap-6 rounded-lg border border-gray-300 p-6">
         <p className="text-b2 text-text-default">
-          {objection.submittedAt} 접수 · 검토는 영업일 기준 최대 3일이
-          소요돼요.
+          이의제기가 접수됐어요 · 검토는 영업일 기준 최대 3일이 소요돼요.
         </p>
 
         <div className="flex items-start justify-center">
@@ -108,7 +107,7 @@ function MyQaObjectionStatusSection({
               )}
             >
               <p className="text-c1 text-text-sub">운영팀 검토 의견</p>
-              <p className="text-b2 text-text-default whitespace-pre-wrap">
+              <p className="text-b2 text-text-default whitespace-pre-wrap wrap-break-word">
                 {resolution.opinion}
               </p>
             </div>

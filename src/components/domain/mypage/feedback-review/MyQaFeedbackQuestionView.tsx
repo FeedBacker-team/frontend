@@ -63,7 +63,7 @@ function MyQaFeedbackQuestionView({
 
       {question.type === 'TEXT' && (
         <div className="flex flex-col gap-3">
-          <div className="rounded-lg border border-gray-300 p-4 text-b2 text-text-default whitespace-pre-wrap">
+          <div className="rounded-lg border border-gray-300 p-4 text-b2 text-text-default whitespace-pre-wrap wrap-break-word">
             {question.answer}
           </div>
 

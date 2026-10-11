@@ -7,6 +7,10 @@ import { toast } from '@/components/common/Sonner';
 import { MyProjectListItem } from '@/components/domain/mypage/overview/MyProjectListItem';
 import { MyQaParticipationDetailDialog } from '@/components/domain/mypage/overview/MyQaParticipationDetailDialog';
 import { MyQaParticipationListItem } from '@/components/domain/mypage/overview/MyQaParticipationListItem';
+import {
+  MyQaParticipationUnavailableDialog,
+  type MyQaParticipationUnavailableStatus,
+} from '@/components/domain/mypage/overview/MyQaParticipationUnavailableDialog';
 import { MyQaRecruitListItem } from '@/components/domain/mypage/overview/MyQaRecruitListItem';
 import { MY_PAGE_TAB_LABEL, MY_PAGE_TAB_ORDER } from '@/constants/mypage';
 import { useFeedbackParticipationDetail } from '@/hooks/useFeedback';
@@ -28,6 +32,13 @@ const CLICKABLE_PARTICIPATION_STATUSES: MyQaParticipationStatus[] = [
   'DISPUTE_RESOLVED',
 ];
 
+/** 제출된 피드백이 없어 상세 조회가 불가능한 상태인지 확인한다. 안내 문구만 보여준다 */
+function isUnavailableParticipationStatus(
+  status: MyQaParticipationStatus
+): status is MyQaParticipationUnavailableStatus {
+  return status === 'GIVEN_UP' || status === 'NOT_SUBMITTED';
+}
+
 type MyPageTabsProps = {
   initialTab?: MyPageTab;
 };
@@ -41,6 +52,8 @@ function MyPageTabs({ initialTab }: MyPageTabsProps) {
   const [selectedParticipationId, setSelectedParticipationId] = useState<
     string | null
   >(null);
+  const [unavailableStatus, setUnavailableStatus] =
+    useState<MyQaParticipationUnavailableStatus | null>(null);
   const participationDetailQuery = useFeedbackParticipationDetail(
     selectedParticipationId
   );
@@ -198,25 +211,29 @@ function MyPageTabs({ initialTab }: MyPageTabsProps) {
           </p>
         ) : (
           <ul className="flex flex-col divide-y divide-gray-300">
-            {qaParticipations.map((participation) => (
-              <li key={participation.id}>
-                <MyQaParticipationListItem
-                  participation={participation}
-                  onClick={
-                    participation.status === 'BEFORE_SUBMIT'
-                      ? () =>
-                          router.push(
-                            `/qa/${participation.feedbackPostId}/feedback`
-                          )
-                      : CLICKABLE_PARTICIPATION_STATUSES.includes(
-                            participation.status
-                          )
-                        ? () => setSelectedParticipationId(participation.id)
-                        : undefined
-                  }
-                />
-              </li>
-            ))}
+            {qaParticipations.map((participation) => {
+              const { status } = participation;
+              const onClick =
+                status === 'BEFORE_SUBMIT'
+                  ? () =>
+                      router.push(
+                        `/qa/${participation.feedbackPostId}/feedback`
+                      )
+                  : CLICKABLE_PARTICIPATION_STATUSES.includes(status)
+                    ? () => setSelectedParticipationId(participation.id)
+                    : isUnavailableParticipationStatus(status)
+                      ? () => setUnavailableStatus(status)
+                      : undefined;
+
+              return (
+                <li key={participation.id}>
+                  <MyQaParticipationListItem
+                    participation={participation}
+                    onClick={onClick}
+                  />
+                </li>
+              );
+            })}
           </ul>
         )
       ) : null}
@@ -231,6 +248,16 @@ function MyPageTabs({ initialTab }: MyPageTabsProps) {
         detail={participationDetailQuery.data}
         isLoading={participationDetailQuery.isPending}
         isError={participationDetailQuery.isError}
+      />
+
+      <MyQaParticipationUnavailableDialog
+        open={unavailableStatus !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setUnavailableStatus(null);
+          }
+        }}
+        status={unavailableStatus}
       />
     </section>
   );
