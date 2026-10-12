@@ -21,6 +21,7 @@ type QaBrowseCardProps = {
   participantCount: number;
   requiredAcorns: number;
   daysRemaining: number;
+  isPinned: boolean;
   className?: string;
 };
 
@@ -39,6 +40,7 @@ function QaBrowseCard({
   participantCount,
   requiredAcorns,
   daysRemaining,
+  isPinned,
   className,
 }: QaBrowseCardProps) {
   const rewardAcorns = requiredAcorns / capacity;
@@ -66,7 +68,16 @@ function QaBrowseCard({
       <div className="flex min-w-0 flex-1 items-stretch justify-between gap-4">
         <div className="flex min-w-0 flex-1 flex-col justify-between gap-3">
           <div className="flex min-w-0 flex-col gap-1">
-            <h3 className="text-h3 truncate text-text-default">{title}</h3>
+            <div className="flex min-w-0 items-center gap-1">
+              {isPinned ? (
+                <span
+                  role="img"
+                  aria-label="고정"
+                  className="size-5 shrink-0 bg-yellow-400 mask-[url(/icons/pin.svg)] mask-center mask-contain mask-no-repeat"
+                />
+              ) : null}
+              <h3 className="text-h3 truncate text-text-default">{title}</h3>
+            </div>
             <p className="text-b3 text-text-info">
               {formatDate(startAt)} ~ {formatDate(endAt)}
             </p>

@@ -25,6 +25,7 @@ type ProjectDetailProps = {
   url: string;
   description: string;
   isOwner?: boolean;
+  hasActiveQa: boolean;
   recruitingQa?: ProjectQaBannerProps;
 };
 
@@ -40,6 +41,7 @@ function ProjectDetail({
   url,
   description,
   isOwner = false,
+  hasActiveQa,
   recruitingQa,
 }: ProjectDetailProps) {
   return (
@@ -137,7 +139,7 @@ function ProjectDetail({
             title,
             description,
             thumbnailUrl: thumbnailUrl ?? null,
-            hasActiveQa: Boolean(recruitingQa),
+            hasActiveQa,
             activeQa: null,
           }}
         />

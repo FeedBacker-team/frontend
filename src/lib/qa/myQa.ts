@@ -1,6 +1,7 @@
 import { PROJECT_TAG_LABEL } from '@/constants/project';
 import {
   computeResponseDeadlineHoursLeft,
+  mapFeedbackStatusToReviewStatus,
   UNKNOWN_REVIEWER_NICKNAME,
 } from '@/lib/feedback';
 import { normalizeImageUrl } from '@/lib/image';
@@ -70,23 +71,36 @@ function mapToMyQaRecruitItem(recruitment: MyQaRecruitment): MyQaRecruitItem {
 }
 
 type SubmittedFeedbackProgress = FeedbackProgressApiResponse & {
-  status: 'SUBMITTED' | 'ACCEPTED' | 'REJECTED';
+  status:
+    | 'SUBMITTED'
+    | 'ACCEPTED'
+    | 'REJECTED'
+    | 'OBJECTED'
+    | 'OBJECTION_ACCEPTED'
+    | 'OBJECTION_REJECTED';
 };
 
+/**
+ * 거절 후 이의제기가 진행된 건(OBJECTED/OBJECTION_ACCEPTED/OBJECTION_REJECTED)도
+ * 메이커 입장에선 거절 처리된 제출 건이므로 "제출된 피드백" 목록에 포함시킨다.
+ */
 function isSubmittedFeedbackProgress(
   response: FeedbackProgressApiResponse
 ): response is SubmittedFeedbackProgress {
   return (
     response.status === 'SUBMITTED' ||
     response.status === 'ACCEPTED' ||
-    response.status === 'REJECTED'
+    response.status === 'REJECTED' ||
+    response.status === 'OBJECTED' ||
+    response.status === 'OBJECTION_ACCEPTED' ||
+    response.status === 'OBJECTION_REJECTED'
   );
 }
 
 function mapToMyQaFeedbackReviewItem(
   response: SubmittedFeedbackProgress
 ): MyQaFeedbackReviewItem {
-  const status = response.status === 'SUBMITTED' ? 'PENDING_REVIEW' : response.status;
+  const status = mapFeedbackStatusToReviewStatus(response.status);
 
   return {
     id: response.feedbackId,
@@ -174,6 +188,7 @@ function mapParticipationStatus(
       // 짧은 틈을 메우기 위한 낙관적 표시. 새로고침하면 실제 상태로 대체된다.
       return hasFiledObjection ? 'DISPUTE_REVIEWING' : 'REJECTED';
     case 'CANCELED':
+      return 'GIVEN_UP';
     case 'EXPIRED':
     default:
       return 'NOT_SUBMITTED';
@@ -201,7 +216,7 @@ function mapToMyQaParticipationItem(
     completeDate: participation.completeAt
       ? toDateOnly(participation.completeAt)
       : null,
-    rewardAcorn: participation.rewardAcorn,
+    rewardAcorn: participation.rewardAcorn ?? 0,
   };
 }
 

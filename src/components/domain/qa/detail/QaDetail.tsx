@@ -37,6 +37,7 @@ import {
 import {
   formatQaDeadlineLabel,
   getQaDaysRemaining,
+  hasQaDeadlinePassed,
 } from '@/lib/qa/deadline';
 import { markdownToPlainText } from '@/lib/markdown/plainText';
 import { useAuthStore } from '@/stores/authStore';
@@ -296,6 +297,7 @@ type QaDetailCardProps = {
 
 function QaDetailCard({ qa, project }: QaDetailCardProps) {
   const daysRemaining = getQaDaysRemaining(qa.endAt);
+  const isClosed = qa.status !== 'RECRUITING' || hasQaDeadlinePassed(qa.endAt);
   const ownerProfileImageSrc =
     project.ownerProfileImageUrl || '/icons/basic-avatars.svg';
   const postThumbnailUrl =
@@ -350,8 +352,8 @@ function QaDetailCard({ qa, project }: QaDetailCardProps) {
 
           <div className="flex items-center gap-2">
             <Badge>{TARGET_TYPE_LABEL[qa.targetType]}</Badge>
-            <Badge variant={daysRemaining <= 2 ? 'rust' : 'green'}>
-              {formatQaDeadlineLabel(daysRemaining)}
+            <Badge variant={isClosed || daysRemaining <= 2 ? 'rust' : 'green'}>
+              {isClosed ? '종료된 QA' : formatQaDeadlineLabel(daysRemaining)}
             </Badge>
             <Badge
               variant="yellow"
@@ -447,7 +449,8 @@ function QaRecruitmentStatusCard({
           Math.max(0, (participantCount / qa.slotCapacity) * 100)
         )
       : 0;
-  const isRecruiting = qa.status === 'RECRUITING';
+  const isRecruiting =
+    qa.status === 'RECRUITING' && !hasQaDeadlinePassed(qa.endAt);
   const canParticipate =
     !hasParticipated && isRecruiting && qa.remainSlotCount > 0;
   const participationButtonLabel = (() => {
@@ -467,7 +470,7 @@ function QaRecruitmentStatusCard({
         return '제출 기한 만료';
       default:
         if (!isRecruiting) {
-          return '모집이 종료되었습니다';
+          return '모집 종료';
         }
 
         if (qa.remainSlotCount <= 0) {
@@ -573,7 +576,9 @@ function QaRecruitmentStatusCard({
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-h4 text-yellow-700">사용 도토리</span>
+          <span className="text-h4 text-yellow-700">
+            {isOwner ? '사용 도토리' : '보상 도토리'}
+          </span>
           <span className="flex items-center gap-1 text-h3 text-yellow-800">
             <Image
               src="/images/acorn.svg"
@@ -583,7 +588,7 @@ function QaRecruitmentStatusCard({
               height={16}
               unoptimized
             />
-            {qa.depositAcorn}
+            {isOwner ? qa.depositAcorn : qa.rewardAcorn}
           </span>
         </div>
 
@@ -606,7 +611,7 @@ function QaRecruitmentStatusCard({
                 disabled={!isRecruiting}
                 onClick={() => setIsEarlyCloseDialogOpen(true)}
               >
-                {isRecruiting ? '조기 마감하기' : '모집이 종료되었습니다'}
+                {isRecruiting ? '조기 마감하기' : '모집 종료'}
               </Button>
             </>
           ) : (

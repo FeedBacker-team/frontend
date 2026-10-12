@@ -30,11 +30,15 @@ type FeedbackDetailResponse = {
   feedbackPostTitle: string;
   feedbackStatus: MyQaParticipationStatus;
   targetType: QaTargetType;
-  rewardAcorn: number;
+  /** 거절된 참여는 보상이 없어 null로 내려온다 */
+  rewardAcorn: number | null;
   testerName?: string | null;
   testerProfileImageUrl?: string | null;
   rejectType: string | null;
   rejectDetail: string | null;
+  objectReason: string | null;
+  /** 운영팀 검토 의견. 이의제기 검토가 완료되기 전에는 null */
+  objectResult: string | null;
   thumbnail: ImageResponse | null;
   startAt: string;
   endAt: string;

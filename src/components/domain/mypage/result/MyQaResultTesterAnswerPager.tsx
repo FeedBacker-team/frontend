@@ -20,6 +20,21 @@ function MyQaResultTesterAnswerPager({
   testerAnswers,
 }: MyQaResultTesterAnswerPagerProps) {
   const [page, setPage] = useState(1);
+
+  if (testerAnswers.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-5 px-5 py-16">
+        <span
+          aria-hidden
+          className="flex size-12 items-center justify-center rounded-lg bg-rust-50"
+        >
+          <span className="size-8 bg-rust-600 mask-[url(/icons/info.svg)] mask-center mask-contain mask-no-repeat" />
+        </span>
+        <p className="text-t3 text-text-default">참여한 테스터가 없습니다</p>
+      </div>
+    );
+  }
+
   const current = testerAnswers[page - 1];
 
   return (

@@ -14,7 +14,6 @@ import type { QaRecruitmentStatus } from '@/types/qa';
 type MyQaEarlyCloseControlsProps = {
   feedbackPostId: string;
   status: QaRecruitmentStatus;
-  daysLeft: number | null;
   pendingReviewCount: number;
   recruitedCount: number;
   completedCount: number;
@@ -23,7 +22,6 @@ type MyQaEarlyCloseControlsProps = {
 function MyQaEarlyCloseControls({
   feedbackPostId,
   status,
-  daysLeft,
   pendingReviewCount,
   recruitedCount,
   completedCount,
@@ -34,6 +32,12 @@ function MyQaEarlyCloseControls({
   const completeMutation = useCompleteQaRecruitment(feedbackPostId);
 
   const isRecruiting = status === 'RECRUITING';
+  const isClosed = status === 'CLOSED';
+  const hasPendingReview = pendingReviewCount > 0;
+  // 모집 중이면 언제든 조기 마감할 수 있고, 모집이 종료(CLOSED)된 뒤에는
+  // 아직 리뷰하지 않은 피드백이 남아있지 않을 때만 완료 처리로 넘어갈 수 있다.
+  // 그렇지 않으면 모집 종료 후 completed API를 호출할 방법이 영영 없어진다.
+  const canComplete = isRecruiting || (isClosed && !hasPendingReview);
   // 모집 인원이 다 차면 status가 RECRUITING에서 바뀌지만, 그렇다고 참여자들이
   // 피드백까지 다 제출했다는 뜻은 아니므로 완료 문구는 따로 구분해서 보여준다.
   const isFeedbackAllSubmitted = completedCount >= recruitedCount;
@@ -41,6 +45,9 @@ function MyQaEarlyCloseControls({
   const earlyCloseButtonLabel = (() => {
     if (isRecruiting) {
       return '조기 마감하기';
+    }
+    if (isClosed) {
+      return hasPendingReview ? '검토할 피드백이 있어요' : '완료 처리하기';
     }
     return isFeedbackAllSubmitted ? '종료된 QA입니다.' : '모집이 마감되었습니다.';
   })();
@@ -58,7 +65,7 @@ function MyQaEarlyCloseControls({
       <Button
         variant="outline"
         size="medium"
-        disabled={daysLeft === null}
+        disabled={!canComplete}
         onClick={handleEarlyCloseClick}
       >
         {earlyCloseButtonLabel}
@@ -85,6 +92,7 @@ function MyQaEarlyCloseControls({
 
       <QaEarlyCloseConfirmDialog
         open={isConfirmDialogOpen}
+        mode={isClosed ? 'complete' : 'earlyClose'}
         onOpenChange={(open) => {
           if (!completeMutation.isPending) {
             setIsConfirmDialogOpen(open);
@@ -95,13 +103,15 @@ function MyQaEarlyCloseControls({
           completeMutation.mutate(undefined, {
             onSuccess: () => {
               setIsConfirmDialogOpen(false);
-              toast.success('QA 모집을 조기 마감했습니다');
+              toast.success(
+                isClosed ? 'QA를 완료 처리했습니다' : 'QA 모집을 조기 마감했습니다'
+              );
             },
             onError: (error) => {
               toast.error(
                 error instanceof Error
                   ? error.message
-                  : 'QA 모집 조기 마감에 실패했습니다'
+                  : 'QA 처리에 실패했습니다'
               );
             },
           });
