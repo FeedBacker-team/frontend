@@ -41,6 +41,7 @@ function QaRewardRankings() {
       href: `/qa/${qa.feedbackPostId}`,
       title: qa.title,
       thumbnailUrl: qa.thumbnailUrl ?? undefined,
+      isPinned: qa.isPinned,
       description: (
         <span className="flex items-center gap-1 text-c1 text-yellow-800">
           <Image

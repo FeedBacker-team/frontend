@@ -13,6 +13,7 @@ type RankedListItem = {
   title: string;
   description?: ReactNode;
   thumbnailUrl?: string;
+  isPinned?: boolean;
 };
 
 type RankedListProps = {
@@ -102,7 +103,16 @@ function RankedList({
         ) : null}
       </div>
       <div className="flex min-w-0 flex-1 flex-col">
-        <p className="text-h4 truncate text-text-default">{item.title}</p>
+        <div className="flex min-w-0 items-center gap-1">
+          {item.isPinned ? (
+            <span
+              role="img"
+              aria-label="고정"
+              className="size-5 shrink-0 bg-yellow-400 mask-[url(/icons/pin.svg)] mask-center mask-contain mask-no-repeat"
+            />
+          ) : null}
+          <p className="text-h4 truncate text-text-default">{item.title}</p>
+        </div>
         {item.description ? (
           <div className="text-b3 truncate text-text-sub">
             {item.description}
