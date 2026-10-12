@@ -50,8 +50,8 @@ const SOCIAL_ITEMS = [
 
 function Footer() {
   return (
-    <footer className="w-full border-t border-border-default bg-bg-default px-6 py-10 md:px-30 md:py-15">
-      <div className="flex flex-col gap-10 md:gap-18.5">
+    <footer className="w-full border-t border-border-default bg-bg-deep px-6 py-10 md:px-30 md:py-13">
+      <div className="flex flex-col gap-10 md:gap-7">
         <div className="flex items-center justify-between">
           <Link href="/" className="relative h-6.75 w-50 shrink-0">
             <Image
@@ -85,7 +85,7 @@ function Footer() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
+        <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <div className="flex flex-col gap-2 md:w-1/2">
             {CONTACT_ITEMS.map((item) => (
               <div key={item.label} className="flex items-center gap-2">
@@ -106,7 +106,7 @@ function Footer() {
             ))}
           </div>
 
-          <div className="flex w-full flex-col items-end gap-8 md:w-108.75">
+          <div className="flex w-full flex-col items-end gap-8 md:w-108.75 md:gap-5">
             <nav className="flex w-full flex-wrap items-center justify-end gap-x-7 gap-y-2 md:flex-nowrap">
               {LINK_ITEMS.map((item) => (
                 <Link
