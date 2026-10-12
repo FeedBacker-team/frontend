@@ -72,7 +72,6 @@ function MyQaEarlyCloseControls({
       </Button>
       <Button
         size="medium"
-        disabled={isRecruiting}
         onClick={() => router.push(`/mypage/my-qa/${feedbackPostId}/result`)}
       >
         QA 결과 확인하기
