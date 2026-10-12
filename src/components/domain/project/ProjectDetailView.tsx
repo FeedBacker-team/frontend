@@ -5,6 +5,7 @@ import { HomeRankedProjects } from '@/components/domain/home/HomeRankedProjects'
 import { ProjectDetail } from '@/components/domain/project/ProjectDetail';
 import { PROJECT_TAG_LABEL } from '@/constants/project';
 import { useProjectDetail } from '@/hooks/useProjects';
+import { hasQaDeadlinePassed } from '@/lib/qa/deadline';
 import type { ProjectDetail as ProjectDetailData } from '@/types/project';
 
 type ProjectDetailViewProps = {
@@ -93,8 +94,10 @@ function ProjectDetailView({
           url={project.serviceUrl}
           description={project.description}
           isOwner={project.isOwner}
+          hasActiveQa={project.hasActiveQa}
           recruitingQa={
-            project.hasActiveQa && project.activeQa
+            project.activeQa?.status === 'RECRUITING' &&
+            !hasQaDeadlinePassed(project.activeQa.endAt)
               ? {
                   feedbackPostId: project.activeQa.feedbackPostId,
                   title: project.activeQa.title,

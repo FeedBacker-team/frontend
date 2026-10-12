@@ -35,6 +35,7 @@ type ProjectCard = {
   tags: ProjectTag[];
   created_at: string;
   view_count: number;
+  is_pinned?: boolean;
 };
 
 type ProjectListResponse = {

@@ -51,6 +51,7 @@ type QaRecruitmentCardResponse = {
   slot_capacity: number;
   remain_slot_count: number;
   reward_acorn: number;
+  is_pinned?: boolean;
 };
 
 type QaRecruitmentListApiResponse = {
@@ -82,6 +83,7 @@ function mapQaRecruitmentCard(
     ),
     requiredAcorns: response.reward_acorn * response.slot_capacity,
     createdAt: response.start_at,
+    isPinned: response.is_pinned === true,
   };
 }
 
