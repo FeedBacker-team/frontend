@@ -139,6 +139,7 @@ type QaRecruitmentCard = {
   participantCount: number;
   requiredAcorns: number;
   createdAt: string;
+  isPinned: boolean;
 };
 
 type QaRecruitmentListResponse = {

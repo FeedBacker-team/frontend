@@ -115,6 +115,7 @@ function QaBrowse() {
                       participantCount={qa.participantCount}
                       requiredAcorns={qa.requiredAcorns}
                       daysRemaining={getQaDaysRemaining(qa.endAt, today)}
+                      isPinned={qa.isPinned}
                     />
                   </Link>
                 </li>

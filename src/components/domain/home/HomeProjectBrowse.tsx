@@ -124,6 +124,7 @@ function HomeProjectBrowse() {
                   thumbnailUrl={project.thumbnail_url}
                   publishedAt={project.created_at}
                   viewCount={project.view_count}
+                  isPinned={project.is_pinned === true}
                 />
               </li>
             ))

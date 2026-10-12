@@ -215,6 +215,7 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
     participantCount: 3,
     requiredAcorns: 300,
     createdAt: '2026-09-23T15:00:00+09:00',
+    isPinned: false,
   },
   {
     feedbackPostId: '22',
@@ -231,6 +232,7 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
     participantCount: 6,
     requiredAcorns: 400,
     createdAt: '2026-09-21T12:00:00+09:00',
+    isPinned: false,
   },
   {
     feedbackPostId: '23',
@@ -247,6 +249,7 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
     participantCount: 2,
     requiredAcorns: 400,
     createdAt: '2026-09-24T18:00:00+09:00',
+    isPinned: false,
   },
   {
     feedbackPostId: '24',
@@ -263,6 +266,7 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
     participantCount: 1,
     requiredAcorns: 300,
     createdAt: '2026-09-25T10:30:00+09:00',
+    isPinned: false,
   },
   {
     feedbackPostId: '25',
@@ -279,6 +283,7 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
     participantCount: 4,
     requiredAcorns: 420,
     createdAt: '2026-09-19T14:00:00+09:00',
+    isPinned: false,
   },
   {
     feedbackPostId: '26',
@@ -295,6 +300,7 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
     participantCount: 5,
     requiredAcorns: 250,
     createdAt: '2026-09-14T11:00:00+09:00',
+    isPinned: false,
   },
   {
     feedbackPostId: '27',
@@ -311,6 +317,7 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
     participantCount: 4,
     requiredAcorns: 500,
     createdAt: '2026-09-22T16:00:00+09:00',
+    isPinned: false,
   },
   {
     feedbackPostId: '28',
@@ -327,6 +334,7 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
     participantCount: 5,
     requiredAcorns: 240,
     createdAt: '2026-09-23T13:00:00+09:00',
+    isPinned: false,
   },
   {
     feedbackPostId: '29',
@@ -343,6 +351,7 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
     participantCount: 7,
     requiredAcorns: 720,
     createdAt: '2026-09-20T17:30:00+09:00',
+    isPinned: false,
   },
   {
     feedbackPostId: '30',
@@ -359,6 +368,7 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
     participantCount: 2,
     requiredAcorns: 350,
     createdAt: '2026-09-24T20:00:00+09:00',
+    isPinned: false,
   },
   {
     feedbackPostId: '31',
@@ -375,6 +385,7 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
     participantCount: 12,
     requiredAcorns: 750,
     createdAt: '2026-09-23T09:30:00+09:00',
+    isPinned: false,
   },
   {
     feedbackPostId: '32',
@@ -391,6 +402,7 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
     participantCount: 3,
     requiredAcorns: 320,
     createdAt: '2026-09-19T11:00:00+09:00',
+    isPinned: false,
   },
   {
     feedbackPostId: '33',
@@ -407,6 +419,7 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
     participantCount: 4,
     requiredAcorns: 540,
     createdAt: '2026-09-25T08:00:00+09:00',
+    isPinned: false,
   },
   {
     feedbackPostId: '34',
@@ -423,6 +436,7 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
     participantCount: 1,
     requiredAcorns: 300,
     createdAt: '2026-09-21T19:00:00+09:00',
+    isPinned: false,
   },
   {
     feedbackPostId: '35',
@@ -439,6 +453,7 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
     participantCount: 8,
     requiredAcorns: 600,
     createdAt: '2026-09-22T10:00:00+09:00',
+    isPinned: false,
   },
   {
     feedbackPostId: '36',
@@ -455,6 +470,7 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
     participantCount: 2,
     requiredAcorns: 490,
     createdAt: '2026-09-17T15:30:00+09:00',
+    isPinned: false,
   },
   {
     feedbackPostId: '37',
@@ -471,6 +487,7 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
     participantCount: 6,
     requiredAcorns: 500,
     createdAt: '2026-09-23T21:00:00+09:00',
+    isPinned: false,
   },
   {
     feedbackPostId: '38',
@@ -487,6 +504,7 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
     participantCount: 0,
     requiredAcorns: 400,
     createdAt: '2026-09-18T14:30:00+09:00',
+    isPinned: false,
   },
   {
     feedbackPostId: '39',
@@ -503,6 +521,7 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
     participantCount: 3,
     requiredAcorns: 480,
     createdAt: '2026-09-26T08:30:00+09:00',
+    isPinned: false,
   },
   {
     feedbackPostId: '40',
@@ -519,6 +538,7 @@ const MOCK_QA_RECRUITMENTS: QaRecruitmentCard[] = [
     participantCount: 6,
     requiredAcorns: 360,
     createdAt: '2026-09-09T10:00:00+09:00',
+    isPinned: false,
   },
 ];
 
