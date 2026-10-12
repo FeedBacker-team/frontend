@@ -19,6 +19,7 @@ function toRankedItem(project: ProjectCard): RankedListItem {
     title: project.title,
     description: markdownToPlainText(project.description),
     thumbnailUrl: project.thumbnail_url ?? undefined,
+    isPinned: project.is_pinned === true,
   };
 }
 

@@ -49,7 +49,7 @@
 
 제목과 흰색 카드 안에 썸네일·제목·보조 콘텐츠 행을 표시합니다. 홈 프로젝트 랭킹과 QA 도토리 랭킹에서 사용합니다.
 
-데이터 호출과 정렬은 사용하는 도메인 컴포넌트가 담당합니다. `thumbnailUrl`이 없으면 52px 회색 플레이스홀더를 표시합니다.
+데이터 호출과 정렬은 사용하는 도메인 컴포넌트가 담당합니다. `thumbnailUrl`이 없으면 52px 회색 플레이스홀더를 표시하며, `isPinned`가 `true`이면 제목 앞에 고정 아이콘을 표시합니다.
 
 ### Props
 
@@ -74,6 +74,7 @@
 | `title` | `string` | 행 제목 |
 | `description` | `ReactNode` | 설명 문자열 또는 아이콘을 포함한 보조 콘텐츠 |
 | `thumbnailUrl` | `string` | 선택적 썸네일 URL |
+| `isPinned` | `boolean` | `true`이면 제목 앞에 고정 아이콘 표시 |
 
 ### 사용 예
 
@@ -86,6 +87,7 @@
       title: '프로젝트 제목',
       description: '프로젝트 설명',
       thumbnailUrl: '/project.png',
+      isPinned: true,
     },
   ]}
 />
