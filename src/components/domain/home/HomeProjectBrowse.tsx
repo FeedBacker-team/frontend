@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/common/Button';
@@ -16,16 +16,24 @@ import {
   PROJECT_TAGS,
 } from '@/constants/project';
 import { useProjects } from '@/hooks/useProjects';
-import type { ProjectSort, ProjectTag } from '@/types/project';
+import { useBrowseQuery } from '@/hooks/useBrowseQuery';
 
 function HomeProjectBrowse() {
   const router = useRouter();
   const { runProtectedAction } = useActionGuard();
-  const [keywordInput, setKeywordInput] = useState('');
-  const [keyword, setKeyword] = useState('');
-  const [selectedTags, setSelectedTags] = useState<ProjectTag[]>([]);
-  const [sort, setSort] = useState<ProjectSort>('LATEST');
-  const [page, setPage] = useState(1);
+  const {
+    keywordInput,
+    setKeywordInput,
+    keyword,
+    selectedTags,
+    sort,
+    page,
+    setPage,
+    search: handleSearch,
+    toggleTag: handleToggleTag,
+    resetTags: handleResetTags,
+    setSort: handleSortChange,
+  } = useBrowseQuery(PROJECT_SORT_OPTIONS, 'LATEST');
 
   const { data, isPending, isError } = useProjects({
     keyword: keyword || undefined,
@@ -47,40 +55,6 @@ function HomeProjectBrowse() {
       toast.error('프로젝트 목록을 불러오지 못했습니다');
     }
   }, [isError]);
-
-  const resetPage = () => {
-    setPage(1);
-  };
-
-  const handleSearch = () => {
-    setKeyword(keywordInput.trim());
-    resetPage();
-  };
-
-  const handleToggleTag = (value: string) => {
-    const tag = value as ProjectTag;
-
-    setSelectedTags((current) => {
-      if (current.includes(tag)) {
-        return current.filter((item) => item !== tag);
-      }
-      if (current.length >= 5) {
-        return current;
-      }
-      return [...current, tag];
-    });
-    resetPage();
-  };
-
-  const handleResetTags = () => {
-    setSelectedTags([]);
-    resetPage();
-  };
-
-  const handleSortChange = (value: string) => {
-    setSort(value as ProjectSort);
-    resetPage();
-  };
 
   const handleRegisterProject = () => {
     runProtectedAction(() => router.push('/projects/new'));

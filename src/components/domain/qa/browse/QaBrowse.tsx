@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Link from 'next/link';
 
 import { toast } from '@/components/common/Sonner';
@@ -11,8 +11,7 @@ import { BrowseSection } from '@/components/domain/shared/BrowseSection';
 import { PROJECT_TAG_LABEL, PROJECT_TAGS } from '@/constants/project';
 import { useQaRecruitments } from '@/hooks/useQaRecruitments';
 import { getQaDaysRemaining } from '@/lib/qa/deadline';
-import type { QaSort } from '@/types/qa';
-import type { ProjectTag } from '@/types/project';
+import { useBrowseQuery } from '@/hooks/useBrowseQuery';
 
 const QA_SORT_OPTIONS = [
   { value: 'LATEST', label: '최신순' },
@@ -22,11 +21,19 @@ const QA_SORT_OPTIONS = [
 const BROWSE_QA_PAGE_SIZE = 5;
 
 function QaBrowse() {
-  const [keywordInput, setKeywordInput] = useState('');
-  const [keyword, setKeyword] = useState('');
-  const [selectedTags, setSelectedTags] = useState<ProjectTag[]>([]);
-  const [sort, setSort] = useState<QaSort>('LATEST');
-  const [page, setPage] = useState(1);
+  const {
+    keywordInput,
+    setKeywordInput,
+    keyword,
+    selectedTags,
+    sort,
+    page,
+    setPage,
+    search,
+    toggleTag,
+    resetTags,
+    setSort,
+  } = useBrowseQuery(QA_SORT_OPTIONS, 'LATEST');
 
   const { data, isPending, isError } = useQaRecruitments({
     keyword: keyword || undefined,
@@ -50,23 +57,6 @@ function QaBrowse() {
     }
   }, [isError]);
 
-  const handleToggleTag = (value: string) => {
-    const tag = value as ProjectTag;
-
-    setSelectedTags((current) => {
-      if (current.includes(tag)) {
-        return current.filter((item) => item !== tag);
-      }
-
-      if (current.length >= 5) {
-        return current;
-      }
-
-      return [...current, tag];
-    });
-    setPage(1);
-  };
-
   return (
     <BrowseSection
       title="모집 중인 QA"
@@ -75,25 +65,16 @@ function QaBrowse() {
       searchPlaceholder="관심 있는 프로젝트나 QA를 검색해 보세요"
       keyword={keywordInput}
       onKeywordChange={setKeywordInput}
-      onSearch={() => {
-        setKeyword(keywordInput.trim());
-        setPage(1);
-      }}
+      onSearch={search}
       tags={PROJECT_TAGS}
       selectedTagValues={selectedTags}
-      onToggleTag={handleToggleTag}
-      onResetTags={() => {
-        setSelectedTags([]);
-        setPage(1);
-      }}
+      onToggleTag={toggleTag}
+      onResetTags={resetTags}
       resultCount={isPending ? 0 : resultCount}
       emptyTitle="조건에 맞는 QA 모집 글이 없어요"
       sortOptions={QA_SORT_OPTIONS}
       sortValue={sort}
-      onSortChange={(value) => {
-        setSort(value as QaSort);
-        setPage(1);
-      }}
+      onSortChange={setSort}
       page={page}
       totalPages={totalPages}
       onPageChange={setPage}
