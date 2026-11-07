@@ -10,8 +10,12 @@ import { getProjects } from '@/apis/project';
 import { HomeBanner } from '@/components/domain/home/HomeBanner';
 import { HomeProjectBrowse } from '@/components/domain/home/HomeProjectBrowse';
 import { HomeRankedProjects } from '@/components/domain/home/HomeRankedProjects';
+import { JsonLd } from '@/components/seo/JsonLd';
+import {
+  SITE_DESCRIPTION,
+  SITE_URL,
+} from '@/constants/metadata';
 import { BROWSE_PROJECT_PAGE_SIZE } from '@/constants/project';
-import { SITE_URL } from '@/constants/metadata';
 import { projectKeys } from '@/lib/project/queryKeys';
 import type { ProjectListParams } from '@/types/project';
 
@@ -29,6 +33,33 @@ export const metadata: Metadata = {
 
 export const dynamic = 'force-dynamic';
 
+const HOME_STRUCTURED_DATA = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}/#organization`,
+      name: 'Feedbacker',
+      alternateName: '피드배커',
+      url: SITE_URL,
+      logo: `${SITE_URL}/images/Logo_symbol.svg`,
+      description: SITE_DESCRIPTION,
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_URL}/#website`,
+      name: 'Feedbacker',
+      alternateName: '피드배커',
+      url: SITE_URL,
+      description: SITE_DESCRIPTION,
+      inLanguage: 'ko-KR',
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+    },
+  ],
+};
+
 export default async function Home() {
   const queryClient = new QueryClient();
 
@@ -39,18 +70,21 @@ export default async function Home() {
   });
 
   return (
-    <div className="flex gap-10">
-      <div className="flex min-w-0 flex-1 flex-col gap-10">
-        <HomeBanner />
-        <HydrationBoundary state={dehydrate(queryClient)}>
-          <Suspense fallback={null}>
-            <HomeProjectBrowse />
-          </Suspense>
-        </HydrationBoundary>
+    <>
+      <JsonLd data={HOME_STRUCTURED_DATA} />
+      <div className="flex gap-10">
+        <div className="flex min-w-0 flex-1 flex-col gap-10">
+          <HomeBanner />
+          <HydrationBoundary state={dehydrate(queryClient)}>
+            <Suspense fallback={null}>
+              <HomeProjectBrowse />
+            </Suspense>
+          </HydrationBoundary>
+        </div>
+        <aside className="flex w-80 shrink-0 flex-col gap-14">
+          <HomeRankedProjects />
+        </aside>
       </div>
-      <aside className="flex w-80 shrink-0 flex-col gap-14">
-        <HomeRankedProjects />
-      </aside>
-    </div>
+    </>
   );
 }
