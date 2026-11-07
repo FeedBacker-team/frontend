@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import {
   dehydrate,
@@ -10,6 +11,7 @@ import { HomeBanner } from '@/components/domain/home/HomeBanner';
 import { HomeProjectBrowse } from '@/components/domain/home/HomeProjectBrowse';
 import { HomeRankedProjects } from '@/components/domain/home/HomeRankedProjects';
 import { BROWSE_PROJECT_PAGE_SIZE } from '@/constants/project';
+import { SITE_URL } from '@/constants/metadata';
 import { projectKeys } from '@/lib/project/queryKeys';
 import type { ProjectListParams } from '@/types/project';
 
@@ -18,6 +20,12 @@ const INITIAL_PROJECT_LIST_PARAMS = {
   page: 0,
   size: BROWSE_PROJECT_PAGE_SIZE,
 } satisfies ProjectListParams;
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: SITE_URL,
+  },
+};
 
 export const dynamic = 'force-dynamic';
 
