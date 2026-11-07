@@ -8,7 +8,6 @@ import {
 
 import { getQaRecruitments } from '@/apis/qaRecruitments';
 import { QaBrowse } from '@/components/domain/qa/browse/QaBrowse';
-import { QaSeoGuide } from '@/components/domain/qa/browse/QaSeoGuide';
 import { QaSidebar } from '@/components/domain/qa/browse/QaSidebar';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { SITE_URL } from '@/constants/metadata';
@@ -84,7 +83,6 @@ export default async function QaPage() {
               <QaBrowse />
             </Suspense>
           </HydrationBoundary>
-          <QaSeoGuide />
         </main>
         <aside className="w-80 shrink-0">
           <QaSidebar />
