@@ -1,7 +1,6 @@
 import type { MetadataRoute } from 'next';
 
 import { getProjects } from '@/apis/project';
-import { getQaRecruitments } from '@/apis/qaRecruitments';
 import { SITE_URL } from '@/constants/metadata';
 
 const SITEMAP_PAGE_SIZE = 50;
@@ -20,7 +19,9 @@ const STATIC_ENTRIES: MetadataRoute.Sitemap = [
   },
 ];
 
-export const revalidate = 3600;
+// 메타데이터 라우트의 기본 캐시를 사용하지 않고,
+// 프로젝트의 생성·삭제 내역을 요청 시점에 반영한다.
+export const dynamic = 'force-dynamic';
 
 async function getProjectEntries(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = [];
@@ -49,33 +50,6 @@ async function getProjectEntries(): Promise<MetadataRoute.Sitemap> {
   return entries;
 }
 
-async function getQaEntries(): Promise<MetadataRoute.Sitemap> {
-  const entries: MetadataRoute.Sitemap = [];
-  let page = 0;
-  let hasNext = true;
-
-  while (hasNext) {
-    const response = await getQaRecruitments({
-      sort: 'LATEST',
-      page,
-      size: SITEMAP_PAGE_SIZE,
-    }, AbortSignal.timeout(SITEMAP_REQUEST_TIMEOUT_MS));
-
-    entries.push(
-      ...response.feedbackPosts.map((qa) => ({
-        url: `${SITE_URL}/qa/${encodeURIComponent(qa.feedbackPostId)}`,
-        changeFrequency: 'daily' as const,
-        priority: 0.7,
-      }))
-    );
-
-    hasNext = response.hasNext && response.feedbackPosts.length > 0;
-    page += 1;
-  }
-
-  return entries;
-}
-
 function getUniqueEntries(entries: MetadataRoute.Sitemap) {
   return [...new Map(entries.map((entry) => [entry.url, entry])).values()];
 }
@@ -85,13 +59,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return STATIC_ENTRIES;
   }
 
-  const results = await Promise.allSettled([
-    getProjectEntries(),
-    getQaEntries(),
-  ]);
-  const dynamicEntries = results.flatMap((result) =>
-    result.status === 'fulfilled' ? result.value : []
-  );
+  const projectEntries = await getProjectEntries().catch(() => []);
 
-  return getUniqueEntries([...STATIC_ENTRIES, ...dynamicEntries]);
+  return getUniqueEntries([...STATIC_ENTRIES, ...projectEntries]);
 }
