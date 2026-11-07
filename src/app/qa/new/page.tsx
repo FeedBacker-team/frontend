@@ -1,8 +1,15 @@
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 import { RequireCompletedProfile } from '@/components/domain/auth/RequireCompletedProfile';
 import { QaRecruitNewView } from '@/components/domain/qa/recruit/QaRecruitNewView';
+import { createRobotsMetadata } from '@/lib/seo/metadata';
 import type { QaTargetType } from '@/types/qa';
+
+export const metadata: Metadata = {
+  title: 'QA 모집 등록',
+  robots: createRobotsMetadata(false),
+};
 
 type QaRecruitNewPageProps = {
   searchParams: Promise<{
