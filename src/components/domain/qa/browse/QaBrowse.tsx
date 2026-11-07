@@ -9,16 +9,10 @@ import { QaRecruitStart } from '@/components/domain/qa/recruit/QaRecruitStart';
 import { BrowseCardSkeleton } from '@/components/domain/shared/BrowseCardSkeleton';
 import { BrowseSection } from '@/components/domain/shared/BrowseSection';
 import { PROJECT_TAG_LABEL, PROJECT_TAGS } from '@/constants/project';
+import { BROWSE_QA_PAGE_SIZE, QA_SORT_OPTIONS } from '@/constants/qa';
 import { useQaRecruitments } from '@/hooks/useQaRecruitments';
 import { getQaDaysRemaining } from '@/lib/qa/deadline';
 import { useBrowseQuery } from '@/hooks/useBrowseQuery';
-
-const QA_SORT_OPTIONS = [
-  { value: 'LATEST', label: '최신순' },
-  { value: 'DEADLINE', label: '마감 임박 순' },
-] as const;
-
-const BROWSE_QA_PAGE_SIZE = 5;
 
 function QaBrowse() {
   const {
@@ -60,6 +54,7 @@ function QaBrowse() {
   return (
     <BrowseSection
       title="모집 중인 QA"
+      headingLevel={1}
       description="동료들의 프로젝트를 직접 테스트하고 피드백을 남겨 포인트를 모아보세요."
       action={<QaRecruitStart />}
       searchPlaceholder="관심 있는 프로젝트나 QA를 검색해 보세요"
