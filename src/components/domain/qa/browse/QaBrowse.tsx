@@ -53,9 +53,9 @@ function QaBrowse() {
 
   return (
     <BrowseSection
-      title="모집 중인 QA"
+      title="사이드 프로젝트 유저 테스트·QA 모집"
       headingLevel={1}
-      description="동료들의 프로젝트를 직접 테스트하고 피드백을 남겨 포인트를 모아보세요."
+      description="다른 메이커의 서비스를 직접 테스트하고 사용성 피드백을 남기거나, 내 서비스의 QA 참여자를 모집해 보세요."
       action={<QaRecruitStart />}
       searchPlaceholder="관심 있는 프로젝트나 QA를 검색해 보세요"
       keyword={keywordInput}

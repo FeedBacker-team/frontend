@@ -65,7 +65,7 @@ function HomeProjectBrowse() {
       <BrowseSection
         title="프로젝트 둘러보기"
         headingLevel={1}
-        description="등록된 프로젝트를 살펴보고 다양한 분야의 작업물을 탐색해 보세요."
+        description="사이드 프로젝트를 둘러보고, 서비스를 직접 테스트하며 사용성 피드백을 나눠보세요."
         action={
           <Button
             size="medium"
