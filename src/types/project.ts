@@ -28,7 +28,7 @@ type ProjectListParams = {
 };
 
 type ProjectCard = {
-  project_id: number;
+  project_id: string;
   title: string;
   description: string;
   thumbnail_url: string | null;

@@ -22,6 +22,7 @@ import {
 } from '@/lib/qa/myQa';
 import { buildQaRecruitmentRequest } from '@/lib/qa/recruit';
 import { mapToMyQaResultDetail } from '@/lib/qa/result';
+import { qaRecruitmentKeys } from '@/lib/qa/queryKeys';
 import { profileKeys, useProfile } from '@/hooks/useProfile';
 import { useAuthStore } from '@/stores/authStore';
 import type {
@@ -35,25 +36,6 @@ import type {
 
 const QA_REWARD_RANKING_SIZE = 5;
 const QA_REWARD_RANKING_PAGE_SIZE = 50;
-
-const qaRecruitmentKeys = {
-  all: ['qa-recruitments'] as const,
-  list: (params: QaRecruitmentListParams) =>
-    [...qaRecruitmentKeys.all, 'list', params] as const,
-  detail: (feedbackPostId: string) =>
-    [...qaRecruitmentKeys.all, 'detail', feedbackPostId] as const,
-  feedbackForm: (feedbackPostId: string) =>
-    [...qaRecruitmentKeys.all, 'feedback-form', feedbackPostId] as const,
-  feedbackReviews: (feedbackPostId: string) =>
-    [...qaRecruitmentKeys.all, 'feedback-reviews', feedbackPostId] as const,
-  result: (feedbackPostId: string) =>
-    [...qaRecruitmentKeys.all, 'result', feedbackPostId] as const,
-  mine: () => [...qaRecruitmentKeys.all, 'mine'] as const,
-  myParticipations: () =>
-    [...qaRecruitmentKeys.all, 'my-participations'] as const,
-  rewardRanking: () =>
-    [...qaRecruitmentKeys.all, 'reward-ranking'] as const,
-};
 
 type QaStatusQueryOptions = {
   enabled?: boolean;
@@ -362,7 +344,6 @@ function useSubmitQaFeedback(feedbackPostId: string) {
 }
 
 export {
-  qaRecruitmentKeys,
   useCompleteQaRecruitment,
   useCreateQaRecruitment,
   useGiveUpQaParticipation,

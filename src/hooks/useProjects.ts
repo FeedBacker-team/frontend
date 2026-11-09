@@ -10,6 +10,7 @@ import {
 } from '@/apis/projects';
 import type { MyProjectResponse, ProjectUpdateRequest } from '@/apis/projects';
 import { PROJECT_TAG_LABEL } from '@/constants/project';
+import { projectKeys } from '@/lib/project/queryKeys';
 import { useAuthStore } from '@/stores/authStore';
 import type { MyProjectItem } from '@/types/mypage';
 import type {
@@ -17,15 +18,6 @@ import type {
   ProjectListParams,
   ProjectTag,
 } from '@/types/project';
-
-const projectKeys = {
-  all: ['projects'] as const,
-  list: (params: ProjectListParams) =>
-    [...projectKeys.all, 'list', params] as const,
-  detail: (projectId: string) =>
-    [...projectKeys.all, 'detail', projectId] as const,
-  mine: () => [...projectKeys.all, 'me'] as const,
-};
 
 function formatDate(value: string) {
   return value.slice(0, 10);
@@ -125,7 +117,6 @@ function useMyProjects({ enabled = true }: UseMyProjectsOptions = {}) {
 }
 
 export {
-  projectKeys,
   useCreateProject,
   useDeleteProject,
   useMyProjects,

@@ -1,21 +1,90 @@
+import type { Metadata } from 'next';
 import { Suspense } from 'react';
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from '@tanstack/react-query';
 
+import { getProjects } from '@/apis/project';
 import { HomeBanner } from '@/components/domain/home/HomeBanner';
 import { HomeProjectBrowse } from '@/components/domain/home/HomeProjectBrowse';
 import { HomeRankedProjects } from '@/components/domain/home/HomeRankedProjects';
+import { JsonLd } from '@/components/seo/JsonLd';
+import {
+  SITE_DESCRIPTION,
+  SITE_URL,
+} from '@/constants/metadata';
+import { BROWSE_PROJECT_PAGE_SIZE } from '@/constants/project';
+import { projectKeys } from '@/lib/project/queryKeys';
+import type { ProjectListParams } from '@/types/project';
 
-export default function Home() {
+const INITIAL_PROJECT_LIST_PARAMS = {
+  sort: 'LATEST',
+  page: 0,
+  size: BROWSE_PROJECT_PAGE_SIZE,
+} satisfies ProjectListParams;
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: SITE_URL,
+  },
+};
+
+export const dynamic = 'force-dynamic';
+
+const HOME_STRUCTURED_DATA = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}/#organization`,
+      name: 'Feedbacker',
+      alternateName: '피드배커',
+      url: SITE_URL,
+      logo: `${SITE_URL}/images/Logo_symbol.svg`,
+      description: SITE_DESCRIPTION,
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_URL}/#website`,
+      name: 'Feedbacker',
+      alternateName: '피드배커',
+      url: SITE_URL,
+      description: SITE_DESCRIPTION,
+      inLanguage: 'ko-KR',
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+    },
+  ],
+};
+
+export default async function Home() {
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: projectKeys.list(INITIAL_PROJECT_LIST_PARAMS),
+    queryFn: ({ signal }) =>
+      getProjects(INITIAL_PROJECT_LIST_PARAMS, signal),
+  });
+
   return (
-    <div className="flex gap-10">
-      <div className="flex min-w-0 flex-1 flex-col gap-10">
-        <HomeBanner />
-        <Suspense fallback={null}>
-          <HomeProjectBrowse />
-        </Suspense>
+    <>
+      <JsonLd data={HOME_STRUCTURED_DATA} />
+      <div className="flex gap-10">
+        <div className="flex min-w-0 flex-1 flex-col gap-10">
+          <HomeBanner />
+          <HydrationBoundary state={dehydrate(queryClient)}>
+            <Suspense fallback={null}>
+              <HomeProjectBrowse />
+            </Suspense>
+          </HydrationBoundary>
+        </div>
+        <aside className="flex w-80 shrink-0 flex-col gap-14">
+          <HomeRankedProjects />
+        </aside>
       </div>
-      <aside className="flex w-80 shrink-0 flex-col gap-14">
-        <HomeRankedProjects />
-      </aside>
-    </div>
+    </>
   );
 }

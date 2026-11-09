@@ -1,5 +1,13 @@
+import type { Metadata } from 'next';
+
 import { RequireCompletedProfile } from '@/components/domain/auth/RequireCompletedProfile';
 import { ProjectRegisterForm } from '@/components/domain/project/ProjectRegisterForm';
+import { createRobotsMetadata } from '@/lib/seo/metadata';
+
+export const metadata: Metadata = {
+  title: '프로젝트 등록',
+  robots: createRobotsMetadata(false),
+};
 
 export default function ProjectNewPage() {
   return (

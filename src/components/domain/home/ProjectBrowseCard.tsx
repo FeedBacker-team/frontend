@@ -8,7 +8,7 @@ import { markdownToPlainText } from '@/lib/markdown/plainText';
 import { cn } from '@/lib/utils';
 
 type ProjectBrowseCardProps = {
-  projectId: number;
+  projectId: string;
   title: string;
   description: string;
   tags: string[];
