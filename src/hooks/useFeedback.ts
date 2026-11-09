@@ -9,12 +9,12 @@ import {
 import type { RejectFeedbackRequest } from '@/apis/feedbacks';
 import { getQaFeedbackForm } from '@/apis/qa';
 import { OBJECTION_REASON_TO_OBJECT_TYPE } from '@/constants/mypage';
-import { qaRecruitmentKeys } from '@/hooks/useQaRecruitments';
 import {
   mapFeedbackDetailToParticipationDetail,
   mapFeedbackDetailToReviewDetail,
 } from '@/lib/feedback';
 import type { ChoiceQuestionMeta } from '@/lib/feedback';
+import { qaRecruitmentKeys } from '@/lib/qa/queryKeys';
 import { useObjectionStore } from '@/stores/objectionStore';
 import type { ObjectionReasonValue } from '@/types/mypage';
 

@@ -19,15 +19,6 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: [
-        '/oauth/',
-        '/profile',
-        '/mypage',
-        '/projects/new',
-        '/projects/*/edit',
-        '/qa/new',
-        '/qa/*/feedback',
-      ],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
     host: SITE_URL,

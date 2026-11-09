@@ -1,4 +1,12 @@
+import type { Metadata } from 'next';
+
 import { ProjectEditView } from '@/components/domain/project/ProjectEditView';
+import { createRobotsMetadata } from '@/lib/seo/metadata';
+
+export const metadata: Metadata = {
+  title: '프로젝트 수정',
+  robots: createRobotsMetadata(false),
+};
 
 export default async function ProjectEditPage(
   props: PageProps<'/projects/[projectId]/edit'>

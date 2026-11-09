@@ -64,7 +64,7 @@ export async function generateMetadata(
     description: qa.description,
     path: `/qa/${encodeURIComponent(qaId)}`,
     imageUrl: qaImageUrl || projectThumbnailUrl,
-    shouldIndex: qa.status === 'RECRUITING',
+    shouldIndex: false,
   });
 }
 

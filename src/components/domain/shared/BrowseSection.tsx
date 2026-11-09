@@ -20,6 +20,7 @@ type BrowseSortOption = {
 
 type BrowseSectionProps = {
   title: string;
+  headingLevel?: 1 | 2;
   description: string;
   action?: ReactNode;
   searchPlaceholder: string;
@@ -47,6 +48,7 @@ type BrowseSectionProps = {
 
 function BrowseSection({
   title,
+  headingLevel = 2,
   description,
   action,
   searchPlaceholder,
@@ -71,6 +73,7 @@ function BrowseSection({
   isError = false,
   className,
 }: BrowseSectionProps) {
+  const Heading = headingLevel === 1 ? 'h1' : 'h2';
   const atMaxTags = selectedTagValues.length >= maxSelectedTags;
   const showEmpty = !isLoading && !isError && resultCount === 0;
   const showPagination = !isLoading && !isError && resultCount > 0;
@@ -78,9 +81,9 @@ function BrowseSection({
   return (
     <section className={cn('flex w-full min-w-0 flex-col gap-13', className)}>
       <div className="flex flex-col gap-7">
-        <header className="flex items-end justify-between gap-4">
+        <header className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 flex-col gap-1">
-            <h2 className="text-t3 text-text-default">{title}</h2>
+            <Heading className="text-t3 text-text-default">{title}</Heading>
             <p className="text-b2 text-text-sub">{description}</p>
           </div>
           {action}

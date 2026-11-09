@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 
 import { KakaoCallback } from '@/components/domain/auth/KakaoCallback';
+import { createRobotsMetadata } from '@/lib/seo/metadata';
 
 export const metadata: Metadata = {
   title: '카카오 로그인',
+  robots: createRobotsMetadata(false),
 };
 
 type KakaoCallbackPageProps = {
