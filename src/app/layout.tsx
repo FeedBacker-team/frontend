@@ -27,6 +27,12 @@ export const metadata: Metadata = {
     template: '%s | Feedbacker',
   },
   description: SITE_DESCRIPTION,
+  verification: {
+    other: {
+      'naver-site-verification':
+        '3c0eb3ba340883f08189ac1b2ef6a46b68267ef8',
+    },
+  },
   robots: createRobotsMetadata(),
   openGraph: {
     title: SITE_TITLE,
