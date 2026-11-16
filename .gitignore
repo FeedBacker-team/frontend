@@ -52,3 +52,6 @@ ex/
 
 # qa.md
 qa.md
+/dist/
+.vinext/
+.cloudflare/

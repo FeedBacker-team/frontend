@@ -7,6 +7,7 @@ import { ActionGuardProvider } from '@/components/domain/auth/ActionGuardProvide
 import { AuthInitializer } from '@/components/domain/auth/AuthInitializer';
 import { AppShell } from '@/components/layout/AppShell';
 import {
+  IS_PRODUCTION_DEPLOYMENT,
   OG_IMAGE_URL,
   SITE_DESCRIPTION,
   SITE_TITLE,
@@ -18,7 +19,6 @@ import { createRobotsMetadata } from '@/lib/seo/metadata';
 import './globals.css';
 
 const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
-const IS_PRODUCTION_DEPLOYMENT = process.env.VERCEL_ENV === 'production';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
