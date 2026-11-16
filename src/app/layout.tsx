@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { GoogleAnalytics } from '@next/third-parties/google';
+import Script from 'next/script';
 
 import { Toaster } from '@/components/common/Sonner';
 import { TooltipProvider } from '@/components/common/Tooltip';
@@ -70,10 +70,23 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
             </ActionGuardProvider>
           </TooltipProvider>
         </QueryProvider>
+        {IS_PRODUCTION_DEPLOYMENT && GOOGLE_ANALYTICS_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GOOGLE_ANALYTICS_ID)}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', ${JSON.stringify(GOOGLE_ANALYTICS_ID)});
+              `}
+            </Script>
+          </>
+        )}
       </body>
-      {IS_PRODUCTION_DEPLOYMENT && GOOGLE_ANALYTICS_ID && (
-        <GoogleAnalytics gaId={GOOGLE_ANALYTICS_ID} />
-      )}
     </html>
   );
 }
