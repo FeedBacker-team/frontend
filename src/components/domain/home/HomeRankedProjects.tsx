@@ -10,7 +10,7 @@ import {
 import { RANKING_PROJECT_PAGE_SIZE } from '@/constants/project';
 import { useProjects } from '@/hooks/useProjects';
 import { markdownToPlainText } from '@/lib/markdown/plainText';
-import type { ProjectCard } from '@/types/project';
+import type { ProjectCard, ProjectListResponse } from '@/types/project';
 
 function toRankedItem(project: ProjectCard): RankedListItem {
   return {
@@ -23,18 +23,32 @@ function toRankedItem(project: ProjectCard): RankedListItem {
   };
 }
 
-function HomeRankedProjects() {
-  const popular = useProjects({
-    sort: 'VIEW_COUNT',
-    page: 0,
-    size: RANKING_PROJECT_PAGE_SIZE,
-  });
-  const webTrend = useProjects({
-    sort: 'VIEW_COUNT',
-    tags: ['WEB'],
-    page: 0,
-    size: RANKING_PROJECT_PAGE_SIZE,
-  });
+type HomeRankedProjectsProps = {
+  initialPopular?: ProjectListResponse;
+  initialWebTrend?: ProjectListResponse;
+};
+
+function HomeRankedProjects({
+  initialPopular,
+  initialWebTrend,
+}: HomeRankedProjectsProps = {}) {
+  const popular = useProjects(
+    {
+      sort: 'VIEW_COUNT',
+      page: 0,
+      size: RANKING_PROJECT_PAGE_SIZE,
+    },
+    initialPopular
+  );
+  const webTrend = useProjects(
+    {
+      sort: 'VIEW_COUNT',
+      tags: ['WEB'],
+      page: 0,
+      size: RANKING_PROJECT_PAGE_SIZE,
+    },
+    initialWebTrend
+  );
 
   useEffect(() => {
     if (popular.isError || webTrend.isError) {

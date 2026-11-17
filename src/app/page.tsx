@@ -1,10 +1,4 @@
 import type { Metadata } from 'next';
-import { Suspense } from 'react';
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from '@tanstack/react-query';
 
 import { getProjects } from '@/apis/project';
 import { HomeBanner } from '@/components/domain/home/HomeBanner';
@@ -13,16 +7,32 @@ import { HomeRankedProjects } from '@/components/domain/home/HomeRankedProjects'
 import { JsonLd } from '@/components/seo/JsonLd';
 import {
   SITE_DESCRIPTION,
+  SITE_TITLE,
   SITE_URL,
 } from '@/constants/metadata';
-import { BROWSE_PROJECT_PAGE_SIZE } from '@/constants/project';
-import { projectKeys } from '@/lib/project/queryKeys';
+import {
+  BROWSE_PROJECT_PAGE_SIZE,
+  RANKING_PROJECT_PAGE_SIZE,
+} from '@/constants/project';
 import type { ProjectListParams } from '@/types/project';
 
 const INITIAL_PROJECT_LIST_PARAMS = {
   sort: 'LATEST',
   page: 0,
   size: BROWSE_PROJECT_PAGE_SIZE,
+} satisfies ProjectListParams;
+
+const POPULAR_PROJECT_LIST_PARAMS = {
+  sort: 'VIEW_COUNT',
+  page: 0,
+  size: RANKING_PROJECT_PAGE_SIZE,
+} satisfies ProjectListParams;
+
+const WEB_TREND_PROJECT_LIST_PARAMS = {
+  sort: 'VIEW_COUNT',
+  tags: ['WEB'],
+  page: 0,
+  size: RANKING_PROJECT_PAGE_SIZE,
 } satisfies ProjectListParams;
 
 export const metadata: Metadata = {
@@ -32,6 +42,14 @@ export const metadata: Metadata = {
 };
 
 export const dynamic = 'force-dynamic';
+
+async function fetchOrUndefined(params: ProjectListParams) {
+  try {
+    return await getProjects(params);
+  } catch {
+    return undefined;
+  }
+}
 
 const HOME_STRUCTURED_DATA = {
   '@context': 'https://schema.org',
@@ -44,6 +62,10 @@ const HOME_STRUCTURED_DATA = {
       url: SITE_URL,
       logo: `${SITE_URL}/images/Logo_symbol.svg`,
       description: SITE_DESCRIPTION,
+      sameAs: [
+        'https://www.instagram.com/feedbacker.team/',
+        'https://www.threads.com/@feedbacker.team',
+      ],
     },
     {
       '@type': 'WebSite',
@@ -61,28 +83,26 @@ const HOME_STRUCTURED_DATA = {
 };
 
 export default async function Home() {
-  const queryClient = new QueryClient();
-
-  await queryClient.prefetchQuery({
-    queryKey: projectKeys.list(INITIAL_PROJECT_LIST_PARAMS),
-    queryFn: ({ signal }) =>
-      getProjects(INITIAL_PROJECT_LIST_PARAMS, signal),
-  });
+  const [projects, popular, webTrend] = await Promise.all([
+    fetchOrUndefined(INITIAL_PROJECT_LIST_PARAMS),
+    fetchOrUndefined(POPULAR_PROJECT_LIST_PARAMS),
+    fetchOrUndefined(WEB_TREND_PROJECT_LIST_PARAMS),
+  ]);
 
   return (
     <>
       <JsonLd data={HOME_STRUCTURED_DATA} />
+      <h1 className="sr-only">{SITE_TITLE}</h1>
       <div className="flex gap-10">
         <div className="flex min-w-0 flex-1 flex-col gap-10">
           <HomeBanner />
-          <HydrationBoundary state={dehydrate(queryClient)}>
-            <Suspense fallback={null}>
-              <HomeProjectBrowse />
-            </Suspense>
-          </HydrationBoundary>
+          <HomeProjectBrowse initialProjects={projects} />
         </div>
         <aside className="flex w-80 shrink-0 flex-col gap-14">
-          <HomeRankedProjects />
+          <HomeRankedProjects
+            initialPopular={popular}
+            initialWebTrend={webTrend}
+          />
         </aside>
       </div>
     </>

@@ -21,6 +21,7 @@ type ProjectDetailProps = {
   authorNickname: string;
   authorProfileImageUrl?: string | null;
   publishedAt: string;
+  updatedAt?: string;
   viewCount: number;
   url: string;
   description: string;
@@ -37,6 +38,7 @@ function ProjectDetail({
   authorNickname,
   authorProfileImageUrl,
   publishedAt,
+  updatedAt,
   viewCount,
   url,
   description,
@@ -51,7 +53,7 @@ function ProjectDetail({
           {thumbnailUrl ? (
             <Image
               src={thumbnailUrl}
-              alt=""
+              alt={`${title} 프로젝트 썸네일`}
               fill
               unoptimized
               className="object-cover"
@@ -86,7 +88,16 @@ function ProjectDetail({
               <span className="text-c1 text-gray-900">{authorNickname}</span>
             </div>
             <p className="flex items-center gap-2 text-b3 text-text-info">
-              <span>{publishedAt}</span>
+              <span>등록일 {publishedAt}</span>
+              {updatedAt && updatedAt !== publishedAt ? (
+                <>
+                  <span
+                    aria-hidden
+                    className="size-1 rounded-full bg-gray-400"
+                  />
+                  <span>수정일 {updatedAt}</span>
+                </>
+              ) : null}
               <span aria-hidden className="size-1 rounded-full bg-gray-400" />
               <span>조회 {viewCount}</span>
             </p>

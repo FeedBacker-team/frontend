@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { GoogleAnalytics } from '@next/third-parties/google';
+import Script from 'next/script';
 
 import { Toaster } from '@/components/common/Sonner';
 import { TooltipProvider } from '@/components/common/Tooltip';
@@ -19,6 +19,17 @@ import { createRobotsMetadata } from '@/lib/seo/metadata';
 import './globals.css';
 
 const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+
+// ChatGPT, Perplexity, Gemini 등 AI 답변 엔진에서 유입된 세션을
+// GA4에서 바로 구분해 볼 수 있도록 리퍼러 호스트를 별도 이벤트로 기록한다.
+const AI_REFERRER_HOSTS = [
+  'chatgpt.com',
+  'chat.openai.com',
+  'perplexity.ai',
+  'gemini.google.com',
+  'claude.ai',
+  'copilot.microsoft.com',
+];
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -70,10 +81,39 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
             </ActionGuardProvider>
           </TooltipProvider>
         </QueryProvider>
+        {IS_PRODUCTION_DEPLOYMENT && GOOGLE_ANALYTICS_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GOOGLE_ANALYTICS_ID)}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', ${JSON.stringify(GOOGLE_ANALYTICS_ID)});
+
+                (function () {
+                  try {
+                    var referrerHost = document.referrer
+                      ? new URL(document.referrer).hostname.replace(/^www\\./, '')
+                      : '';
+                    var aiHosts = ${JSON.stringify(AI_REFERRER_HOSTS)};
+                    var matchedHost = aiHosts.find(function (host) {
+                      return referrerHost === host || referrerHost.endsWith('.' + host);
+                    });
+
+                    if (matchedHost) {
+                      gtag('event', 'ai_referral', { ai_source: matchedHost });
+                    }
+                  } catch (error) {}
+                })();
+              `}
+            </Script>
+          </>
+        )}
       </body>
-      {IS_PRODUCTION_DEPLOYMENT && GOOGLE_ANALYTICS_ID && (
-        <GoogleAnalytics gaId={GOOGLE_ANALYTICS_ID} />
-      )}
     </html>
   );
 }

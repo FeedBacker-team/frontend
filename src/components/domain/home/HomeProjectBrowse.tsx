@@ -17,8 +17,13 @@ import {
 } from '@/constants/project';
 import { useProjects } from '@/hooks/useProjects';
 import { useBrowseQuery } from '@/hooks/useBrowseQuery';
+import type { ProjectListResponse } from '@/types/project';
 
-function HomeProjectBrowse() {
+type HomeProjectBrowseProps = {
+  initialProjects?: ProjectListResponse;
+};
+
+function HomeProjectBrowse({ initialProjects }: HomeProjectBrowseProps = {}) {
   const router = useRouter();
   const { runProtectedAction } = useActionGuard();
   const {
@@ -35,13 +40,21 @@ function HomeProjectBrowse() {
     setSort: handleSortChange,
   } = useBrowseQuery(PROJECT_SORT_OPTIONS, 'LATEST');
 
-  const { data, isPending, isError } = useProjects({
-    keyword: keyword || undefined,
-    tags: selectedTags.length ? selectedTags : undefined,
-    sort,
-    page: page - 1,
-    size: BROWSE_PROJECT_PAGE_SIZE,
-  });
+  // 서버에서 미리 받아온 데이터는 기본 화면(검색어·태그 없는 1페이지)일 때만 재사용한다.
+  // 그 외에는 필터와 맞지 않는 데이터를 잘못 보여줄 수 있어 넘기지 않는다.
+  const isDefaultView =
+    !keyword && selectedTags.length === 0 && page === 1 && sort === 'LATEST';
+
+  const { data, isPending, isError } = useProjects(
+    {
+      keyword: keyword || undefined,
+      tags: selectedTags.length ? selectedTags : undefined,
+      sort,
+      page: page - 1,
+      size: BROWSE_PROJECT_PAGE_SIZE,
+    },
+    isDefaultView ? initialProjects : undefined
+  );
 
   const projects = data?.projects ?? [];
   const resultCount = data?.total_count ?? 0;

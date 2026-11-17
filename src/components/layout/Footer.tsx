@@ -17,16 +17,16 @@ const CONTACT_ITEMS = [
 const LINK_ITEMS = [
   // { href: '/support', label: '고객센터' },
   {
-    href: 'https://decorous-toothbrush-115.notion.site/3ec4c1124e188012be33c7ec032bbfe7?pvs=74',
+    href: '/terms',
     label: '이용약관',
   },
   {
-    href: 'https://decorous-toothbrush-115.notion.site/3ec4c1124e1880f293d9f1d852e5466d?pvs=74',
+    href: '/privacy',
     label: '개인정보처리방침',
   },
   // { href: '/notices', label: '공지사항' },
   {
-    href: 'https://decorous-toothbrush-115.notion.site/FAQ-3ec4c1124e18809ebe83f12e1a51ed7d?pvs=74',
+    href: '/faq',
     label: 'FAQ',
   },
 ] as const;
@@ -112,8 +112,6 @@ function Footer() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="text-h4 whitespace-nowrap text-text-sub"
                 >
                   {item.label}

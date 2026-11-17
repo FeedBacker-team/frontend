@@ -76,6 +76,7 @@ export default async function QaPage() {
   return (
     <>
       <JsonLd data={QA_STRUCTURED_DATA} />
+      <h1 className="sr-only">{QA_PAGE_TITLE}</h1>
       <div className="flex gap-10">
         <main className="min-w-0 flex-1">
           <HydrationBoundary state={dehydrate(queryClient)}>

@@ -3,7 +3,9 @@ import { notFound } from 'next/navigation';
 
 import { getPublicProjectDetail } from '@/apis/project';
 import { getPublicQaRecruitmentDetail } from '@/apis/qaRecruitments';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { QaDetail } from '@/components/domain/qa/detail/QaDetail';
+import { SITE_URL } from '@/constants/metadata';
 import { normalizeImageUrl } from '@/lib/image';
 import { isUuid } from '@/lib/schemas/id';
 import {
@@ -83,12 +85,42 @@ export default async function QaDetailPage(props: PageProps<'/qa/[qaId]'>) {
     ? searchParams.created[0]
     : searchParams.created;
 
+  const breadcrumbData = qa
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Feedbacker',
+            item: SITE_URL,
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'QA 모집',
+            item: `${SITE_URL}/qa`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: qa.title,
+            item: `${SITE_URL}/qa/${encodeURIComponent(qaId)}`,
+          },
+        ],
+      }
+    : null;
+
   return (
-    <QaDetail
-      feedbackPostId={qaId}
-      showCreatedToast={created === '1'}
-      initialQa={qa ?? undefined}
-      initialProject={project ?? undefined}
-    />
+    <>
+      {breadcrumbData ? <JsonLd data={breadcrumbData} /> : null}
+      <QaDetail
+        feedbackPostId={qaId}
+        showCreatedToast={created === '1'}
+        initialQa={qa ?? undefined}
+        initialProject={project ?? undefined}
+      />
+    </>
   );
 }
