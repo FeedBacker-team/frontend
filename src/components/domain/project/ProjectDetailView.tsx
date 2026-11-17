@@ -6,11 +6,16 @@ import { ProjectDetail } from '@/components/domain/project/ProjectDetail';
 import { PROJECT_TAG_LABEL } from '@/constants/project';
 import { useProjectDetail } from '@/hooks/useProjects';
 import { hasQaDeadlinePassed } from '@/lib/qa/deadline';
-import type { ProjectDetail as ProjectDetailData } from '@/types/project';
+import type {
+  ProjectDetail as ProjectDetailData,
+  ProjectListResponse,
+} from '@/types/project';
 
 type ProjectDetailViewProps = {
   projectId: string;
   initialProject?: ProjectDetailData;
+  initialPopular?: ProjectListResponse;
+  initialWebTrend?: ProjectListResponse;
 };
 
 function formatDate(value: string) {
@@ -53,6 +58,8 @@ function ProjectDetailError({ message, onRetry }: ProjectDetailErrorProps) {
 function ProjectDetailView({
   projectId,
   initialProject,
+  initialPopular,
+  initialWebTrend,
 }: ProjectDetailViewProps) {
   const projectQuery = useProjectDetail(projectId, initialProject);
 
@@ -90,6 +97,7 @@ function ProjectDetailView({
           authorNickname={project.ownerNickname}
           authorProfileImageUrl={project.ownerProfileImageUrl}
           publishedAt={formatDate(project.createdAt)}
+          updatedAt={formatDate(project.updatedAt)}
           viewCount={project.viewCount}
           url={project.serviceUrl}
           description={project.description}
@@ -110,7 +118,10 @@ function ProjectDetailView({
         />
       </div>
       <aside className="flex w-80 shrink-0 flex-col gap-14">
-        <HomeRankedProjects />
+        <HomeRankedProjects
+          initialPopular={initialPopular}
+          initialWebTrend={initialWebTrend}
+        />
       </aside>
     </div>
   );

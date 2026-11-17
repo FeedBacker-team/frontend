@@ -16,6 +16,7 @@ import type { MyProjectItem } from '@/types/mypage';
 import type {
   ProjectDetail,
   ProjectListParams,
+  ProjectListResponse,
   ProjectTag,
 } from '@/types/project';
 
@@ -37,10 +38,15 @@ function mapToMyProjectItem(response: MyProjectResponse): MyProjectItem {
   };
 }
 
-function useProjects(params: ProjectListParams = {}) {
+function useProjects(
+  params: ProjectListParams = {},
+  initialData?: ProjectListResponse
+) {
   return useQuery({
     queryKey: projectKeys.list(params),
     queryFn: ({ signal }) => getProjects(params, signal),
+    initialData,
+    initialDataUpdatedAt: initialData ? 0 : undefined,
   });
 }
 

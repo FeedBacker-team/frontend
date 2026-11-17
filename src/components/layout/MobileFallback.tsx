@@ -24,9 +24,9 @@ function MobileFallback() {
           >
             <span className="size-8 bg-rust-600 mask-[url(/icons/info.svg)] mask-center mask-contain mask-no-repeat" />
           </span>
-          <h1 className="mt-5 text-t3 text-text-default">
+          <h2 className="mt-5 text-t3 text-text-default">
             더 쾌적한 모바일 환경을 준비 중이에요!
-          </h1>
+          </h2>
           <p className="mt-2 text-b2 text-text-sub">
             편리한 모바일 경험을 위해 열심히 단장 중이에요.
             <br />

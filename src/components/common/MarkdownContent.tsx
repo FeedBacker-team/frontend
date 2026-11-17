@@ -1,8 +1,33 @@
+import type { ReactNode } from 'react';
 import Markdown, { type Components } from 'react-markdown';
 import remarkBreaks from 'remark-breaks';
 
 import { emojifyShortcodes } from '@/lib/emoji';
+import { slugifyHeading } from '@/lib/markdown/headings';
 import { cn } from '@/lib/utils';
+
+function getTextContent(node: ReactNode): string {
+  if (typeof node === 'string' || typeof node === 'number') {
+    return String(node);
+  }
+
+  if (Array.isArray(node)) {
+    return node.map(getTextContent).join('');
+  }
+
+  if (
+    node &&
+    typeof node === 'object' &&
+    'props' in node &&
+    node.props &&
+    typeof node.props === 'object' &&
+    'children' in node.props
+  ) {
+    return getTextContent(node.props.children as ReactNode);
+  }
+
+  return '';
+}
 
 const ALLOWED_MARKDOWN_ELEMENTS = [
   'p',
@@ -23,10 +48,20 @@ const ALLOWED_MARKDOWN_ELEMENTS = [
 const markdownComponents: Components = {
   p: ({ children }) => <p className="my-3 first:mt-0 last:mb-0">{children}</p>,
   h2: ({ children }) => (
-    <h2 className="mt-6 mb-3 text-h2 first:mt-0">{children}</h2>
+    <h2
+      id={slugifyHeading(getTextContent(children))}
+      className="mt-6 mb-3 scroll-mt-20 text-h2 first:mt-0"
+    >
+      {children}
+    </h2>
   ),
   h3: ({ children }) => (
-    <h3 className="mt-5 mb-2 text-h3 first:mt-0">{children}</h3>
+    <h3
+      id={slugifyHeading(getTextContent(children))}
+      className="mt-5 mb-2 scroll-mt-20 text-h3 first:mt-0"
+    >
+      {children}
+    </h3>
   ),
   strong: ({ children }) => <strong className="font-bold">{children}</strong>,
   em: ({ children }) => <em className="italic">{children}</em>,

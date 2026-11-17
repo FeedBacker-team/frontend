@@ -42,7 +42,7 @@ function ProjectBrowseCard({
         {thumbnailUrl ? (
           <Image
             src={thumbnailUrl}
-            alt=""
+            alt={`${title} 프로젝트 썸네일`}
             fill
             unoptimized
             className="object-cover"
