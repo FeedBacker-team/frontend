@@ -6,6 +6,7 @@ import {
   deleteProject,
   getMyProjects,
   getProjectDetail,
+  recordProjectView,
   updateProject,
 } from '@/apis/projects';
 import type { MyProjectResponse, ProjectUpdateRequest } from '@/apis/projects';
@@ -73,6 +74,20 @@ function useProjectDetail(
   });
 }
 
+function useRecordProjectView() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (projectId: string) => recordProjectView(projectId),
+    onSuccess: (viewCount, projectId) => {
+      queryClient.setQueryData<ProjectDetail>(
+        projectKeys.detail(projectId),
+        (prev) => (prev ? { ...prev, viewCount } : prev)
+      );
+    },
+  });
+}
+
 function useCreateProject() {
   return useMutation({
     mutationFn: createProject,
@@ -128,5 +143,6 @@ export {
   useMyProjects,
   useProjectDetail,
   useProjects,
+  useRecordProjectView,
   useUpdateProject,
 };

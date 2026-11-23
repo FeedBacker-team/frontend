@@ -3,6 +3,7 @@ export { deleteProject } from './deleteProject';
 export { ProjectError } from './error';
 export { getProjectDetail, mapProjectDetailResponse } from './getProjectDetail';
 export { getMyProjects } from './getMyProjects';
+export { recordProjectView } from './recordProjectView';
 export { updateProject } from './updateProject';
 
 export type {

@@ -1,11 +1,14 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+
 import { Button } from '@/components/common/Button';
 import { HomeRankedProjects } from '@/components/domain/home/HomeRankedProjects';
 import { ProjectDetail } from '@/components/domain/project/ProjectDetail';
 import { PROJECT_TAG_LABEL } from '@/constants/project';
-import { useProjectDetail } from '@/hooks/useProjects';
+import { useProjectDetail, useRecordProjectView } from '@/hooks/useProjects';
 import { hasQaDeadlinePassed } from '@/lib/qa/deadline';
+import { useAuthStore } from '@/stores/authStore';
 import type {
   ProjectDetail as ProjectDetailData,
   ProjectListResponse,
@@ -62,6 +65,22 @@ function ProjectDetailView({
   initialWebTrend,
 }: ProjectDetailViewProps) {
   const projectQuery = useProjectDetail(projectId, initialProject);
+  const authStatus = useAuthStore((state) => state.status);
+  const { mutate: recordView } = useRecordProjectView();
+  const recordedProjectIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (authStatus === 'initializing') {
+      return;
+    }
+
+    if (recordedProjectIdRef.current === projectId) {
+      return;
+    }
+
+    recordedProjectIdRef.current = projectId;
+    recordView(projectId);
+  }, [authStatus, projectId, recordView]);
 
   if (projectQuery.isPending) {
     return <ProjectDetailLoading />;

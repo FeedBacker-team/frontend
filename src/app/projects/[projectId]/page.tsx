@@ -86,6 +86,7 @@ export default async function ProjectDetailPage(
         '@type': 'CreativeWork',
         '@id': `${SITE_URL}${path}#project`,
         name: project.title,
+        headline: project.title,
         description: createMetadataDescription(project.description),
         url: `${SITE_URL}${path}`,
         image: normalizeImageUrl(project.thumbnailUrl) ?? undefined,
