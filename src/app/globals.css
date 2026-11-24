@@ -5,41 +5,25 @@
 @custom-variant dark (&:is(.dark *));
 
 @font-face {
-  font-family: 'NanumSquareRound';
-  src:
-    url('/fonts/NanumSquareRoundOTFL.otf') format('opentype'),
-    url('/fonts/NanumSquareRoundL.ttf') format('truetype');
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'NanumSquareRound';
-  src:
-    url('/fonts/NanumSquareRoundOTFR.otf') format('opentype'),
-    url('/fonts/NanumSquareRoundR.ttf') format('truetype');
+  font-family: 'Pretendard';
+  src: url('/fonts/Pretendard-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'NanumSquareRound';
-  src:
-    url('/fonts/NanumSquareRoundOTFB.otf') format('opentype'),
-    url('/fonts/NanumSquareRoundB.ttf') format('truetype');
-  font-weight: 700;
+  font-family: 'Pretendard';
+  src: url('/fonts/Pretendard-Medium.woff2') format('woff2');
+  font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'NanumSquareRound';
-  src:
-    url('/fonts/NanumSquareRoundOTFEB.otf') format('opentype'),
-    url('/fonts/NanumSquareRoundEB.ttf') format('truetype');
-  font-weight: 800;
+  font-family: 'Pretendard';
+  src: url('/fonts/Pretendard-SemiBold.woff2') format('woff2');
+  font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
@@ -102,84 +86,94 @@
 
   /* Font Family */
   --font-sans:
-    'NanumSquareRound', 'Pretendard', -apple-system, BlinkMacSystemFont,
-    'Malgun Gothic', sans-serif;
+    'Pretendard', -apple-system, BlinkMacSystemFont, 'Malgun Gothic',
+    sans-serif;
 
   /* Typography */
   /* Display */
   --text-d1: 2.75rem;
-  --text-d1--line-height: 3.5rem;
-  --text-d1--letter-spacing: -0.02em;
-  --text-d1--font-weight: 800;
+  --text-d1--line-height: 3.575rem;
+  --text-d1--letter-spacing: -0.025em;
+  --text-d1--font-weight: 600;
 
-  --text-d2: 2.5rem;
-  --text-d2--line-height: 3.25rem;
-  --text-d2--letter-spacing: -0.02em;
-  --text-d2--font-weight: 800;
+  --text-d2: 1.875rem;
+  --text-d2--line-height: 2.4375rem;
+  --text-d2--letter-spacing: -0.025em;
+  --text-d2--font-weight: 600;
 
   /* Title */
   --text-t1: 2rem;
-  --text-t1--line-height: 2.75rem;
-  --text-t1--letter-spacing: -0.02em;
-  --text-t1--font-weight: 700;
+  --text-t1--line-height: 2.6rem;
+  --text-t1--letter-spacing: -0.025em;
+  --text-t1--font-weight: 600;
 
   --text-t2: 1.75rem;
-  --text-t2--line-height: 2.5rem;
-  --text-t2--letter-spacing: -0.02em;
-  --text-t2--font-weight: 700;
+  --text-t2--line-height: 2.45rem;
+  --text-t2--letter-spacing: -0.025em;
+  --text-t2--font-weight: 600;
 
   --text-t3: 1.5rem;
-  --text-t3--line-height: 2.25rem;
-  --text-t3--letter-spacing: -0.02em;
-  --text-t3--font-weight: 700;
+  --text-t3--line-height: 2.1rem;
+  --text-t3--letter-spacing: -0.025em;
+  --text-t3--font-weight: 600;
 
   /* Heading */
   --text-h1: 1.375rem;
-  --text-h1--line-height: 2rem;
-  --text-h1--letter-spacing: -0.01em;
-  --text-h1--font-weight: 700;
+  --text-h1--line-height: 1.925rem;
+  --text-h1--letter-spacing: -0.025em;
+  --text-h1--font-weight: 600;
 
   --text-h2: 1.25rem;
-  --text-h2--line-height: 1.875rem;
-  --text-h2--letter-spacing: -0.01em;
-  --text-h2--font-weight: 700;
+  --text-h2--line-height: 1.75rem;
+  --text-h2--letter-spacing: -0.025em;
+  --text-h2--font-weight: 600;
 
   --text-h3: 1.125rem;
-  --text-h3--line-height: 1.75rem;
-  --text-h3--letter-spacing: -0.01em;
-  --text-h3--font-weight: 700;
+  --text-h3--line-height: 1.63125rem;
+  --text-h3--letter-spacing: -0.025em;
+  --text-h3--font-weight: 600;
 
   --text-h4: 1rem;
-  --text-h4--line-height: 1.5rem;
-  --text-h4--letter-spacing: -0.01em;
-  --text-h4--font-weight: 700;
+  --text-h4--line-height: 1.45rem;
+  --text-h4--letter-spacing: -0.025em;
+  --text-h4--font-weight: 600;
+
+  --text-h5: 0.875rem;
+  --text-h5--line-height: 1.26875rem;
+  --text-h5--letter-spacing: -0.025em;
+  --text-h5--font-weight: 600;
 
   /* Body */
   --text-b1: 1.125rem;
-  --text-b1--line-height: 1.75rem;
-  --text-b1--letter-spacing: -0.005em;
+  --text-b1--line-height: 1.63125rem;
+  --text-b1--letter-spacing: -0.025em;
   --text-b1--font-weight: 400;
 
   --text-b2: 1rem;
-  --text-b2--line-height: 1.5rem;
-  --text-b2--letter-spacing: -0.005em;
+  --text-b2--line-height: 1.4rem;
+  --text-b2--letter-spacing: -0.025em;
   --text-b2--font-weight: 400;
 
   --text-b3: 0.875rem;
-  --text-b3--line-height: 1.375rem;
-  --text-b3--letter-spacing: -0.005em;
+  --text-b3--line-height: 1.26875rem;
+  --text-b3--letter-spacing: -0.025em;
   --text-b3--font-weight: 400;
+
+  --text-b4: 0.75rem;
+  --text-b4--line-height: 1.0875rem;
+  --text-b4--letter-spacing: -0.025em;
+  --text-b4--font-weight: 400;
 
   /* Caption */
   --text-c1: 0.875rem;
-  --text-c1--line-height: 1.25rem;
-  --text-c1--letter-spacing: 0em;
-  --text-c1--font-weight: 700;
+  --text-c1--line-height: 1.26875rem;
+  --text-c1--letter-spacing: -0.025em;
+  --text-c1--font-weight: 500;
 
   --text-c2: 0.75rem;
-  --text-c2--line-height: 1rem;
-  --text-c2--letter-spacing: 0em;
-  --text-c2--font-weight: 700;
+  --text-c2--line-height: 1.0875rem;
+  --text-c2--letter-spacing: -0.025em;
+  --text-c2--font-weight: 500;
 }
 
 @theme inline {
