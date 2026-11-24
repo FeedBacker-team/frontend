@@ -4,8 +4,8 @@ import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 
 import { Footer } from '@/components/layout/Footer';
+import { Header } from '@/components/layout/Header';
 import { MobileFallback } from '@/components/layout/MobileFallback';
-import { Sidebar } from '@/components/layout/Sidebar';
 
 const HIDE_SHELL = [
   '/ex',
@@ -17,12 +17,12 @@ const HIDE_SHELL = [
 const HIDE_FOOTER = ['/projects/new', '/qa/new'];
 
 /**
- * 기본: 사이드바 + 푸터
+ * 기본: 헤더 + 푸터
  *
- * HIDE_SHELL  — 사이드바·푸터 둘 다 없음. 경로 prefix.
+ * HIDE_SHELL  — 헤더·푸터 둘 다 없음. 경로 prefix.
  *               예: '/ex' → /ex, /ex/toast
  *
- * HIDE_FOOTER — 사이드바는 있고 푸터만 없음. 경로 prefix.
+ * HIDE_FOOTER — 헤더는 있고 푸터만 없음. 경로 prefix.
  *               예: '/projects/new'(주소는 예시입니다)
  *               수정 페이지(/projects/:id/edit)는 아래 정규식으로 따로 처리.
  *
@@ -64,11 +64,9 @@ function DesktopAppShell({ children, pathname }: DesktopAppShellProps) {
 
   return (
     <div className="w-full sm:min-w-app-canvas">
+      <Header />
       <div className="sm:mx-auto sm:w-app-canvas">
-        <div className="flex items-stretch gap-10 p-10">
-          <Sidebar />
-          <div className="min-w-0 flex-1">{children}</div>
-        </div>
+        <div className="p-10">{children}</div>
       </div>
       {hideFooter ? null : <Footer />}
     </div>

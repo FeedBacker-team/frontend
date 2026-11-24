@@ -17,8 +17,8 @@ const radioControlVariants = cva(
   {
     variants: {
       size: {
-        large: 'size-6',
-        medium: 'size-5',
+        large: 'm-0.25 size-5.5',
+        medium: 'm-0.25 size-4.5',
       },
     },
     defaultVariants: {
@@ -43,19 +43,22 @@ const radioIndicatorVariants = cva(
   }
 );
 
-const radioLabelVariants = cva('text-gray-800', {
-  variants: {
-    size: {
-      large:
-        'text-b1 peer-data-checked:text-h3 peer-data-checked:text-gray-900 peer-data-disabled:peer-data-checked:text-b1 peer-data-disabled:peer-data-checked:text-gray-800',
-      medium:
-        'text-b2 peer-data-checked:text-h4 peer-data-checked:text-gray-900 peer-data-disabled:peer-data-checked:text-b2 peer-data-disabled:peer-data-checked:text-gray-800',
+const radioLabelVariants = cva(
+  'text-text-default peer-data-disabled:text-text-sub',
+  {
+    variants: {
+      size: {
+        large:
+          'text-b1 peer-data-checked:text-h3 peer-data-disabled:peer-data-checked:text-b1',
+        medium:
+          'text-b2 peer-data-checked:text-h4 peer-data-disabled:peer-data-checked:text-b2',
+      },
     },
-  },
-  defaultVariants: {
-    size: 'large',
-  },
-});
+    defaultVariants: {
+      size: 'large',
+    },
+  }
+);
 
 const radioDescriptionVariants = cva('text-gray-600', {
   variants: {

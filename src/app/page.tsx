@@ -1,15 +1,12 @@
 import type { Metadata } from 'next';
 
 import { getProjects } from '@/apis/project';
+import { ScrollToTopButton } from '@/components/common/ScrollToTopButton';
 import { HomeBanner } from '@/components/domain/home/HomeBanner';
 import { HomeProjectBrowse } from '@/components/domain/home/HomeProjectBrowse';
 import { HomeRankedProjects } from '@/components/domain/home/HomeRankedProjects';
 import { JsonLd } from '@/components/seo/JsonLd';
-import {
-  SITE_DESCRIPTION,
-  SITE_TITLE,
-  SITE_URL,
-} from '@/constants/metadata';
+import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from '@/constants/metadata';
 import {
   BROWSE_PROJECT_PAGE_SIZE,
   RANKING_PROJECT_PAGE_SIZE,
@@ -105,6 +102,7 @@ export default async function Home() {
           />
         </aside>
       </div>
+      <ScrollToTopButton className="fixed right-10 bottom-30 z-50" />
     </>
   );
 }

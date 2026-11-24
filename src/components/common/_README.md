@@ -16,6 +16,24 @@
 | `className` | `string`                                    | —           | 추가 클래스          |
 | …           | `button` attrs                              | —           | `onClick`, `type` 등 |
 
+### Size 규격
+
+버튼 외곽 높이는 border를 포함한 값입니다. `outline`의 `giant`만 다른 variant보다 크게 표시됩니다.
+
+| size     | 높이                    | 가로 padding            | gap  | radius | 아이콘 |
+| -------- | ----------------------- | ----------------------- | ---- | ------ | ------ |
+| `giant`  | 50px (`outline`은 52px) | 19px (`outline`은 22px) | 12px | 12px   | 24px   |
+| `large`  | 48px                    | 11px                    | 8px  | 12px   | 24px   |
+| `medium` | 40px                    | 15px                    | 6px  | 10px   | 20px   |
+| `small`  | 29px                    | 7px                     | 6px  | 8px    | 16px   |
+
+### 상태
+
+- `primary`: Default `rust-600`, Hover `rust-700`, Pressed `rust-800`, Disabled `rust-200`
+- `secondary`: Default `rust-50`, Hover `rust-100`, Pressed `rust-200`, Disabled `gray-100`
+- `secondary`의 Pressed 글자·아이콘·border는 `rust-700`을 사용합니다.
+- `outline`: Default white, Hover `gray-100` 또는 `gray-200`, Pressed `gray-300`, Disabled `gray-200`
+
 ### 사용 예
 
 ```tsx
@@ -40,6 +58,35 @@ import { Button } from '@/components/common/Button';
 // disabled
 <Button disabled>비활성</Button>
 ```
+
+상태에 따라 아이콘 색이 함께 바뀌어야 하는 경우 `currentColor`를 따르는 SVG 또는 CSS mask를 사용합니다. 고정 색상이 지정된 SVG를 `<img>`로 넣으면 버튼의 글자색을 상속하지 않습니다.
+
+---
+
+## ScrollToTopButton
+
+페이지를 최상단으로 이동시키는 44×44px 원형 아이콘 버튼입니다. 버튼의 고정 위치는 사용하는 레이아웃에서 `className`으로 지정합니다.
+
+### Props
+
+| prop         | type                | default          | 설명                                                       |
+| ------------ | ------------------- | ---------------- | ---------------------------------------------------------- |
+| `behavior`   | `ScrollBehavior`    | `'smooth'`       | `window.scrollTo`의 스크롤 동작                             |
+| `aria-label` | `string`            | `'맨 위로 이동'` | 버튼의 접근성 이름                                         |
+| `onClick`    | `MouseEventHandler` | —                | 기본 스크롤 동작 전에 호출. `preventDefault()`로 취소 가능 |
+| `className`  | `string`            | —                | 고정 위치, z-index 등의 추가 클래스                        |
+| `disabled`   | `boolean`           | `false`          |                                                            |
+| …            | `button` attrs      | —                | `id`, `data-*` 등 (`type`은 `button`으로 고정)             |
+
+### 사용 예
+
+```tsx
+import { ScrollToTopButton } from '@/components/common/ScrollToTopButton';
+
+<ScrollToTopButton className="fixed right-10 bottom-10 z-50" />;
+```
+
+사용자가 `prefers-reduced-motion: reduce`를 설정한 경우 `behavior`와 관계없이 애니메이션 없이 이동합니다.
 
 ---
 
@@ -873,25 +920,26 @@ const totalPages = 5;
 
 ## 컴포넌트 목록
 
-| 컴포넌트         | 상태 | 담당   |
-| ---------------- | ---- | ------ |
-| Button           | ✅   | 이찬우 |
-| Badge            | ✅   | 이찬우 |
-| Tooltip          | ✅   | 이찬우 |
-| Dropdown         | ✅   | 이찬우 |
-| Sonner           | ✅   | 이찬우 |
-| ToastLarge       | ✅   | 김지은 |
-| Radio            | ✅   | 이찬우 |
-| CheckBox         | ✅   | 김지은 |
-| Dialog           | ✅   | 이찬우 |
-| Calendar         | ✅   | 김지은 |
-| Chip             | ✅   | 김지은 |
-| Input            | ✅   | 김지은 |
-| Tag              | ✅   | 김지은 |
-| Toggle           | ✅   | 김지은 |
-| Textarea         | ✅   | 김지은 |
-| MarkdownTextarea | ✅   | 김지은 |
-| MarkdownContent  | ✅   | 김지은 |
-| FileUpload       | ✅   | 김지은 |
-| FileUploadItem   | ✅   | 김지은 |
-| Pagination       | ✅   | 김지은 |
+| 컴포넌트          | 상태 | 담당   |
+| ----------------- | ---- | ------ |
+| Button            | ✅   | 이찬우 |
+| ScrollToTopButton | ✅   | 이찬우 |
+| Badge             | ✅   | 이찬우 |
+| Tooltip           | ✅   | 이찬우 |
+| Dropdown          | ✅   | 이찬우 |
+| Sonner            | ✅   | 이찬우 |
+| ToastLarge        | ✅   | 김지은 |
+| Radio             | ✅   | 이찬우 |
+| CheckBox          | ✅   | 김지은 |
+| Dialog            | ✅   | 이찬우 |
+| Calendar          | ✅   | 김지은 |
+| Chip              | ✅   | 김지은 |
+| Input             | ✅   | 김지은 |
+| Tag               | ✅   | 김지은 |
+| Toggle            | ✅   | 김지은 |
+| Textarea          | ✅   | 김지은 |
+| MarkdownTextarea  | ✅   | 김지은 |
+| MarkdownContent   | ✅   | 김지은 |
+| FileUpload        | ✅   | 김지은 |
+| FileUploadItem    | ✅   | 김지은 |
+| Pagination        | ✅   | 김지은 |

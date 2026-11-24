@@ -7,29 +7,34 @@ import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex cursor-pointer items-center justify-center font-bold whitespace-nowrap transition-colors outline-none select-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_img]:pointer-events-none [&_img]:shrink-0',
+  'inline-flex cursor-pointer items-center justify-center border border-transparent font-bold whitespace-nowrap transition-colors outline-none select-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_img]:pointer-events-none [&_img]:shrink-0',
   {
     variants: {
       variant: {
         primary:
           'bg-rust-600 [color:var(--color-gray-50)] hover:bg-rust-700 active:bg-rust-800 active:[color:var(--color-rust-50)] disabled:bg-rust-200 disabled:[color:var(--color-rust-500)]',
         secondary:
-          'bg-rust-50 [color:var(--color-rust-600)] border border-rust-600 hover:bg-rust-100 active:bg-rust-200 disabled:bg-gray-100 disabled:[color:var(--color-gray-500)] disabled:border-gray-300',
+          'border-rust-600 bg-rust-50 [color:var(--color-rust-600)] hover:bg-rust-100 active:border-rust-700 active:bg-rust-200 active:[color:var(--color-rust-700)] disabled:border-gray-300 disabled:bg-gray-100 disabled:[color:var(--color-gray-500)]',
         outline:
-          'bg-white [color:var(--color-gray-900)] border border-gray-400 hover:border-gray-600 active:bg-gray-300 active:border-gray-600 disabled:bg-gray-200 disabled:[color:var(--color-gray-500)] disabled:border-gray-300',
+          'border-gray-400 bg-white [color:var(--color-gray-900)] hover:border-gray-600 active:border-gray-600 active:bg-gray-300 disabled:border-gray-300 disabled:bg-gray-200 disabled:[color:var(--color-gray-500)]',
       },
       size: {
         giant:
-          'gap-3 rounded-[12px] px-5 py-3 text-h3 [&_svg]:size-6 [&_img]:size-6',
-        large: 'gap-2 rounded-[12px] p-3 text-h4 [&_svg]:size-6 [&_img]:size-6',
+          'h-12.5 gap-3 rounded-[12px] px-[19px] text-h3 [&_svg]:size-6 [&_img]:size-6',
+        large:
+          'h-12 gap-2 rounded-[12px] px-[11px] text-h4 [&_svg]:size-6 [&_img]:size-6',
         medium:
-          'gap-1.5 rounded-[10px] px-4 py-2.5 text-c1 [&_svg]:size-5 [&_img]:size-5',
+          'h-10 gap-1.5 rounded-[10px] px-[15px] text-c1 [&_svg]:size-5 [&_img]:size-5',
         small:
-          'gap-1.5 rounded-[8px] px-2 py-1.5 text-c1 [&_svg]:size-4 [&_img]:size-4',
+          'h-7.25 gap-1.5 rounded-[8px] px-[7px] text-c1 [&_svg]:size-4 [&_img]:size-4',
       },
     },
     compoundVariants: [
-      { variant: 'outline', size: 'giant', class: 'hover:bg-gray-200' },
+      {
+        variant: 'outline',
+        size: 'giant',
+        class: 'h-13 px-[22px] hover:bg-gray-200',
+      },
       { variant: 'outline', size: 'large', class: 'hover:bg-gray-200' },
       { variant: 'outline', size: 'medium', class: 'hover:bg-gray-100' },
       { variant: 'outline', size: 'small', class: 'hover:bg-gray-100' },
