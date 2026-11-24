@@ -57,7 +57,7 @@ function ToastView({ id, variant, message }: ToastViewProps) {
         className="inline-flex size-6 shrink-0 cursor-pointer items-center justify-center"
         onClick={() => sonnerToast.dismiss(id)}
       >
-        <ToastIcon src="/icons/x.svg" className="bg-gray-50" />
+        <ToastIcon src="/icons/x.svg" className="bg-gray-600" />
       </button>
     </div>
   );
