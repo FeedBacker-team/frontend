@@ -46,8 +46,10 @@ function Badge({
               <span
                 data-slot="badge-icon"
                 className={cn(
-                  'flex h-4.25 w-4.25 shrink-0 items-center justify-center [&_img]:h-4.25 [&_img]:w-4.25 [&_svg]:h-4.25 [&_svg]:w-4.25',
-                  variant === 'yellow' && '-translate-y-0.5'
+                  'flex h-4.25 shrink-0 items-center justify-center [&_img]:h-4.25 [&_svg]:h-4.25',
+                  variant === 'yellow'
+                    ? '-translate-y-0.5 w-3 [&_img]:w-3 [&_svg]:w-3'
+                    : 'w-4.25 [&_img]:w-4.25 [&_svg]:w-4.25'
                 )}
               >
                 {icon}
