@@ -16,6 +16,24 @@
 | `className` | `string`                                    | —           | 추가 클래스          |
 | …           | `button` attrs                              | —           | `onClick`, `type` 등 |
 
+### Size 규격
+
+버튼 외곽 높이는 border를 포함한 값입니다. `outline`의 `giant`만 다른 variant보다 크게 표시됩니다.
+
+| size     | 높이                    | 가로 padding            | gap  | radius | 아이콘 |
+| -------- | ----------------------- | ----------------------- | ---- | ------ | ------ |
+| `giant`  | 50px (`outline`은 52px) | 19px (`outline`은 22px) | 12px | 12px   | 24px   |
+| `large`  | 48px                    | 11px                    | 8px  | 12px   | 24px   |
+| `medium` | 40px                    | 15px                    | 6px  | 10px   | 20px   |
+| `small`  | 29px                    | 7px                     | 6px  | 8px    | 16px   |
+
+### 상태
+
+- `primary`: Default `rust-600`, Hover `rust-700`, Pressed `rust-800`, Disabled `rust-200`
+- `secondary`: Default `rust-50`, Hover `rust-100`, Pressed `rust-200`, Disabled `gray-100`
+- `secondary`의 Pressed 글자·아이콘·border는 `rust-700`을 사용합니다.
+- `outline`: Default white, Hover `gray-100` 또는 `gray-200`, Pressed `gray-300`, Disabled `gray-200`
+
 ### 사용 예
 
 ```tsx
@@ -40,6 +58,8 @@ import { Button } from '@/components/common/Button';
 // disabled
 <Button disabled>비활성</Button>
 ```
+
+상태에 따라 아이콘 색이 함께 바뀌어야 하는 경우 `currentColor`를 따르는 SVG 또는 CSS mask를 사용합니다. 고정 색상이 지정된 SVG를 `<img>`로 넣으면 버튼의 글자색을 상속하지 않습니다.
 
 ---
 
