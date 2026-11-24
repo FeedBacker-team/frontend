@@ -43,6 +43,33 @@ import { Button } from '@/components/common/Button';
 
 ---
 
+## ScrollToTopButton
+
+페이지를 최상단으로 이동시키는 44×44px 원형 아이콘 버튼입니다. 버튼의 고정 위치는 사용하는 레이아웃에서 `className`으로 지정합니다.
+
+### Props
+
+| prop         | type                | default          | 설명                                                       |
+| ------------ | ------------------- | ---------------- | ---------------------------------------------------------- |
+| `behavior`   | `ScrollBehavior`    | `'smooth'`       | `window.scrollTo`의 스크롤 동작                             |
+| `aria-label` | `string`            | `'맨 위로 이동'` | 버튼의 접근성 이름                                         |
+| `onClick`    | `MouseEventHandler` | —                | 기본 스크롤 동작 전에 호출. `preventDefault()`로 취소 가능 |
+| `className`  | `string`            | —                | 고정 위치, z-index 등의 추가 클래스                        |
+| `disabled`   | `boolean`           | `false`          |                                                            |
+| …            | `button` attrs      | —                | `id`, `data-*` 등 (`type`은 `button`으로 고정)             |
+
+### 사용 예
+
+```tsx
+import { ScrollToTopButton } from '@/components/common/ScrollToTopButton';
+
+<ScrollToTopButton className="fixed right-10 bottom-10 z-50" />;
+```
+
+사용자가 `prefers-reduced-motion: reduce`를 설정한 경우 `behavior`와 관계없이 애니메이션 없이 이동합니다.
+
+---
+
 ## Badge
 
 상태, 분류, 남은 기간 등의 짧은 정보를 표시하는 비상호작용 라벨입니다.
@@ -873,25 +900,26 @@ const totalPages = 5;
 
 ## 컴포넌트 목록
 
-| 컴포넌트         | 상태 | 담당   |
-| ---------------- | ---- | ------ |
-| Button           | ✅   | 이찬우 |
-| Badge            | ✅   | 이찬우 |
-| Tooltip          | ✅   | 이찬우 |
-| Dropdown         | ✅   | 이찬우 |
-| Sonner           | ✅   | 이찬우 |
-| ToastLarge       | ✅   | 김지은 |
-| Radio            | ✅   | 이찬우 |
-| CheckBox         | ✅   | 김지은 |
-| Dialog           | ✅   | 이찬우 |
-| Calendar         | ✅   | 김지은 |
-| Chip             | ✅   | 김지은 |
-| Input            | ✅   | 김지은 |
-| Tag              | ✅   | 김지은 |
-| Toggle           | ✅   | 김지은 |
-| Textarea         | ✅   | 김지은 |
-| MarkdownTextarea | ✅   | 김지은 |
-| MarkdownContent  | ✅   | 김지은 |
-| FileUpload       | ✅   | 김지은 |
-| FileUploadItem   | ✅   | 김지은 |
-| Pagination       | ✅   | 김지은 |
+| 컴포넌트          | 상태 | 담당   |
+| ----------------- | ---- | ------ |
+| Button            | ✅   | 이찬우 |
+| ScrollToTopButton | ✅   | 이찬우 |
+| Badge             | ✅   | 이찬우 |
+| Tooltip           | ✅   | 이찬우 |
+| Dropdown          | ✅   | 이찬우 |
+| Sonner            | ✅   | 이찬우 |
+| ToastLarge        | ✅   | 김지은 |
+| Radio             | ✅   | 이찬우 |
+| CheckBox          | ✅   | 김지은 |
+| Dialog            | ✅   | 이찬우 |
+| Calendar          | ✅   | 김지은 |
+| Chip              | ✅   | 김지은 |
+| Input             | ✅   | 김지은 |
+| Tag               | ✅   | 김지은 |
+| Toggle            | ✅   | 김지은 |
+| Textarea          | ✅   | 김지은 |
+| MarkdownTextarea  | ✅   | 김지은 |
+| MarkdownContent   | ✅   | 김지은 |
+| FileUpload        | ✅   | 김지은 |
+| FileUploadItem    | ✅   | 김지은 |
+| Pagination        | ✅   | 김지은 |

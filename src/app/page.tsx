@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import { getProjects } from '@/apis/project';
+import { ScrollToTopButton } from '@/components/common/ScrollToTopButton';
 import { HomeBanner } from '@/components/domain/home/HomeBanner';
 import { HomeProjectBrowse } from '@/components/domain/home/HomeProjectBrowse';
 import { HomeRankedProjects } from '@/components/domain/home/HomeRankedProjects';
@@ -105,6 +106,7 @@ export default async function Home() {
           />
         </aside>
       </div>
+      <ScrollToTopButton className="fixed right-10 bottom-10 z-50" />
     </>
   );
 }
