@@ -1,6 +1,6 @@
 'use client';
 
-import type { ComponentProps, MouseEvent } from 'react';
+import { useEffect, useState, type ComponentProps, type MouseEvent } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -9,15 +9,30 @@ type ScrollToTopButtonProps = Omit<
   'children' | 'type'
 > & {
   behavior?: ScrollBehavior;
+  showAfter?: number;
 };
 
 function ScrollToTopButton({
   behavior = 'smooth',
+  showAfter = 200,
   className,
   onClick,
   'aria-label': ariaLabel = '맨 위로 이동',
   ...props
 }: ScrollToTopButtonProps) {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const updateVisibility = () => {
+      setIsVisible(window.scrollY >= showAfter);
+    };
+
+    updateVisibility();
+    window.addEventListener('scroll', updateVisibility, { passive: true });
+
+    return () => window.removeEventListener('scroll', updateVisibility);
+  }, [showAfter]);
+
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     onClick?.(event);
 
@@ -34,6 +49,10 @@ function ScrollToTopButton({
       behavior: prefersReducedMotion ? 'auto' : behavior,
     });
   };
+
+  if (!isVisible) {
+    return null;
+  }
 
   return (
     <button
